@@ -1,0 +1,10 @@
+*.meta
+*.zip
+*.rar
+bin/
+obj/
+*.bak
+*.csproj*
+*.projitems
+*.sln
+.vs/
