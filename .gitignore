@@ -8,3 +8,4 @@ obj/
 *.projitems
 *.sln
 .vs/
+*.suo
