@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace WingSrv
+
+
+namespace Wingsrv
 {
 
     public class SO_ship
@@ -14,13 +16,13 @@ namespace WingSrv
         public bool atack;
         private Quaternion rotationToTarget;
 
-        private ServerObject target;
-        public ServerObject targetToMove;
-        public ServerObject newtargetToMove;
+        private SpaceObject target;
+        public SpaceObject targetToMove;
+        public SpaceObject newtargetToMove;
         //	private Quaternion oldRotation; //for roll calc
 
-        private ServerObject targetToAtack;
-        private ServerObject newtargetToAtack;
+        private SpaceObject targetToAtack;
+        private SpaceObject newtargetToAtack;
         public enum MoveType { move, warp, stop };
         public MoveType moveCommand;
         public enum ComandType { warpTo, goTo, landTo, none, open };
@@ -77,7 +79,7 @@ namespace WingSrv
 
             }
         }
-        public void SetTarget(ServerObject newtarget)
+        public void SetTarget(SpaceObject newtarget)
         {
             Debug.Log("new target  " + newtarget.visibleName);
             newtargetToMove = newtarget;
@@ -506,8 +508,8 @@ namespace WingSrv
             Stop();
         }
 
-        //	public ServerObject ConvertToSO(){
-        //		ServerObject SO= new ServerObject();
+        //	public SpaceObject ConvertToSO(){
+        //		SpaceObject SO= new SpaceObject();
         //		SO.id=p.SO.id;
         //		SO.position=p.SO.position;
         //		SO.rotation=p.SO.rotation;

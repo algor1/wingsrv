@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
 
 
-namespace WingSrv
+namespace Wingsrv
 {
 
     public class Server
     {
 
         public bool started;
-        private Dictionary<int, SO_ship> ships;
+        private ConcurrentDictionary<int, SO_ship> ships;
 
         public enum Command { MoveTo, WarpTo, Atack, SetTarget, LandTo, Equipment, Open, TakeOff };
         public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal };
         public enum typeSO { asteroid, ship, station, waypoint, container };
 
-        delegate void TickContainer();
-        public event TickContainer onTick;
+        public delegate void TickHandler();
+        public event TickHandler onTick;
 
         #region ShipList
 
@@ -40,7 +41,7 @@ namespace WingSrv
         }
         private void AddShip(SO_shipData ship)
         {
-            if (!ships.ContainsKey(ship.id){
+            if (!ships.ContainsKey(ship.id)){
                 SO_ship s = new SO_ship(ship, this);
                 ships.Add(ship.id,ship);
                 onTick+=s.Tick();

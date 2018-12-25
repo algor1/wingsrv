@@ -1,10 +1,13 @@
-namespace WingSrv{
-    interface SpaceObject
+using UnityEngine;
+
+namespace Wingsrv
+{
+    public struct SpaceObject
     {
-        int id;
-        string visibleName;
-        Server.typeSO type;
-        Vector3 position;
+        public int id;
+        public string visibleName;
+        public Server.typeSO type;
+        public Vector3 position;
         public Quaternion rotation;
         public float speed;
         public string prefab;
