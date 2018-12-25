@@ -1,23 +1,69 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Threading;
+using System.Threading.Tasks;
+
+
 namespace WingSrv
 {
 
     public class Server 
     {
+
         public bool started;
-        private List<SO_ship> ships;
+        private Dictionary<int,SO_ship> ships;
 
         public enum Command { MoveTo, WarpTo, Atack, SetTarget, LandTo, Equipment, Open, TakeOff };
         public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal };
+        public enum typeSO { asteroid, ship, station, waypoint, container };
 
-        public delegate void Tick();
+        delegate void TickContainer();
+        public event TickContainer onTick;
 
-        private 
+
+        public void RunServer()
+        {
+            if (!started)
+                Run();
+
+        }
+
+        private void Run(){
+            while (started)
+            {
+                onTick();
+                Task.Delay(20);
+            }
+        }
+        private void AddShip(SO_shipData ship)
+        {
+            if (!ships.ContainsKey){
+                SO_ship s = new SO_ship(ship, this);
+                ships.Add(ship.id,ship)
 
 
+            bool foundFlag = false;
+
+            for (int i = 0; i < ships.Count; i++)
+            {
+                if (ships[i].p.SO.id == ship.SO.id) foundFlag = true;
+            }
+
+            if (!foundFlag)
+            {
+                SO_ship s = new SO_ship(ship, this.gameObject);
+                ships.Add(s);
+            }
+            else
+            {
+                Debug.Log("Cant add ship id:" + ship.SO.id + " Because it exists.");
+            }
+        }
+
+        
+
+    }
+}
 
 
 
@@ -101,25 +147,7 @@ namespace WingSrv
         //    //}
         //}
 
-        //private void AddShip(SO_shipData ship)
-        //{
-        //    bool foundFlag = false;
 
-        //    for (int i = 0; i < ships.Count; i++)
-        //    {
-        //        if (ships[i].p.SO.id == ship.SO.id) foundFlag = true;
-        //    }
-
-        //    if (!foundFlag)
-        //    {
-        //        SO_ship s = new SO_ship(ship, this.gameObject);
-        //        ships.Add(s);
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("Cant add ship id:" + ship.SO.id + " Because it exists.");
-        //    }
-        //}
 
         //private void DeleteShip(int ship_id)
         //{
@@ -320,8 +348,3 @@ namespace WingSrv
         //    }
         //}
 
-
-
-
-    }
-}
