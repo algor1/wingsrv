@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 namespace WingSrv
 {
 
-    public class Server 
+    public class Server
     {
 
         public bool started;
-        private Dictionary<int,SO_ship> ships;
+        private Dictionary<int, SO_ship> ships;
 
         public enum Command { MoveTo, WarpTo, Atack, SetTarget, LandTo, Equipment, Open, TakeOff };
         public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal };
@@ -20,6 +21,7 @@ namespace WingSrv
         delegate void TickContainer();
         public event TickContainer onTick;
 
+        #region ShipList
 
         public void RunServer()
         {
@@ -28,7 +30,8 @@ namespace WingSrv
 
         }
 
-        private void Run(){
+        private void Run()
+        {
             while (started)
             {
                 onTick();
@@ -37,32 +40,32 @@ namespace WingSrv
         }
         private void AddShip(SO_shipData ship)
         {
-            if (!ships.ContainsKey){
+            if (!ships.ContainsKey(ship.id){
                 SO_ship s = new SO_ship(ship, this);
-                ships.Add(ship.id,ship)
-
-
-            bool foundFlag = false;
-
-            for (int i = 0; i < ships.Count; i++)
-            {
-                if (ships[i].p.SO.id == ship.SO.id) foundFlag = true;
-            }
-
-            if (!foundFlag)
-            {
-                SO_ship s = new SO_ship(ship, this.gameObject);
-                ships.Add(s);
+                ships.Add(ship.id,ship);
+                onTick+=s.Tick();
             }
             else
             {
-                Debug.Log("Cant add ship id:" + ship.SO.id + " Because it exists.");
+                //TODO Log wrong ship adding
             }
         }
+        private void DeleteShip(SO_shipData ship) { }
 
-        
+        #endregion
 
+        #region load_save data
+
+
+        #endregion
+
+        #region user commands
+        #endregion
+
+        #region events
+        #endregion
     }
+    
 }
 
 
