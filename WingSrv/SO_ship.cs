@@ -1,6 +1,7 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 
 namespace Wingsrv
@@ -34,20 +35,24 @@ namespace Wingsrv
 
         public List<SO_weapon> weapons;
         public List<SO_equipment> equipments;
+        public delegate void dgEventHandler();
+        public delegate void dgEventHandler1(int ship_id);
+        public event dgEventHandler onDestroyShip;
+        public event dgEventHandler1 onland;
 
 
-        public SO_ship(SO_shipData shipData, GameObject _host)
+
+        public SO_ship(SO_shipData shipData)
         {
-
             p = shipData;
             rotationToTarget = p.SO.rotation;
-            moveCommand = MoveType.move;
-            SendEvent(ShipEvenentsType.move);
+            //moveCommand = MoveType.move;
+            //SendEvent(ShipEvenentsType.move);
 
-            host = _host;
-            Debug.Log(host);
+            //host = _host;
+            //Debug.Log(host);
 
-            newtargetToMove = null;
+            //newtargetToMove = null;
             weapons = new List<SO_weapon>();
             for (int i = 0; i < shipData.weapons.Count; i++)
             {
@@ -62,7 +67,8 @@ namespace Wingsrv
                 SO_equipment neweq = new SO_equipment(shipData.equipments[i], this);
                 equipments.Add(neweq);
             }
-            this.p.SO.ship = this;
+            //this.p.SO.ship = this;
+
 
         }
 
@@ -83,21 +89,9 @@ namespace Wingsrv
 
         public void SendEvent(ShipEvenentsType evnt)
         {
-            if (host != null)
-            {
-                //			Debug.Log (host.name);
-                if (host.name == "ServerGo")
-                {
-                    host.GetComponent<Server>().Events(evnt, this);
+            onland?.Invoke(p.SO.id);
+            Console.WriteLine("onland");
 
-                }
-                else
-                {
-                    host.GetComponent<ShipMotor>().Events(evnt, this);
-                }
-                //			Debug.Log (host.name);
-
-            }
         }
 
 

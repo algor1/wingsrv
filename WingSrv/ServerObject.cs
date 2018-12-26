@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Wingsrv
 {
-    public struct SpaceObject
+    public class SpaceObject
     {
         public int id;
         public string visibleName;

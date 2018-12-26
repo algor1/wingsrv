@@ -36,12 +36,12 @@ namespace Wingsrv
         public void Atack_target(SpaceObject target)
         {
 
-            if (target.type == SpaceObject.typeSO.ship)
+            if (target.type == Server.typeSO.ship)
             {
                 currentTarget = target.ship;
                 fire = true;
             }
-            if (target.type == SpaceObject.typeSO.asteroid)
+            if (target.type == Server.typeSO.asteroid)
             {
                 mineTarget = target;
                 mine = true;
@@ -84,13 +84,13 @@ namespace Wingsrv
 
                         if (sqrDistance < p.sqrDistanse_max)
                         {
-                            if (weaponPoint != null)
-                            {
-                                //							Debug.Log(host.p.SO.visibleName +  " weaponpoint not null");
-                                //							Debug.Log (weaponPoint.GetComponent<WeaponPoint> ());
+                            //if (weaponPoint != null)
+                            //{
+                                ////							Debug.Log(host.p.SO.visibleName +  " weaponpoint not null");
+                                ////							Debug.Log (weaponPoint.GetComponent<WeaponPoint> ());
 
-                                weaponPoint.GetComponent<WeaponPoint>().StartFire(currentTarget);
-                            }
+                                //weaponPoint.GetComponent<WeaponPoint>().StartFire(currentTarget);
+                            //}
                             yield return new WaitForSeconds(2);
 
                             if (p.type == SO_weaponData.WeaponType.laser)
@@ -110,10 +110,10 @@ namespace Wingsrv
                                 //							Debug.Log ("server  " + host.p.SO.visibleName + "----pew----  to " + currentTarget.p.SO.visibleName); 
                             }
                             //							Debug.Log (weaponPoint.GetComponent<WeaponPoint> ());
-                            if (weaponPoint != null)
-                            {
-                                weaponPoint.GetComponent<WeaponPoint>().StopFire();
-                            }
+                            //if (weaponPoint != null)
+                            //{
+                            //    weaponPoint.GetComponent<WeaponPoint>().StopFire();
+                            //}
                             Debug.Log("******  damage from " + host.p.SO.visibleName + " to " + currentTarget.p.SO.visibleName + "  co  " + atack_co.GetHashCode());
                             if (currentTarget != null) currentTarget.Damage(p.damage);
                         }
@@ -127,74 +127,6 @@ namespace Wingsrv
             activated = false;
         }
 
-        public IEnumerator Mine()
-        {
-            activated = true;
-            while (mine)
-            {
-                //            if (!currentTarget.p.destroyed)
-                //            {
-                if (host.p.capasitor >= p.capasitor_use)
-                {
-                    host.p.capasitor += -p.capasitor_use;
-                }
-                else
-                {
-                    stop();
-                }
-
-                float sqrDistance = (currentTarget.p.SO.position - host.p.SO.position).sqrMagnitude;
-                if (sqrDistance > p.sqrDistanse_max * 4)
-                {
-                    stop();
-                }
-                else
-                {
-                    yield return new WaitForSeconds(p.reload);
-
-                    if (sqrDistance < p.sqrDistanse_max)
-                    {
-                        if (weaponPoint != null)
-                        {
-                            //							Debug.Log(host.p.SO.visibleName +  " weaponpoint not null");
-                            //							Debug.Log (weaponPoint.GetComponent<WeaponPoint> ());
-
-                            weaponPoint.GetComponent<WeaponPoint>().StartFire(currentTarget);
-                        }
-                        yield return new WaitForSeconds(2);
-
-                        if (p.type == SO_weaponData.WeaponType.laser)
-                        {
-                            yield return new WaitForSeconds(p.activeTime);
-                        }
-                        else
-                        {
-                            yield return new WaitForSeconds(Mathf.Sqrt(sqrDistance) / p.ammoSpeed);
-                        }
-                        if (host.host != null)
-                        {
-                            //							Debug.Log (host.host.name + "  " + host.p.SO.visibleName + "----pew----  to " + currentTarget.p.SO.visibleName); 
-                        }
-                        else
-                        {
-                            //							Debug.Log ("server  " + host.p.SO.visibleName + "----pew----  to " + currentTarget.p.SO.visibleName); 
-                        }
-                        //							Debug.Log (weaponPoint.GetComponent<WeaponPoint> ());
-                        if (weaponPoint != null)
-                        {
-                            weaponPoint.GetComponent<WeaponPoint>().StopFire();
-                        }
-                        if (currentTarget != null) currentTarget.Damage(p.damage);
-                    }
-                }
-                //            }
-                //            else
-                //            {
-                //                stop();
-                //            }
-            }
-            activated = false;
-        }
 
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -21,8 +21,7 @@ namespace Wingsrv
 
         public delegate void TickHandler();
         public event TickHandler onTick;
-        public delegate void ShipEvents(int ship_id);
-        public event ShipEvents onLand;
+
 
 
         #region ShipList
@@ -45,10 +44,10 @@ namespace Wingsrv
         }
         private void AddShip(SO_shipData ship)
         {
-            if (!ships.ContainsKey(ship.id)){
-                SO_ship s = new SO_ship(ship, this);
+            if (!ships.ContainsKey(ship.SO.id)){
+                SO_ship s = new SO_ship(ship);
                 ships.TryAdd(s.p.SO.id,s);
-                this.onTick += new TickHandler(s.Tick);
+                onTick += s.Tick;
                 
             }
             else
@@ -64,12 +63,12 @@ namespace Wingsrv
 
         private void LoadShips()
         {
-            List<SO_shipData> shipList = GetComponent<ServerDB>().GetAllShips();
-            for (int i = 0; i < shipList.Count; i++)
-            {
-                Debug.Log("add Ship " + i);
-                AddShip(shipList[i]);
-            }
+            //List<SO_shipData> shipList = GetComponent<ServerDB>().GetAllShips();
+            //for (int i = 0; i < shipList.Count; i++)
+            //{
+            //    Debug.Log("add Ship " + i);
+            //    AddShip(shipList[i]);
+            //}
         }
 
         #endregion
@@ -88,9 +87,12 @@ namespace Wingsrv
         }
         private void EventSigner(SO_ship ship)
         {
-            this.onLand += new ShipEvents(ship.onland();
+            ship.onland += new SO_ship.dgEventHandler1( ShipLand,ship.p.SO.id);
         }
-
+        private void ShipLand(int ship_id)
+        {
+            Console.WriteLine(" Ship id: {0}  landed ", ship_id);
+        }
         #endregion
     }
     
