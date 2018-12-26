@@ -430,12 +430,12 @@ namespace Wingsrv
                 }
             }
         }
-        public IEnumerator Warpdrive()
+        public async Task Warpdrive()
         {
             warpCoroutineStarted = true;
             SendEvent(ShipEvenentsType.warmwarp);
             Debug.Log("warming warp drive  " + p.warpDriveStartTime + " s");
-            yield return new WaitForSeconds(p.warpDriveStartTime);
+            await Task.Delay(p.warpDriveStartTime);
 
 
             float warpDistance = Vector3.Distance(p.SO.position, targetToMove.position);
@@ -446,7 +446,7 @@ namespace Wingsrv
             warpActivated = true;
             Debug.Log("flying warp   " + warpTime + " s");
             SendEvent(ShipEvenentsType.warp);
-            yield return new WaitForSeconds(warpTime);
+            await Task.Delay(warpTime);
 
             Spawn(targetToMove.position - Vector3.forward * 10);
             SendEvent(ShipEvenentsType.spawn);
