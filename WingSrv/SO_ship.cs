@@ -90,15 +90,23 @@ namespace Wingsrv
         {
             EventHandler<LandEventArgs> handler = ShipLanded;
         }
-        
-        public event EventHandler<LandEventArgs> ShipDestroyed;
-
-        protected virtual void OnDestroy(LandEventArgs e)
+        private void OnLandCall(int ship_id)
         {
-            EventHandler<LandEventArgs> handler = ShipDestroyed;
+            LandEventArgs args = new LandEventArgs();
+            OnLand(args);
         }
 
+        public event EventHandler<DestroyEventArgs> ShipDestroyed;
 
+        protected virtual void OnDestroy(DestroyEventArgs e)
+        {
+            EventHandler<DestroyEventArgs> handler = ShipDestroyed;
+        }
+        private void OnDestroyCall(int ship_id)
+        {
+            DestroyEventArgs args = new DestroyEventArgs();
+            OnDestroy(args);
+        }
 
 #endregion
         //public void SendEvent(ShipEvenentsType evnt)
@@ -109,7 +117,7 @@ namespace Wingsrv
         //}
 
 
-        #region user commands
+#region user commands
         public void SetTarget(SpaceObject newtarget)
         {
             Debug.Log("new target  " + newtarget.visibleName);
@@ -225,7 +233,7 @@ namespace Wingsrv
                 {
                     //				Debug.Log ("command goto");
                     moveCommand = MoveType.move;
-                    SendEvent(ShipEvenentsType.move);
+                    //SendEvent(ShipEvenentsType.move);
 
                 }
                 else
@@ -233,7 +241,7 @@ namespace Wingsrv
                     //				Debug.Log(Vector3.Distance (p.SO.position, targetToMove.position));
 
                     moveCommand = MoveType.stop;
-                    SendEvent(ShipEvenentsType.stop);
+                    //SendEvent(ShipEvenentsType.stop);
 
                     complexCommand = ComandType.none;
                 }
@@ -247,17 +255,17 @@ namespace Wingsrv
                 if (Vector3.Distance(p.SO.position, targetToMove.position) > 10 * p.max_speed / p.acceleration_max)
                 {
                     moveCommand = MoveType.move;
-                    SendEvent(ShipEvenentsType.move);
+                    //SendEvent(ShipEvenentsType.move);
 
                 }
                 else
                 {
 
                     moveCommand = MoveType.stop;
-                    SendEvent(ShipEvenentsType.stop);
+                    //SendEvent(ShipEvenentsType.stop);
 
 
-                    onland?.Invoke(p.SO.id);
+                    OnLandCall(p.SO.id);
                     complexCommand = ComandType.none;
 
                 }
@@ -268,15 +276,15 @@ namespace Wingsrv
                 if (Vector3.Distance(p.SO.position, targetToMove.position) > 10 * p.max_speed / p.acceleration_max)
                 {
                     moveCommand = MoveType.move;
-                    SendEvent(ShipEvenentsType.move);
+                    //SendEvent(ShipEvenentsType.move);
 
                 }
                 else
                 {
 
                     moveCommand = MoveType.stop;
-                    SendEvent(ShipEvenentsType.stop);
-                    SendEvent(ShipEvenentsType.open);
+                    //SendEvent(ShipEvenentsType.stop);
+                    //SendEvent(ShipEvenentsType.open);
                     complexCommand = ComandType.none;
 
                 }
@@ -411,7 +419,7 @@ namespace Wingsrv
                 StopFire(i);
             }
             StopEquipment();
-            OnDestroy?.Invoke(p.SO.id);
+            OnDestroyCall(p.SO.id);
             
         }
         private void Agr()
@@ -442,14 +450,14 @@ namespace Wingsrv
         public async Task Warpdrive()
         {
             warpCoroutineStarted = true;
-            await Task.Delay(p.warpDriveStartTime);
+            await Task.Delay((int)(1000*p.warpDriveStartTime));
             float warpDistance = Vector3.Distance(p.SO.position, targetToMove.position);
             float warpTime = warpDistance / p.warpSpeed;
             Hide(); //TODO damage=0
             warpActivated = true;
 
 
-            await Task.Delay(warpTime);
+            await Task.Delay((int)warpTime*1000);
             Spawn(targetToMove.position - Vector3.forward * 10);
 
             Reveal();

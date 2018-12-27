@@ -28,12 +28,15 @@ namespace Wingsrv
         {
             if (!started)
                 this.onTick += new TickHandler(Tick);
+            ships = new ConcurrentDictionary<int, SO_ship>();
+            LoadShips();
             Run();
 
         }
 
         private void Run()
         {
+            Console.WriteLine(" Server started.");
             while (started)
             {
                 onTick();
@@ -44,7 +47,7 @@ namespace Wingsrv
         {
             for (int i = 0; i < ships.Count; i++)
             {
-            //Tick counter
+                Console.WriteLine("Ship tick {0}",i);
             }
         }
 
@@ -71,12 +74,17 @@ namespace Wingsrv
 
         private void LoadShips()
         {
-            //List<SO_shipData> shipList = GetComponent<ServerDB>().GetAllShips();
-            //for (int i = 0; i < shipList.Count; i++)
-            //{
-            //    Debug.Log("add Ship " + i);
-            //    AddShip(shipList[i]);
-            //}
+            //List<SO_shipData> shipList = ServerDB.GetAllShips();
+            List<SO_shipData> shipList = new List<SO_shipData>
+            {
+                new SO_shipData { SO = new SpaceObject { id = 1 } },
+                new SO_shipData { SO = new SpaceObject { id = 2 } }
+            };
+            for (int i = 0; i < shipList.Count; i++)
+            {
+                //Debug.Log("add Ship " + i);
+                AddShip(shipList[i]);
+            }
         }
 
         #endregion
@@ -99,7 +107,7 @@ namespace Wingsrv
         {
             Console.WriteLine(" Ship id: {0}  landed ", e.ship_id);
         }
-        private void ShipDestroy(object sender, LandEventArgs e)
+        private void ShipDestroy(object sender, DestroyEventArgs e)
         {
             Console.WriteLine(" Ship id: {0}  landed ", e.ship_id);
         }
