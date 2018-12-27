@@ -24,13 +24,11 @@ namespace Wingsrv
 
 
 
-        #region ShipList
-
         public void RunServer()
         {
             if (!started)
                 this.onTick += new TickHandler(Tick);
-                Run();
+            Run();
 
         }
 
@@ -42,6 +40,16 @@ namespace Wingsrv
                 Task.Delay(20);
             }
         }
+        private void Tick()
+        {
+            for (int i = 0; i < ships.Count; i++)
+            {
+            //Tick counter
+            }
+        }
+
+        #region ShipList
+
         private void AddShip(SO_shipData ship)
         {
             if (!ships.ContainsKey(ship.SO.id)){
@@ -78,20 +86,16 @@ namespace Wingsrv
 
         #region events
 
-        private void Tick()
-        {
-            for (int i = 0; i < ships.Count; i++)
-            {
-            //Tick counter
-            }
-        }
+
+
         private void EventSigner(SO_ship ship)
         {
-            ship.onland += new SO_ship.dgEventHandler1( ShipLand,ship.p.SO.id);
+            ship.ShipLanded += ShipLand;
+            
         }
-        private void ShipLand(int ship_id)
+        private void ShipLand(object sender, LandEventArgs e)
         {
-            Console.WriteLine(" Ship id: {0}  landed ", ship_id);
+            Console.WriteLine(" Ship id: {0}  landed ", e.ship_id);
         }
         #endregion
     }
