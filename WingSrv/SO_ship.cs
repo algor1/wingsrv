@@ -35,10 +35,7 @@ namespace Wingsrv
 
         public List<SO_weapon> weapons;
         public List<SO_equipment> equipments;
-        public delegate void dgEventHandler();
-        public delegate void dgEventHandler1(int ship_id);
-        public event dgEventHandler onDestroyShip;
-        public event dgEventHandler1 onland;
+
 
 
 
@@ -86,13 +83,24 @@ namespace Wingsrv
 
             }
         }
+#region events
+        public event EventHandler<LandEventArgs> ShipLanded;
 
-        public void SendEvent(ShipEvenentsType evnt)
+        protected virtual void OnLand(LandEventArgs e)
         {
-            onland?.Invoke(p.SO.id);
-            Console.WriteLine("onland");
-
+            EventHandler<LandEventArgs> handler = ShipLanded;
         }
+
+
+
+
+#endregion
+        //public void SendEvent(ShipEvenentsType evnt)
+        //{
+        //    onland?.Invoke(p.SO.id);
+        //    Console.WriteLine("onland");
+
+        //}
 
 
         #region user commands
@@ -243,7 +251,7 @@ namespace Wingsrv
                     SendEvent(ShipEvenentsType.stop);
 
 
-                    SendEvent(ShipEvenentsType.land);
+                    onland?.Invoke(p.SO.id);
                     complexCommand = ComandType.none;
 
                 }
@@ -486,4 +494,12 @@ namespace Wingsrv
 
 
     }
+
+#region  Events Args Classes
+    public class LandEventArgs: EventArgs
+    {
+        public int ship_id {get; set;}
+    }
+
+#endregion
 }
