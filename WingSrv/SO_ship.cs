@@ -90,7 +90,13 @@ namespace Wingsrv
         {
             EventHandler<LandEventArgs> handler = ShipLanded;
         }
+        
+        public event EventHandler<LandEventArgs> ShipDestroyed;
 
+        protected virtual void OnDestroy(LandEventArgs e)
+        {
+            EventHandler<LandEventArgs> handler = ShipDestroyed;
+        }
 
 
 
@@ -405,7 +411,8 @@ namespace Wingsrv
                 StopFire(i);
             }
             StopEquipment();
-            SendEvent(ShipEvenentsType.destroyed);
+            OnDestroy?.Invoke(p.SO.id);
+            
         }
         private void Agr()
         {
@@ -435,44 +442,32 @@ namespace Wingsrv
         public async Task Warpdrive()
         {
             warpCoroutineStarted = true;
-            SendEvent(ShipEvenentsType.warmwarp);
-            Debug.Log("warming warp drive  " + p.warpDriveStartTime + " s");
             await Task.Delay(p.warpDriveStartTime);
-
-
             float warpDistance = Vector3.Distance(p.SO.position, targetToMove.position);
-
             float warpTime = warpDistance / p.warpSpeed;
-            SendEvent(ShipEvenentsType.hide);
-            Hide();
+            Hide(); //TODO damage=0
             warpActivated = true;
-            Debug.Log("flying warp   " + warpTime + " s");
-            SendEvent(ShipEvenentsType.warp);
-            await Task.Delay(warpTime);
 
+
+            await Task.Delay(warpTime);
             Spawn(targetToMove.position - Vector3.forward * 10);
-            SendEvent(ShipEvenentsType.spawn);
-            SendEvent(ShipEvenentsType.reveal);
+
             Reveal();
+
             warpActivated = false;
-            //warpToTargetFlag = false;
             warpCoroutineStarted = false;
             p.SO.speed = p.max_speed * 0.1f;
             moveCommand = MoveType.stop;
-            SendEvent(ShipEvenentsType.stop);
-
             complexCommand = ComandType.none;
-
-
         }
         private void Spawn(Vector3 _position)
         {
-            p.SO.position = _position;
-            Debug.Log(host);
-            if (host != null)
-            {
-                //			host.GetComponent<ShipMotor>().Spawn(p.SO.id);
-            }
+            //p.SO.position = _position;
+            //Debug.Log(host);
+            //if (host != null)
+            //{
+            //    //			host.GetComponent<ShipMotor>().Spawn(p.SO.id);
+            //}
         }
         private void Hide()
         {
@@ -484,9 +479,9 @@ namespace Wingsrv
         }
         public void Tick()
         {
-            Agr();
+            Agr(); //TODO too heavy fo tick may be it must hav diffeent time of activation
             RestoreTick();
-            CommandManager();
+            //CommandManager();
             Move();
             Stop();
         }
@@ -496,10 +491,16 @@ namespace Wingsrv
     }
 
 #region  Events Args Classes
+
     public class LandEventArgs: EventArgs
     {
         public int ship_id {get; set;}
     }
+    public class DestroyEventArgs: EventArgs
+    {
+        public int ship_id {get; set;}
+    }
+
 
 #endregion
 }

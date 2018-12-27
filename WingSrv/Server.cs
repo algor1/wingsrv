@@ -37,7 +37,7 @@ namespace Wingsrv
             while (started)
             {
                 onTick();
-                Task.Delay(20);
+                Task.Delay(20); //await?????????????
             }
         }
         private void Tick()
@@ -90,10 +90,16 @@ namespace Wingsrv
 
         private void EventSigner(SO_ship ship)
         {
+            this.onTick += new TickHandler(ship.Tick);//избавится от делегата
             ship.ShipLanded += ShipLand;
+            ship.ShipDestroyed += ShipDestroy;
             
         }
         private void ShipLand(object sender, LandEventArgs e)
+        {
+            Console.WriteLine(" Ship id: {0}  landed ", e.ship_id);
+        }
+        private void ShipDestroy(object sender, LandEventArgs e)
         {
             Console.WriteLine(" Ship id: {0}  landed ", e.ship_id);
         }
