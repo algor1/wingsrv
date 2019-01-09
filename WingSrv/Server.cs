@@ -68,18 +68,10 @@ namespace Wingsrv
         }
         private void DeleteShip(SO_shipData ship) { }
 
-        #endregion
-
-        #region load_save data
-
         private void LoadShips()
         {
-            //List<SO_shipData> shipList = ServerDB.GetAllShips();
-            List<SO_shipData> shipList = new List<SO_shipData>
-            {
-                new SO_shipData { SO = new SpaceObject { id = 1 } },
-                new SO_shipData { SO = new SpaceObject { id = 2 } }
-            };
+            List<SO_shipData> shipList = ServerDB.GetAllShips();
+            
             for (int i = 0; i < shipList.Count; i++)
             {
                 //Debug.Log("add Ship " + i);
