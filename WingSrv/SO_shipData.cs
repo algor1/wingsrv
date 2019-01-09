@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Wingsrv
 {
 
-    public struct SO_shipData
+    public class SO_shipData
     {
         public SpaceObject SO;
 
@@ -41,5 +41,14 @@ namespace Wingsrv
         public List<SO_weaponData> weapons;
         public List<SO_equipmentData> equipments;
 
+        public SO_shipData()
+        {
+            SO = new SpaceObject();
+            weapons = new List<SO_weaponData>();
+            equipments = new List<SO_equipmentData>();
+        }
+
+
     }
+
 }

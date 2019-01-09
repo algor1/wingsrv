@@ -7,8 +7,8 @@ namespace Wingsrv
         public static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            Server server = new Server();
-            server.RunServer();
+            ServerManager serverManager = new ServerManager();
+            serverManager.Run();
         }
     }
 }

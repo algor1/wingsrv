@@ -4,20 +4,26 @@ using System.Data;
 using Microsoft.Data.Sqlite;
 using System.IO;
 using System.Collections.Generic;
-
+using System;
 
 namespace Wingsrv
 {
 
-    public class ServerDB : MonoBehaviour
+    public class ServerDB
     {
         private IDbConnection dbSkillCon;
         private IDataReader reader;
         private IDbCommand dbcmd;
         public bool started;
 
-        void Start()
+
+        private ServerManager serverManager;
+
+
+
+        public ServerDB(ServerManager manager)
         {
+            serverManager = manager;
             started = true;
         }
 
@@ -29,18 +35,18 @@ namespace Wingsrv
         private void InitDB()
         {
             string p = "wing_srv.db";
-            string filepath = Application.persistentDataPath + "/" + p;
-            Debug.Log(filepath);
-            if (!File.Exists(filepath))
-            {
-                WWW loadDB = new WWW("jar:file://" + Application.dataPath + "!/assets/" + p);  // this is the path to your StreamingAssets in android
-                while (!loadDB.isDone)
-                {
-                    Debug.Log("LOADING..." + loadDB.uploadProgress);
-                }
-                File.WriteAllBytes(filepath, loadDB.bytes);
-            }
-            string connectionString = "URI=file:" + filepath;
+            string filepath = "DB/" + p;
+            string dbPath = Path.Combine(Environment.CurrentDirectory, filepath);
+            string connectionString = string.Format("Data Source={0}", dbPath);
+            //if (!File.Exists(filepath))
+            //{
+            //    WWW loadDB = new WWW("jar:file://" + Application.dataPath + "!/assets/" + p);  // this is the path to your StreamingAssets in android
+            //    while (!loadDB.isDone)
+            //    {
+            //        Debug.Log("LOADING..." + loadDB.uploadProgress);
+            //    }
+            //    File.WriteAllBytes(filepath, loadDB.bytes);
+            //}
             dbSkillCon = (IDbConnection)new SqliteConnection(connectionString);
             dbSkillCon.Open();
         }
@@ -329,8 +335,8 @@ namespace Wingsrv
             }
             for (int i = 0; i < retListShip.Count; i++)
             {
-                retListShip[i].weapons = new List<SO_weaponData>();//GetWeapons(retListShip[i].SO.id);
-                retListShip[i].equipments = new List<SO_equipmentData>() ;//GetEquip(retListShip[i].SO.id);
+                //retListShip[i].weapons = new List<SO_weaponData>();//GetWeapons(retListShip[i].SO.id);
+                //retListShip[i].equipments = new List<SO_equipmentData>() ;//GetEquip(retListShip[i].SO.id);
             }
             return retListShip;
         }
@@ -395,7 +401,7 @@ namespace Wingsrv
         {
             int new_id = 0;
             int _type = 1;
-            Item _item = GetComponent<InventoryServer>().GetItem(item_id);
+            Item _item = serverManager.inventoryServer.GetItem(item_id);
             Debug.Log(_item.itemType);
             switch (_item.itemType)
             {
@@ -433,7 +439,7 @@ namespace Wingsrv
             SO_shipData retSOShipData;
             if (SO.type == Server.typeSO.ship)
             {
-                ShipItem _shipItem = GetComponent<InventoryServer>().GetShipItem(item_id);
+                ShipItem _shipItem = serverManager.inventoryServer.GetShipItem(item_id);
 
                 string qwery = @"insert into SO_shipdata (
                    SO_id,

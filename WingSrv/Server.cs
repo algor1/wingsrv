@@ -21,22 +21,38 @@ namespace Wingsrv
 
         public delegate void TickHandler();
         public event TickHandler onTick;
+        private ServerDB serverDB;
+        public InventoryServer inventoryServer;
+        private ServerManager serverManager;
 
 
 
+        public Server(ServerManager manager)
+        {
+            serverManager = manager;
+        }
         public void RunServer()
         {
             if (!started)
+            {
                 this.onTick += new TickHandler(Tick);
-            ships = new ConcurrentDictionary<int, SO_ship>();
-            LoadShips();
-            Run();
+                ships = new ConcurrentDictionary<int, SO_ship>();
+                Console.WriteLine("Starting DB server...");
+                serverDB = serverManager.serverDB;
+                Console.WriteLine("Starting inventory server...");
+                inventoryServer = serverManager.inventoryServer;
+                Console.WriteLine("loading ships...");
+                LoadShips();
+                Console.WriteLine("Starting server...");
+                Run();
+            }
 
         }
 
         private void Run()
         {
             Console.WriteLine(" Server started.");
+            started = true;
             while (started)
             {
                 onTick();
@@ -70,7 +86,7 @@ namespace Wingsrv
 
         private void LoadShips()
         {
-            List<SO_shipData> shipList = ServerDB.GetAllShips();
+            List<SO_shipData> shipList = serverDB.GetAllShips();
             
             for (int i = 0; i < shipList.Count; i++)
             {
