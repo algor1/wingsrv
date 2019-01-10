@@ -10,12 +10,12 @@ namespace Wingsrv
     public class SO_ship
     {
         public SO_shipData p; //ship properties	
-        public GameObject host;
+        //public GameObject host;
 
-        public bool atack;
-        private Quaternion rotationToTarget;
+        //public bool atack;
+        //private Quaternion rotationToTarget;
 
-        private SpaceObject target;
+        //private SpaceObject target;
         public SpaceObject targetToMove;
         public SpaceObject newtargetToMove;
         //	private Quaternion oldRotation; //for roll calc
@@ -28,8 +28,8 @@ namespace Wingsrv
         public ComandType complexCommand;
         public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal, destroyed, open };
         public bool warpActivated;
-        public bool warpCoroutineStarted;
-        public bool landed;
+        //public bool warpCoroutineStarted;
+        //public bool landed;
 
         public List<SO_weapon> weapons;
         public List<SO_equipment> equipments;
@@ -42,7 +42,7 @@ namespace Wingsrv
         public SO_ship(SO_shipData shipData)
         {
             p = shipData;
-            rotationToTarget = p.SO.rotation;
+            //rotationToTarget = p.SO.rotation;
             //moveCommand = MoveType.move;
             //SendEvent(ShipEvenentsType.move);
 
@@ -208,20 +208,20 @@ namespace Wingsrv
                 targetToAtack = newtargetToAtack;
                 Debug.Log(p.SO.visibleName + " atacking " + targetToAtack.visibleName);
 
-                atack = true;
+                //atack = true;
                 weapons[weaponnum].Atack_target(targetToAtack);
 
             }
             else
             {
-                atack = false;
+                //atack = false;
             }
 
         }
         public void StopFire(int weaponnum)
         {
             Debug.Log(p.SO.visibleName + " stop fire ");
-            atack = false;
+            //atack = false;
             weapons[weaponnum].stop();
         }
         private void CommandManager()
@@ -494,7 +494,7 @@ namespace Wingsrv
             //CommandManager();
             Move();
             Stop();
-            Console.WriteLine("Ship {0} , position {1}", p.SO.id, p.SO.position);
+            //Console.WriteLine("Ship {0} , position {1}", p.SO.id, p.SO.position);
 
         }
         #endregion
