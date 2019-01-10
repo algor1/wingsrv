@@ -9,8 +9,6 @@ namespace Wingsrv
 
     public class SO_ship
     {
-
-
         public SO_shipData p; //ship properties	
         public GameObject host;
 
@@ -35,6 +33,7 @@ namespace Wingsrv
 
         public List<SO_weapon> weapons;
         public List<SO_equipment> equipments;
+        
         public int TickDeltaTime=20;
 
 
