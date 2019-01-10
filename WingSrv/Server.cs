@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace Wingsrv
 {
+    public enum Command { MoveTo, WarpTo, Atack, SetTarget, LandTo, Equipment, Open, TakeOff };
+    public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal };
+    public enum typeSO { asteroid, ship, station, waypoint, container };
 
     public class Server
     {
@@ -15,9 +18,6 @@ namespace Wingsrv
         public bool started;
         private ConcurrentDictionary<int, SO_ship> ships;
 
-        public enum Command { MoveTo, WarpTo, Atack, SetTarget, LandTo, Equipment, Open, TakeOff };
-        public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal };
-        public enum typeSO { asteroid, ship, station, waypoint, container };
 
         public delegate void TickHandler();
         public event TickHandler onTick;
@@ -65,7 +65,7 @@ namespace Wingsrv
         {
             for (int i = 0; i < ships.Count; i++)
             {
-                Console.WriteLine("Ship tick {0}",i);
+                //Console.WriteLine("Ship tick {0}",i);
             }
         }
 

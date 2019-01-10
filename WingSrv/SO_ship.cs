@@ -335,6 +335,8 @@ namespace Wingsrv
                     if (p.newSpeed < p.SO.speed)
                     {
                         p.SO.speed = p.newSpeed;
+                        Console.WriteLine("Ship {0} , position {1}", p.SO.id,p.SO.position);
+
                     }
                 }
                 else
@@ -492,6 +494,8 @@ namespace Wingsrv
             //CommandManager();
             Move();
             Stop();
+            Console.WriteLine("Ship {0} , position {1}", p.SO.id, p.SO.position);
+
         }
         #endregion
 

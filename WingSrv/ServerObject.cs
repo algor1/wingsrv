@@ -6,7 +6,7 @@ namespace Wingsrv
     {
         public int id;
         public string visibleName;
-        public Server.typeSO type;
+        public typeSO type;
         public Vector3 position;
         public Quaternion rotation;
         public float speed;

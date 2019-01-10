@@ -97,19 +97,19 @@ namespace Wingsrv
                 switch (_type)
                 {
                     case 1:
-                        returnSO.type = Server.typeSO.ship;
+                        returnSO.type = typeSO.ship;
                         break;
                     case 2:
-                        returnSO.type = Server.typeSO.station;
+                        returnSO.type = typeSO.station;
                         break;
                     case 3:
-                        returnSO.type = Server.typeSO.asteroid;
+                        returnSO.type = typeSO.asteroid;
                         break;
                     case 4:
-                        returnSO.type = Server.typeSO.waypoint;
+                        returnSO.type = typeSO.waypoint;
                         break;
                     case 5:
-                        returnSO.type = Server.typeSO.container;
+                        returnSO.type = typeSO.container;
                         break;
                 }
             }
@@ -148,19 +148,19 @@ namespace Wingsrv
                 switch (_type)
                 {
                     case 1:
-                        _SO.type = Server.typeSO.ship;
+                        _SO.type = typeSO.ship;
                         break;
                     case 2:
-                        _SO.type = Server.typeSO.station;
+                        _SO.type = typeSO.station;
                         break;
                     case 3:
-                        _SO.type = Server.typeSO.asteroid;
+                        _SO.type = typeSO.asteroid;
                         break;
                     case 4:
-                        _SO.type = Server.typeSO.waypoint;
+                        _SO.type = typeSO.waypoint;
                         break;
                     case 5:
-                        _SO.type = Server.typeSO.container;
+                        _SO.type = typeSO.container;
                         break;
                 }
                 Debug.Log("SODB  " + _SO.prefab + "  " + _SO.type);
@@ -322,13 +322,13 @@ namespace Wingsrv
                 switch (_type)
                 {
                     case 1:
-                        retShipData.SO.type = Server.typeSO.ship;
+                        retShipData.SO.type = typeSO.ship;
                         break;
                     case 2:
-                        retShipData.SO.type = Server.typeSO.station;
+                        retShipData.SO.type = typeSO.station;
                         break;
                     case 3:
-                        retShipData.SO.type = Server.typeSO.asteroid;
+                        retShipData.SO.type = typeSO.asteroid;
                         break;
                 }
                 retListShip.Add(retShipData);
@@ -437,7 +437,7 @@ namespace Wingsrv
         {
             SpaceObject SO = AddNewSO(position, rotation, item_id);
             SO_shipData retSOShipData;
-            if (SO.type == Server.typeSO.ship)
+            if (SO.type == typeSO.ship)
             {
                 ShipItem _shipItem = serverManager.inventoryServer.GetShipItem(item_id);
 

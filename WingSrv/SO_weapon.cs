@@ -36,12 +36,12 @@ namespace Wingsrv
         public void Atack_target(SpaceObject target)
         {
 
-            if (target.type == Server.typeSO.ship)
+            if (target.type == typeSO.ship)
             {
                 currentTarget = target.ship;
                 fire = true;
             }
-            if (target.type == Server.typeSO.asteroid)
+            if (target.type == typeSO.asteroid)
             {
                 mineTarget = target;
                 mine = true;
