@@ -35,6 +35,7 @@ namespace Wingsrv
 
         public List<SO_weapon> weapons;
         public List<SO_equipment> equipments;
+        public int TickDeltaTime=20;
 
 
 
@@ -311,7 +312,7 @@ namespace Wingsrv
                     //				Debug.Log ("id " + p.id + "  position " + p.SO.position + "  target pos" + targetToMove.position);
                     //				Debug.Log("sin z " +  Mathf.Sin(Mathf.Deg2Rad*p.rotation.z)+ "  cos z " +  Mathf.Cos(Mathf.Deg2Rad*p.rotation.z));
 
-                    p.SO.rotation = Quaternion.RotateTowards(p.SO.rotation, rotationToTarget, p.rotation_speed * Time.deltaTime);
+                    p.SO.rotation = Quaternion.RotateTowards(p.SO.rotation, rotationToTarget, p.rotation_speed * TickDeltaTime/1000);
                     //				float difx = p.rotation.eulerAngles.x - oldRotation.eulerAngles.x;
                     //				float dify = p.rotation.eulerAngles.y - oldRotation.eulerAngles.y;
                     //				Debug.Log("dif x " +  (difx*Mathf.Sin(Mathf.Deg2Rad*p.rotation.z)) + "  dif y " + (dify*Mathf.Cos(Mathf.Deg2Rad*p.rotation.z)) );
@@ -331,7 +332,7 @@ namespace Wingsrv
             {
                 if (p.newSpeed > p.SO.speed)
                 {
-                    p.SO.speed += Time.deltaTime * p.acceleration_max;
+                    p.SO.speed += TickDeltaTime/1000 * p.acceleration_max;
                     if (p.newSpeed < p.SO.speed)
                     {
                         p.SO.speed = p.newSpeed;
@@ -339,7 +340,7 @@ namespace Wingsrv
                 }
                 else
                 {
-                    p.SO.speed += -Time.deltaTime * p.acceleration_max;
+                    p.SO.speed += -TickDeltaTime/1000 * p.acceleration_max;
                     if (p.newSpeed > p.SO.speed)
                     {
                         p.SO.speed = p.newSpeed;
@@ -353,8 +354,8 @@ namespace Wingsrv
             {
                 Rotate();
                 Accelerate();
-                p.SO.speed = Mathf.Lerp(p.SO.speed, p.max_speed, Time.deltaTime * p.acceleration_max);
-                p.SO.position += p.SO.rotation * Vector3.forward * Time.deltaTime * p.SO.speed;
+                p.SO.speed = Mathf.Lerp(p.SO.speed, p.max_speed, TickDeltaTime/1000 * p.acceleration_max);
+                p.SO.position += p.SO.rotation * Vector3.forward * TickDeltaTime/1000 * p.SO.speed;
             }
         }
         private void Stop()
@@ -398,16 +399,16 @@ namespace Wingsrv
         {
             if (p.hull < p.hull_full)
             {
-                p.hull += p.hull_restore * Time.deltaTime;
+                p.hull += p.hull_restore * TickDeltaTime/1000;
             }
             else { p.hull = p.hull_full; }
             if (p.shield < p.shield_full)
-            { p.shield += p.shield_restore * Time.deltaTime; }
+            { p.shield += p.shield_restore * TickDeltaTime/1000; }
             else { p.shield = p.shield_full; }
 
-            if (p.armor < p.armor_full) { p.armor += p.armor_restore * Time.deltaTime; }
+            if (p.armor < p.armor_full) { p.armor += p.armor_restore * TickDeltaTime/1000; }
             else { p.armor = p.armor_full; }
-            if (p.capasitor < p.capasitor_full) { p.capasitor += p.capasitor_restore * Time.deltaTime; }
+            if (p.capasitor < p.capasitor_full) { p.capasitor += p.capasitor_restore * TickDeltaTime/1000; }
             else { p.capasitor = p.capasitor_full; }
 
         }

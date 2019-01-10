@@ -24,6 +24,7 @@ namespace Wingsrv
         private ServerDB serverDB;
         public InventoryServer inventoryServer;
         private ServerManager serverManager;
+        public int TickDeltaTime = 20;
 
 
 
@@ -56,7 +57,8 @@ namespace Wingsrv
             while (started)
             {
                 onTick();
-                Task.Delay(20); //await?????????????
+
+                Task.Delay(TickDeltaTime); //await?????????????
             }
         }
         private void Tick()
