@@ -9,7 +9,7 @@ namespace Wingsrv
 
     public class SO_ship
     {
-        public SO_shipData p; //ship properties	
+        public ShipData p; //ship properties	
         //public GameObject host;
 
         //public bool atack;
@@ -39,39 +39,35 @@ namespace Wingsrv
 
 
 
-        public SO_ship(SO_shipData shipData)
+        public SO_ship(ShipData shipData)
         {
-            p = new SO_shipData(shipData);
+            p = new ShipData(shipData);
             //rotationToTarget = p.SO.rotation;
             //moveCommand = MoveType.move;
             //SendEvent(ShipEvenentsType.move);
             //host = _host;
             //newtargetToMove = null;
-            weapons = new SO_weapon[shipData.weapons.];
-            for (int i = 0; i < shipData.weapons.Length; i++)
+            weapons = new SO_weapon[shipData.Weapons.Length];
+            for (int i = 0; i < shipData.Weapons.Length; i++)
             {
-                SO_weapon newweappon = new SO_weapon(shipData.weapons[i], this);
-                weapons.Add(newweappon);
+                weapons[i] = new SO_weapon(shipData.Weapons[i], this);
+                
             }
-            equipments = new List<SO_equipment>();
-            for (int i = 0; i < shipData.equipments.Count; i++)
+            equipments = new SO_equipment[shipData.Equipments.Length];
+            for (int i = 0; i < shipData.Equipments.Length; i++)
             {
-                SO_equipment neweq = new SO_equipment(shipData.equipments[i], this);
-                equipments.Add(neweq);
+                equipments[i] = new SO_equipment(shipData.Equipments[i], this);
             }
-            //this.p.SO.ship = this;
-
-
         }
 
         public void BeforeDestroy()
         {
-            for (int i = 0; i < weapons.Count; i++)
+            for (int i = 0; i < weapons.Length; i++)
             {
                 weapons[i].BeforeDestroy();
                 weapons.RemoveAt(i);
             }
-            for (int i = 0; i < equipments.Count; i++)
+            for (int i = 0; i < equipments.Length; i++)
             {
                 equipments[i].BeforeDestroy();
                 equipments.RemoveAt(i);
@@ -391,11 +387,11 @@ namespace Wingsrv
         }
         private void Agr()
         {
-            if (p.mob && !p.destroyed)
+            if (p.Mob && !p.Destroyed)
             {
                 if (newtargetToAtack != null && !atack)
                 {
-                    if (Vector3.Distance(p.SO.position, newtargetToAtack.position) < p.agr_distance)
+                    if (Vector3.Distance(p.position, newtargetToAtack.position) < p.AgrDistance)
                     {
                         SetTarget(newtargetToAtack);
                         GoToTarget();
