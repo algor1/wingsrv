@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 namespace Wingsrv
 {
-
+    // Properties of spaceship that will be stored to DB
     public class ShipData: SpaceObject
     {
+        public Ship ShipLink { get; }
         public float SpeedMax { get; set; }
         public float RotationSpeed { get; set; }
         public float AccelerationMax{get; set;}
@@ -40,8 +41,14 @@ namespace Wingsrv
         public SO_equipmentData[] Equipments{get; set;}
 
 
-        public ShipData(ShipData value)
+        public ShipData()
         {
+
+        }
+
+        public ShipData(ShipData value,Ship ship)
+        {
+            ShipLink = ship;
             SpeedMax = value.SpeedMax;
             RotationSpeed = value.RotationSpeed;
             AccelerationMax = value.AccelerationMax;

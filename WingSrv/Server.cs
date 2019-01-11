@@ -9,14 +9,13 @@ using UnityEngine;
 namespace Wingsrv
 {
     public enum Command { MoveTo, WarpTo, Atack, SetTarget, LandTo, Equipment, Open, TakeOff };
-    public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal };
     public enum typeSO { asteroid, ship, station, waypoint, container };
 
     public class Server
     {
 
         public bool started;
-        private ConcurrentDictionary<int, SO_ship> ships;
+        private ConcurrentDictionary<int, Ship> ships;
 
 
         public delegate void TickHandler();
@@ -28,7 +27,7 @@ namespace Wingsrv
 
 
 
-        public Server(ServerManager manager)
+        public  Server(ServerManager manager)
         {
             serverManager = manager;
         }
@@ -37,7 +36,7 @@ namespace Wingsrv
             if (!started)
             {
                 this.onTick += new TickHandler(Tick);
-                ships = new ConcurrentDictionary<int, SO_ship>();
+                ships = new ConcurrentDictionary<int, Ship>();
                 Console.WriteLine("Starting DB server...");
                 serverDB = serverManager.serverDB;
                 Console.WriteLine("Starting inventory server...");
@@ -71,11 +70,11 @@ namespace Wingsrv
 
         #region ShipList
 
-        private void AddShip(SO_shipData ship)
+        private void AddShip(ShipData ship)
         {
-            if (!ships.ContainsKey(ship.SO.id)){
-                SO_ship s = new SO_ship(ship);
-                ships.TryAdd(s.p.SO.id,s);
+            if (!ships.ContainsKey(ship.Id)){
+                Ship s = new Ship(ship);
+                ships.TryAdd(s.p.Id,s);
                 onTick += s.Tick;
                 
             }
@@ -84,11 +83,11 @@ namespace Wingsrv
                 //TODO Log wrong ship adding
             }
         }
-        private void DeleteShip(SO_shipData ship) { }
+        private void DeleteShip(ShipData ship) { }
 
         private void LoadShips()
         {
-            List<SO_shipData> shipList = serverDB.GetAllShips();
+            List<ShipData> shipList = serverDB.GetAllShips();
             
             for (int i = 0; i < shipList.Count; i++)
             {
@@ -99,13 +98,33 @@ namespace Wingsrv
         #endregion
 
         #region user commands
+        public void PlayerControlSetTarget(int player_id, Command player_command, int target_id)
+        {
+            Ship player = GetShip(player_id);
+            Ship target = GetShip(target_id);
+            if (player_command == Command.SetTarget)
+            {
+                player.SetTarget(target.p);
+            }
+
+        }
+        public Ship GetShip(int player_id)
+        {
+            for (int i = 0; i < ships.Count; i++)
+            {
+                if (ships[i].p.Id == player_id) return ships[i];
+            }
+            return ships[0];
+
+        }
+
         #endregion
 
         #region events
 
 
 
-        private void EventSigner(SO_ship ship)
+        private void EventSigner(Ship ship)
         {
             this.onTick += new TickHandler(ship.Tick);//избавится от делегата
             ship.ShipLanded += ShipLand;

@@ -60,19 +60,19 @@ namespace Wingsrv
         }
         public void ContainerFromShip(SpaceObject cont, SpaceObject ship)
         {
-            List<InventoryItem> objectInventory = ObjectInventory(ship.id);
+            List<InventoryItem> objectInventory = ObjectInventory(ship.Id);
             for (int i = 0; i < objectInventory.Count; i++)
             {
 
                 if (Random.value > 0.8)
                 {
                     //				float tmp_quantity = (float)objectInventory [i].quantity;
-                    MoveItem(objectInventory[i].player_id, ship.id, 0, cont.id, objectInventory[i].item_id, objectInventory[i].tech, Mathf.CeilToInt(objectInventory[i].quantity * Random.value * 0.3f));
+                    MoveItem(objectInventory[i].player_id, ship.Id, 0, cont.Id, objectInventory[i].item_id, objectInventory[i].tech, Mathf.CeilToInt(objectInventory[i].quantity * Random.value * 0.3f));
                 }
 
             }
-            AddToInventory(0, cont.id, 38, 0, Mathf.CeilToInt(10 * Random.value));
-            DestroyInventory(ship.id);
+            AddToInventory(0, cont.Id, 38, 0, Mathf.CeilToInt(10 * Random.value));
+            DestroyInventory(ship.Id);
         }
 
     }

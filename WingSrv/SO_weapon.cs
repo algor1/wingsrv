@@ -8,16 +8,16 @@ namespace Wingsrv
     {
         public SO_weaponData p; //weapon properties
 
-        private SO_ship currentTarget;
+        private Ship currentTarget;
         private SpaceObject mineTarget;
-        private SO_ship host;
+        private Ship host;
         private GameObject weaponPoint;
         public bool fire;
         public bool mine;
         public Coroutine atack_co;
         public bool activated;
 
-        public SO_weapon(SO_weaponData _data, SO_ship _host)
+        public SO_weapon(SO_weaponData _data, Ship _host)
         {
             p = new SO_weaponData(_data);
             host = _host;
@@ -36,12 +36,12 @@ namespace Wingsrv
         public void Atack_target(SpaceObject target)
         {
 
-            if (target.type == typeSO.ship)
+            if (target.Type == typeSO.ship)
             {
-                currentTarget = target.ship;
+                currentTarget = (Ship) target;
                 fire = true;
             }
-            if (target.type == typeSO.asteroid)
+            if (target.Type == typeSO.asteroid)
             {
                 mineTarget = target;
                 mine = true;
@@ -61,47 +61,42 @@ namespace Wingsrv
             activated = true;
             while (fire)
             {
-                if (!currentTarget.p.destroyed)
+                if (!currentTarget.p.Destroyed)
                 {
-                    if (host.p.capasitor >= p.capasitor_use)
+                    if (host.p.Capasitor >= p.Capasitor_use)
                     {
-                        host.p.capasitor += -p.capasitor_use;
+                        host.p.Capasitor += -p.Capasitor_use;
                     }
                     else
                     {
                         stop();
                     }
 
-                    float sqrDistance = (currentTarget.p.SO.position - host.p.SO.position).sqrMagnitude;
-                    if (sqrDistance > p.sqrDistanse_max * 4)
+                    float sqrDistance = (currentTarget.p.Position - host.p.Position).sqrMagnitude;
+                    if (sqrDistance > p.SqrDistanse_max * 4)
                     {
                         stop();
                     }
                     else
                     {
-                        yield return new WaitForSeconds(p.reload);
+                        yield return new WaitForSeconds(p.Reload);
 
-                        if (sqrDistance < p.sqrDistanse_max)
+                        if (sqrDistance < p.SqrDistanse_max)
                         {
                         
                             yield return new WaitForSeconds(2);
 
-                            if (p.type == SO_weaponData.WeaponType.laser)
+                            if (p.Type == SO_weaponData.WeaponType.laser)
                             {
-                                yield return new WaitForSeconds(p.activeTime);
+                                yield return new WaitForSeconds(p.ActiveTime);
                             }
                             else
                             {
-                                yield return new WaitForSeconds(Mathf.Sqrt(sqrDistance) / p.ammoSpeed);
+                                yield return new WaitForSeconds(Mathf.Sqrt(sqrDistance) / p.AmmoSpeed);
                             }
-                            if (host.host != null)
-                            {
-                            }
-                            else
-                            {
-                            }
-                          
-                            if (currentTarget != null) currentTarget.Damage(p.damage);
+
+                         
+                            if (currentTarget != null) currentTarget.Damage(p.Damage);
                         }
                     }
                 }

@@ -75,29 +75,29 @@ namespace Wingsrv
             GetReader(qwery);
             while (reader.Read())
             {
-                if (!reader.IsDBNull(0)) returnSO.id = reader.GetInt32(0);
+                if (!reader.IsDBNull(0)) returnSO.Id = reader.GetInt32(0);
                 if (!reader.IsDBNull(1)) { _type = reader.GetInt32(1); }
-                if (!reader.IsDBNull(2)) returnSO.visibleName = reader.GetString(2);
-                if (!reader.IsDBNull(3) && !reader.IsDBNull(4) && !reader.IsDBNull(5)) returnSO.position = new Vector3(reader.GetFloat(3), reader.GetFloat(4), reader.GetFloat(5));
-                if (!reader.IsDBNull(6) && !reader.IsDBNull(7) && !reader.IsDBNull(8) && !reader.IsDBNull(9)) returnSO.rotation = new Quaternion(reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), reader.GetFloat(9));
-                if (!reader.IsDBNull(0)) returnSO.speed = reader.GetFloat(10);
-                if (!reader.IsDBNull(0)) returnSO.prefab = reader.GetString(11);
+                if (!reader.IsDBNull(2)) returnSO.VisibleName = reader.GetString(2);
+                if (!reader.IsDBNull(3) && !reader.IsDBNull(4) && !reader.IsDBNull(5)) returnSO.Position = new Vector3(reader.GetFloat(3), reader.GetFloat(4), reader.GetFloat(5));
+                if (!reader.IsDBNull(6) && !reader.IsDBNull(7) && !reader.IsDBNull(8) && !reader.IsDBNull(9)) returnSO.Rotation = new Quaternion(reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), reader.GetFloat(9));
+                if (!reader.IsDBNull(0)) returnSO.Speed = reader.GetFloat(10);
+                if (!reader.IsDBNull(0)) returnSO.Prefab = reader.GetString(11);
                 switch (_type)
                 {
                     case 1:
-                        returnSO.type = typeSO.ship;
+                        returnSO.Type = typeSO.ship;
                         break;
                     case 2:
-                        returnSO.type = typeSO.station;
+                        returnSO.Type = typeSO.station;
                         break;
                     case 3:
-                        returnSO.type = typeSO.asteroid;
+                        returnSO.Type = typeSO.asteroid;
                         break;
                     case 4:
-                        returnSO.type = typeSO.waypoint;
+                        returnSO.Type = typeSO.waypoint;
                         break;
                     case 5:
-                        returnSO.type = typeSO.container;
+                        returnSO.Type = typeSO.container;
                         break;
                 }
             }
@@ -126,29 +126,29 @@ namespace Wingsrv
             {
                 SpaceObject _SO = new SpaceObject();
                 int _type = 0;
-                if (!reader.IsDBNull(0)) _SO.id = reader.GetInt32(0);
+                if (!reader.IsDBNull(0)) _SO.Id = reader.GetInt32(0);
                 if (!reader.IsDBNull(1)) { _type = reader.GetInt32(1); }
-                if (!reader.IsDBNull(2)) _SO.visibleName = reader.GetString(2);
-                if (!reader.IsDBNull(3) && !reader.IsDBNull(4) && !reader.IsDBNull(5)) _SO.position = new Vector3(reader.GetFloat(3), reader.GetFloat(4), reader.GetFloat(5));
-                if (!reader.IsDBNull(6) && !reader.IsDBNull(7) && !reader.IsDBNull(8) && !reader.IsDBNull(9)) _SO.rotation = new Quaternion(reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), reader.GetFloat(9));
-                if (!reader.IsDBNull(10)) _SO.speed = reader.GetFloat(10);
-                if (!reader.IsDBNull(11)) _SO.prefab = reader.GetString(11);
+                if (!reader.IsDBNull(2)) _SO.VisibleName = reader.GetString(2);
+                if (!reader.IsDBNull(3) && !reader.IsDBNull(4) && !reader.IsDBNull(5)) _SO.Position = new Vector3(reader.GetFloat(3), reader.GetFloat(4), reader.GetFloat(5));
+                if (!reader.IsDBNull(6) && !reader.IsDBNull(7) && !reader.IsDBNull(8) && !reader.IsDBNull(9)) _SO.Rotation = new Quaternion(reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), reader.GetFloat(9));
+                if (!reader.IsDBNull(10)) _SO.Speed = reader.GetFloat(10);
+                if (!reader.IsDBNull(11)) _SO.Prefab = reader.GetString(11);
                 switch (_type)
                 {
                     case 1:
-                        _SO.type = typeSO.ship;
+                        _SO.Type = typeSO.ship;
                         break;
                     case 2:
-                        _SO.type = typeSO.station;
+                        _SO.Type = typeSO.station;
                         break;
                     case 3:
-                        _SO.type = typeSO.asteroid;
+                        _SO.Type = typeSO.asteroid;
                         break;
                     case 4:
-                        _SO.type = typeSO.waypoint;
+                        _SO.Type = typeSO.waypoint;
                         break;
                     case 5:
-                        _SO.type = typeSO.container;
+                        _SO.Type = typeSO.container;
                         break;
                 }
                 returnSOList.Add(_SO);
@@ -157,76 +157,110 @@ namespace Wingsrv
             return returnSOList;
         }
 
-        public SO_shipData GetSOShipData(int SO_id)
+        public ShipData GetSOShipData(int SO_id)
         {
-            SO_shipData retShipData = new SO_shipData();
+            ShipData retShipData = new ShipData();
             string qwery = @"SELECT 
-                       SO_id,
-                       max_speed,
-                       rotation_speed,
-                       acceleration_max,
-                       newSpeed,
-                       hull_full,
-                       armor_full,
-                       shield_full,
-                       capasitor_full,
-                       hull,
-                       armor,
-                       shield,
-                       capasitor,
-                       hull_restore,
-                       armor_restore,
-                       shield_restore,
-                       capasitor_restore,
-                       agr_distance,
-                       vision_distance,
-                       destroyed,
-                       hidden,
-                       mob,
-                       warpDriveStartTime,
-                       warpSpeed
-                FROM SO_shipdata
-                WHERE SO_id=" + SO_id.ToString();
+                            server_objects.id,
+                            server_objects.type,
+                            server_objects.visibleName,
+                            server_objects.position_x,
+                            server_objects.position_y,
+                            server_objects.position_z,
+                            server_objects.rotation_x,
+                            server_objects.rotation_y,
+                            server_objects.rotation_z,
+                            server_objects.rotation_w,
+                            server_objects.speed,
+                            server_objects.prefab_path,
+                            SO_shipdata.SO_id,
+                            SO_shipdata.max_speed,
+                            SO_shipdata.rotation_speed,
+                            SO_shipdata.acceleration_max,
+                            SO_shipdata.newSpeed,
+                            SO_shipdata.hull_full,
+                            SO_shipdata.armor_full,
+                            SO_shipdata.shield_full,
+                            SO_shipdata.capasitor_full,
+                            SO_shipdata.hull,
+                            SO_shipdata.armor,
+                            SO_shipdata.shield,
+                            SO_shipdata.capasitor,
+                            SO_shipdata.hull_restore,
+                            SO_shipdata.armor_restore,
+                            SO_shipdata.shield_restore,
+                            SO_shipdata.capasitor_restore,
+                            SO_shipdata.agr_distance,
+                            SO_shipdata.vision_distance,
+                            SO_shipdata.destroyed,
+                            SO_shipdata.hidden,
+                            SO_shipdata.mob,
+                            SO_shipdata.warpDriveStartTime,
+                            SO_shipdata.warpSpeed
+                        FROM SO_shipdata INNER JOIN server_objects
+                        ON SO_shipdata.SO_id=server_objects.id 
+                        WHERE SO_id=" + SO_id.ToString();
 
 
 
             GetReader(qwery);
             while (reader.Read())
             {
+                int _type = 0;
 
-                //            if (!reader.IsDBNull(0)) { int _id = reader.GetInt32(0); };
-                if (!reader.IsDBNull(1)) retShipData.max_speed = reader.GetFloat(1);
-                if (!reader.IsDBNull(2)) retShipData.rotation_speed = reader.GetFloat(2);
-                if (!reader.IsDBNull(3)) retShipData.acceleration_max = reader.GetFloat(3);
-                if (!reader.IsDBNull(4)) retShipData.newSpeed = reader.GetFloat(4);
-                if (!reader.IsDBNull(5)) retShipData.hull_full = reader.GetFloat(5);
-                if (!reader.IsDBNull(6)) retShipData.armor_full = reader.GetFloat(6);
-                if (!reader.IsDBNull(7)) retShipData.shield_full = reader.GetFloat(7);
-                if (!reader.IsDBNull(8)) retShipData.capasitor_full = reader.GetFloat(8);
-                if (!reader.IsDBNull(9)) retShipData.hull = reader.GetFloat(9);
-                if (!reader.IsDBNull(10)) retShipData.armor = reader.GetFloat(10);
-                if (!reader.IsDBNull(11)) retShipData.shield = reader.GetFloat(11);
-                if (!reader.IsDBNull(12)) retShipData.capasitor = reader.GetFloat(12);
-                if (!reader.IsDBNull(13)) retShipData.hull_restore = reader.GetFloat(13);
-                if (!reader.IsDBNull(14)) retShipData.armor_restore = reader.GetFloat(14);
-                if (!reader.IsDBNull(15)) retShipData.shield_restore = reader.GetFloat(15);
-                if (!reader.IsDBNull(16)) retShipData.capasitor_restore = reader.GetFloat(16);
-                if (!reader.IsDBNull(17)) retShipData.agr_distance = reader.GetFloat(17);
-                if (!reader.IsDBNull(18)) retShipData.vision_distance = reader.GetFloat(18);
-                if (!reader.IsDBNull(19)) retShipData.destroyed = (reader.GetInt32(19) == 1);
-                if (!reader.IsDBNull(20)) retShipData.hidden = (reader.GetInt32(20) == 1);
-                if (!reader.IsDBNull(21)) retShipData.mob = (reader.GetInt32(21) == 1);
-                if (!reader.IsDBNull(22)) retShipData.warpDriveStartTime = reader.GetFloat(22);
-                if (!reader.IsDBNull(23)) retShipData.warpSpeed = reader.GetFloat(23);
+                if (!reader.IsDBNull(0)) retShipData.Id = reader.GetInt32(0);
+                if (!reader.IsDBNull(1)) { _type = reader.GetInt32(1); }
+                if (!reader.IsDBNull(2)) retShipData.VisibleName = reader.GetString(2);
+                if (!reader.IsDBNull(3) && !reader.IsDBNull(4) && !reader.IsDBNull(5)) retShipData.Position = new Vector3(reader.GetFloat(3), reader.GetFloat(4), reader.GetFloat(5));
+                if (!reader.IsDBNull(6) && !reader.IsDBNull(7) && !reader.IsDBNull(8) && !reader.IsDBNull(9)) retShipData.Rotation = new Quaternion(reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), reader.GetFloat(9));
+                if (!reader.IsDBNull(10)) retShipData.Speed = reader.GetFloat(10);
+                if (!reader.IsDBNull(11)) retShipData.Prefab = reader.GetString(11);
+
+                //            if (!reader.IsDBNull(12)) { int _id = reader.GetInt32(12); };
+                if (!reader.IsDBNull(13)) retShipData.SpeedMax = reader.GetFloat(13);
+                if (!reader.IsDBNull(14)) retShipData.RotationSpeed = reader.GetFloat(14);
+                if (!reader.IsDBNull(15)) retShipData.AccelerationMax = reader.GetFloat(15);
+                if (!reader.IsDBNull(16)) retShipData.SpeedNew = reader.GetFloat(16);
+                if (!reader.IsDBNull(17)) retShipData.Hull_full = reader.GetFloat(17);
+                if (!reader.IsDBNull(18)) retShipData.Armor_full = reader.GetFloat(18);
+                if (!reader.IsDBNull(19)) retShipData.Shield_full = reader.GetFloat(19);
+                if (!reader.IsDBNull(20)) retShipData.Capasitor_full = reader.GetFloat(20);
+                if (!reader.IsDBNull(21)) retShipData.Hull = reader.GetFloat(21);
+                if (!reader.IsDBNull(22)) retShipData.Armor = reader.GetFloat(22);
+                if (!reader.IsDBNull(23)) retShipData.Shield = reader.GetFloat(23);
+                if (!reader.IsDBNull(24)) retShipData.Capasitor = reader.GetFloat(24);
+                if (!reader.IsDBNull(25)) retShipData.Hull_restore = reader.GetFloat(25);
+                if (!reader.IsDBNull(26)) retShipData.Armor_restore = reader.GetFloat(26);
+                if (!reader.IsDBNull(27)) retShipData.Shield_restore = reader.GetFloat(27);
+                if (!reader.IsDBNull(28)) retShipData.Capasitor_restore = reader.GetFloat(28);
+                if (!reader.IsDBNull(29)) retShipData.AgrDistance = reader.GetFloat(29);
+                if (!reader.IsDBNull(30)) retShipData.VisionDistance = reader.GetFloat(30);
+                if (!reader.IsDBNull(31)) retShipData.Destroyed = (reader.GetInt32(31) == 1);
+                if (!reader.IsDBNull(32)) retShipData.Hidden = (reader.GetInt32(32) == 1);
+                if (!reader.IsDBNull(33)) retShipData.Mob = (reader.GetInt32(33) == 1);
+                if (!reader.IsDBNull(34)) retShipData.WarpDriveStartTime = reader.GetFloat(34);
+                if (!reader.IsDBNull(35)) retShipData.WarpSpeed = reader.GetFloat(35);
+
+                switch (_type)
+                {
+                    case 1:
+                        retShipData.Type = typeSO.ship;
+                        break;
+                    case 2:
+                        retShipData.Type = typeSO.station;
+                        break;
+                    case 3:
+                        retShipData.Type = typeSO.asteroid;
+                        break;
+                }
             }
-            retShipData.SO = GetSpaceObject(SO_id);
 
-            return retShipData;
+                return retShipData;
         }
 
-        public List<SO_shipData> GetAllShips()
+        public List<ShipData> GetAllShips()
         {
-            List<SO_shipData> retListShip = new List<SO_shipData>();
+            List<ShipData> retListShip = new List<ShipData>();
 
             string qwery = @"SELECT 
                             server_objects.id,
@@ -270,71 +304,71 @@ namespace Wingsrv
             GetReader(qwery);
             while (reader.Read())
             {
-                SO_shipData retShipData = new SO_shipData();
+                ShipData retShipData = new ShipData();
                 int _type = 0;
 
-                if (!reader.IsDBNull(0)) retShipData.SO.id = reader.GetInt32(0);
+                if (!reader.IsDBNull(0)) retShipData.Id = reader.GetInt32(0);
                 if (!reader.IsDBNull(1)) { _type = reader.GetInt32(1); }
-                if (!reader.IsDBNull(2)) retShipData.SO.visibleName = reader.GetString(2);
-                if (!reader.IsDBNull(3) && !reader.IsDBNull(4) && !reader.IsDBNull(5)) retShipData.SO.position = new Vector3(reader.GetFloat(3), reader.GetFloat(4), reader.GetFloat(5));
-                if (!reader.IsDBNull(6) && !reader.IsDBNull(7) && !reader.IsDBNull(8) && !reader.IsDBNull(9)) retShipData.SO.rotation = new Quaternion(reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), reader.GetFloat(9));
-                if (!reader.IsDBNull(10)) retShipData.SO.speed = reader.GetFloat(10);
-                if (!reader.IsDBNull(11)) retShipData.SO.prefab = reader.GetString(11);
+                if (!reader.IsDBNull(2)) retShipData.VisibleName = reader.GetString(2);
+                if (!reader.IsDBNull(3) && !reader.IsDBNull(4) && !reader.IsDBNull(5)) retShipData.Position = new Vector3(reader.GetFloat(3), reader.GetFloat(4), reader.GetFloat(5));
+                if (!reader.IsDBNull(6) && !reader.IsDBNull(7) && !reader.IsDBNull(8) && !reader.IsDBNull(9)) retShipData.Rotation = new Quaternion(reader.GetFloat(6), reader.GetFloat(7), reader.GetFloat(8), reader.GetFloat(9));
+                if (!reader.IsDBNull(10)) retShipData.Speed = reader.GetFloat(10);
+                if (!reader.IsDBNull(11)) retShipData.Prefab = reader.GetString(11);
 
                 //            if (!reader.IsDBNull(12)) { int _id = reader.GetInt32(12); };
-                if (!reader.IsDBNull(13)) retShipData.max_speed = reader.GetFloat(13);
-                if (!reader.IsDBNull(14)) retShipData.rotation_speed = reader.GetFloat(14);
-                if (!reader.IsDBNull(15)) retShipData.acceleration_max = reader.GetFloat(15);
-                if (!reader.IsDBNull(16)) retShipData.newSpeed = reader.GetFloat(16);
-                if (!reader.IsDBNull(17)) retShipData.hull_full = reader.GetFloat(17);
-                if (!reader.IsDBNull(18)) retShipData.armor_full = reader.GetFloat(18);
-                if (!reader.IsDBNull(19)) retShipData.shield_full = reader.GetFloat(19);
-                if (!reader.IsDBNull(20)) retShipData.capasitor_full = reader.GetFloat(20);
-                if (!reader.IsDBNull(21)) retShipData.hull = reader.GetFloat(21);
-                if (!reader.IsDBNull(22)) retShipData.armor = reader.GetFloat(22);
-                if (!reader.IsDBNull(23)) retShipData.shield = reader.GetFloat(23);
-                if (!reader.IsDBNull(24)) retShipData.capasitor = reader.GetFloat(24);
-                if (!reader.IsDBNull(25)) retShipData.hull_restore = reader.GetFloat(25);
-                if (!reader.IsDBNull(26)) retShipData.armor_restore = reader.GetFloat(26);
-                if (!reader.IsDBNull(27)) retShipData.shield_restore = reader.GetFloat(27);
-                if (!reader.IsDBNull(28)) retShipData.capasitor_restore = reader.GetFloat(28);
-                if (!reader.IsDBNull(29)) retShipData.agr_distance = reader.GetFloat(29);
-                if (!reader.IsDBNull(30)) retShipData.vision_distance = reader.GetFloat(30);
-                if (!reader.IsDBNull(31)) retShipData.destroyed = (reader.GetInt32(31) == 1);
-                if (!reader.IsDBNull(32)) retShipData.hidden = (reader.GetInt32(32) == 1);
-                if (!reader.IsDBNull(33)) retShipData.mob = (reader.GetInt32(33) == 1);
-                if (!reader.IsDBNull(34)) retShipData.warpDriveStartTime = reader.GetFloat(34);
-                if (!reader.IsDBNull(35)) retShipData.warpSpeed = reader.GetFloat(35);
+                if (!reader.IsDBNull(13)) retShipData.SpeedMax = reader.GetFloat(13);
+                if (!reader.IsDBNull(14)) retShipData.RotationSpeed = reader.GetFloat(14);
+                if (!reader.IsDBNull(15)) retShipData.AccelerationMax = reader.GetFloat(15);
+                if (!reader.IsDBNull(16)) retShipData.SpeedNew = reader.GetFloat(16);
+                if (!reader.IsDBNull(17)) retShipData.Hull_full = reader.GetFloat(17);
+                if (!reader.IsDBNull(18)) retShipData.Armor_full = reader.GetFloat(18);
+                if (!reader.IsDBNull(19)) retShipData.Shield_full = reader.GetFloat(19);
+                if (!reader.IsDBNull(20)) retShipData.Capasitor_full = reader.GetFloat(20);
+                if (!reader.IsDBNull(21)) retShipData.Hull = reader.GetFloat(21);
+                if (!reader.IsDBNull(22)) retShipData.Armor = reader.GetFloat(22);
+                if (!reader.IsDBNull(23)) retShipData.Shield = reader.GetFloat(23);
+                if (!reader.IsDBNull(24)) retShipData.Capasitor = reader.GetFloat(24);
+                if (!reader.IsDBNull(25)) retShipData.Hull_restore = reader.GetFloat(25);
+                if (!reader.IsDBNull(26)) retShipData.Armor_restore = reader.GetFloat(26);
+                if (!reader.IsDBNull(27)) retShipData.Shield_restore = reader.GetFloat(27);
+                if (!reader.IsDBNull(28)) retShipData.Capasitor_restore = reader.GetFloat(28);
+                if (!reader.IsDBNull(29)) retShipData.AgrDistance = reader.GetFloat(29);
+                if (!reader.IsDBNull(30)) retShipData.VisionDistance = reader.GetFloat(30);
+                if (!reader.IsDBNull(31)) retShipData.Destroyed = (reader.GetInt32(31) == 1);
+                if (!reader.IsDBNull(32)) retShipData.Hidden = (reader.GetInt32(32) == 1);
+                if (!reader.IsDBNull(33)) retShipData.Mob = (reader.GetInt32(33) == 1);
+                if (!reader.IsDBNull(34)) retShipData.WarpDriveStartTime = reader.GetFloat(34);
+                if (!reader.IsDBNull(35)) retShipData.WarpSpeed = reader.GetFloat(35);
 
                 switch (_type)
                 {
                     case 1:
-                        retShipData.SO.type = typeSO.ship;
+                        retShipData.Type = typeSO.ship;
                         break;
                     case 2:
-                        retShipData.SO.type = typeSO.station;
+                        retShipData.Type = typeSO.station;
                         break;
                     case 3:
-                        retShipData.SO.type = typeSO.asteroid;
+                        retShipData.Type = typeSO.asteroid;
                         break;
                 }
                 retListShip.Add(retShipData);
             }
             for (int i = 0; i < retListShip.Count; i++)
             {
-                //retListShip[i].weapons = new List<SO_weaponData>();//GetWeapons(retListShip[i].SO.id);
-                //retListShip[i].equipments = new List<SO_equipmentData>() ;//GetEquip(retListShip[i].SO.id);
+                retListShip[i].Weapons = GetWeapons(retListShip[i].Id);
+                retListShip[i].Equipments = GetEquip(retListShip[i].Id);
             }
             return retListShip;
         }
 
-        private List<SO_equipmentData> GetEquip(int Ship_id)
+        private SO_equipmentData[] GetEquip(int Ship_id)
         {
-            List<SO_equipmentData> retList = new List<SO_equipmentData>();
+            SO_equipmentData[] retList = new SO_equipmentData[0];
             return retList;
         }
 
-        private List<SO_weaponData> GetWeapons(int ship_id)
+        private SO_weaponData[] GetWeapons(int ship_id)
         {
             List<SO_weaponData> retList = new List<SO_weaponData>();
             SO_weaponData _weapon;
@@ -359,27 +393,32 @@ namespace Wingsrv
                 //			if (!reader.IsDBNull(0)) _weapon. = reader.GetInt32(0);
                 if (!reader.IsDBNull(1)) _type = reader.GetInt32(1);
                 //			if (!reader.IsDBNull (2))_weapon.active = (reader.GetInt32(2) == 1);
-                if (!reader.IsDBNull(3)) _weapon.damage = reader.GetFloat(3);
-                if (!reader.IsDBNull(4)) _weapon.reload = reader.GetFloat(4);
-                if (!reader.IsDBNull(5)) _weapon.ammoSpeed = reader.GetFloat(5);
-                if (!reader.IsDBNull(6)) _weapon.activeTime = reader.GetFloat(6);
-                if (!reader.IsDBNull(7)) _weapon.sqrDistanse_max = reader.GetFloat(7);
-                if (!reader.IsDBNull(8)) _weapon.capasitor_use = reader.GetFloat(8);
+                if (!reader.IsDBNull(3)) _weapon.Damage = reader.GetFloat(3);
+                if (!reader.IsDBNull(4)) _weapon.Reload = reader.GetFloat(4);
+                if (!reader.IsDBNull(5)) _weapon.AmmoSpeed = reader.GetFloat(5);
+                if (!reader.IsDBNull(6)) _weapon.ActiveTime = reader.GetFloat(6);
+                if (!reader.IsDBNull(7)) _weapon.SqrDistanse_max = reader.GetFloat(7);
+                if (!reader.IsDBNull(8)) _weapon.Capasitor_use = reader.GetFloat(8);
                 switch (_type)
                 {
                     case 1:
-                        _weapon.type = SO_weaponData.WeaponType.laser;
+                        _weapon.Type = SO_weaponData.WeaponType.laser;
                         break;
                     case 2:
-                        _weapon.type = SO_weaponData.WeaponType.missile;
+                        _weapon.Type = SO_weaponData.WeaponType.missile;
                         break;
                     case 3:
-                        _weapon.type = SO_weaponData.WeaponType.projective;
+                        _weapon.Type = SO_weaponData.WeaponType.projective;
                         break;
                 }
                 retList.Add(_weapon);
             }
-            return retList;
+            SO_weaponData[] retArray = new SO_weaponData[retList.Count];
+            for (int i = 0; i < retList.Count; i++)
+            {
+                retArray[i] = retList[i];
+            }
+            return retArray;
 
 
         }
@@ -417,11 +456,11 @@ namespace Wingsrv
             return GetSpaceObject(new_id);
         }
 
-        public SO_shipData AddNewSOShip(Vector3 position, Quaternion rotation, int item_id)
+        public ShipData AddNewSOShip(Vector3 position, Quaternion rotation, int item_id)
         {
             SpaceObject SO = AddNewSO(position, rotation, item_id);
-            SO_shipData retSOShipData;
-            if (SO.type == typeSO.ship)
+            ShipData retSOShipData;
+            if (SO.Type == typeSO.ship)
             {
                 ShipItem _shipItem = serverManager.inventoryServer.GetShipItem(item_id);
 
@@ -449,7 +488,7 @@ namespace Wingsrv
                    warpDriveStartTime,
                    warpSpeed" +
                     ") values (" +
-                       SO.id.ToString() + ", " +
+                       SO.Id.ToString() + ", " +
                        _shipItem.max_speed.ToString() + ", " +
                        _shipItem.rotation_speed.ToString() + ", " +
                        _shipItem.acceleration_max.ToString() + ", " +
@@ -474,7 +513,7 @@ namespace Wingsrv
 
                 GetReader(qwery);
             }
-            retSOShipData = GetSOShipData(SO.id);
+            retSOShipData = GetSOShipData(SO.Id);
             return retSOShipData;
         }
 

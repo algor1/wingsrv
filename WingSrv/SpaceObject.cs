@@ -4,13 +4,13 @@ namespace Wingsrv
 {
     public class SpaceObject
     {
-        public int id { get; set; }
-        public string visibleName { get; set; }
-        public typeSO type { get; set; }
-        public Vector3 position { get; set; }
-        public Quaternion rotation { get; set; }
-        public float speed { get; set; }
-        public string prefab { get; set; }
+        public int Id { get; set; }
+        public string VisibleName { get; set; }
+        public typeSO Type { get; set; }
+        public Vector3 Position { get; set; }
+        public Quaternion Rotation { get; set; }
+        public float Speed { get; set; }
+        public string Prefab { get; set; }
         //public SO_ship ship { get; set; }
 
     }

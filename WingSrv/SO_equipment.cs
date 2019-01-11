@@ -8,15 +8,14 @@ namespace Wingsrv
     {
         public SO_equipmentData p; //equipment properties
 
-        private SO_ship currentTarget;
-        private SO_ship host;
-        private GameObject weaponPoint;
+        private Ship currentTarget;
+        private Ship host;
         public bool coroutineStarted;
         public bool activate;
         public Coroutine use_co;
 
 
-        public SO_equipment(SO_equipmentData _data, SO_ship _host)
+        public SO_equipment(SO_equipmentData _data, Ship _host)
         {
             p = new SO_equipmentData(_data);
             host = _host;
@@ -46,9 +45,9 @@ namespace Wingsrv
 
                 //check capasitor
 
-                if (host.p.capasitor > p.capasitor_use)
+                if (host.p.Capasitor > p.capasitor_use)
                 {
-                    host.p.capasitor -= p.capasitor_use;
+                    host.p.Capasitor -= p.capasitor_use;
                 }
                 else
                 {
@@ -56,9 +55,9 @@ namespace Wingsrv
                 }
                 yield return new WaitForSeconds(p.reload);
 
-                host.p.shield += p.shieldpoints;
-                host.p.armor += p.armorpoints;
-                host.p.hull += p.hullpoints;
+                host.p.Shield += p.shieldpoints;
+                host.p.Armor += p.armorpoints;
+                host.p.Hull += p.hullpoints;
 
 
 

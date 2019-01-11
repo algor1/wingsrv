@@ -1,5 +1,8 @@
 ﻿
 
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Wingsrv
 {
 
@@ -17,7 +20,11 @@ namespace Wingsrv
             inventoryServer = new InventoryServer(this);
             serverDB = new ServerDB(this);
             server = new Server(this);
-            server.RunServer();
+            Thread myThread = new Thread(new ThreadStart(server.RunServer));
+            myThread.Start();
+            Thread.Sleep(7000);
+            server.PlayerControlSetTarget(0, Command.SetTarget, 1);
+            //server.RunServer();
 
         }
         public void Stop()
