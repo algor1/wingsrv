@@ -31,17 +31,17 @@ namespace Wingsrv
         //public bool warpCoroutineStarted;
         //public bool landed;
 
-        public List<SO_weapon> weapons;
-        public List<SO_equipment> equipments;
+        private SO_weapon[] weapons;
+        private SO_equipment[] equipments;
         
-        public int TickDeltaTime=20;
+        public int TickDeltaTime=20; //{get;set;}
 
 
 
 
         public SO_ship(SO_shipData shipData)
         {
-            p = shipData;
+            p = new SO_shipData(shipData);
             //rotationToTarget = p.SO.rotation;
             //moveCommand = MoveType.move;
             //SendEvent(ShipEvenentsType.move);
@@ -50,8 +50,8 @@ namespace Wingsrv
             //Debug.Log(host);
 
             //newtargetToMove = null;
-            weapons = new List<SO_weapon>();
-            for (int i = 0; i < shipData.weapons.Count; i++)
+            weapons = new SO_weapon[shipData.weapons.];
+            for (int i = 0; i < shipData.weapons.Length; i++)
             {
                 Debug.Log(p.SO.id + " ---init  weapon  " + i + "    " + shipData.weapons[i].type + shipData.weapons.Count);
                 SO_weapon newweappon = new SO_weapon(shipData.weapons[i], this);
