@@ -27,16 +27,6 @@ namespace Wingsrv {
         {
             string p = "inventory.db";
             string filepath = "./DB/" + p; 
-            //Debug.Log(filepath);
-            //if (!File.Exists(filepath))
-            //{
-            //    WWW loadDB = new WWW("jar:file://" + Application.dataPath + "!/assets/" + p);  // this is the path to your StreamingAssets in android
-            //    while (!loadDB.isDone)
-            //    {
-            //        Debug.Log("LOADING..." + loadDB.uploadProgress);
-            //    }
-            //    File.WriteAllBytes(filepath, loadDB.bytes);
-            //}
             string connectionString = "URI=file:" + filepath;
             dbSkillCon = (IDbConnection)new SqliteConnection(connectionString);
             dbSkillCon.Open();
@@ -47,13 +37,13 @@ namespace Wingsrv {
             {
                 InitDB();
             }
-            //		Debug.Log (dbSkillCon.Database);
+
             dbcmd = dbSkillCon.CreateCommand();
-            //		Debug.Log (dbcmd.CommandText);
+
             dbcmd.CommandText = dbselect;
             // Выполняем запрос
             reader = dbcmd.ExecuteReader();
-            //		Debug.Log (reader.Read());
+
         }
 
 
@@ -65,13 +55,10 @@ namespace Wingsrv {
             GetReader(qwery);
             while (reader.Read())
             {
-                Debug.Log(reader.GetInt32(0));
                 if (!reader.IsDBNull(0)) returnItem.id = reader.GetInt32(0);
                 if (!reader.IsDBNull(1)) returnItem.item = reader.GetString(1);
-                Debug.Log(reader.GetString(2));
                 if (!reader.IsDBNull(2)) returnItem.itemType = (Item.Type_of_item)System.Enum.Parse(typeof(Item.Type_of_item), reader.GetString(2));
                 if (!reader.IsDBNull(3)) returnItem.prefab = reader.GetString(3);
-                Debug.Log(returnItem.itemType);
             }
             return returnItem;
         }
@@ -144,14 +131,14 @@ namespace Wingsrv {
             if (Quantity(player_id, holder_id, item_id, tech) == 0)
             {
                 qwery = "insert into inventory (player_id,inventory_holder_id,item_id,tech,quantity) values (" + player_id.ToString() + "," + holder_id.ToString() + "," + item_id.ToString() + "," + tech.ToString() + "," + quantity.ToString() + ")";
-                //			Debug.Log (qwery);
+
 
             }
             else
             {
 
                 qwery = "update inventory set quantity = quantity +" + quantity.ToString() + " where player_id=" + player_id.ToString() + " and item_id=" + item_id.ToString() + " and inventory_holder_id=" + holder_id.ToString() + "  and tech=" + tech.ToString();
-                //			Debug.Log (qwery);
+
             }
             GetReader(qwery);
         }

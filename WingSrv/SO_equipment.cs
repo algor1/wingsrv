@@ -60,15 +60,6 @@ namespace Wingsrv
                 host.p.armor += p.armorpoints;
                 host.p.hull += p.hullpoints;
 
-                //if (host.host != null)
-                //{
-                //    //							Debug.Log (host.host.name + "  " + host.p.SO.visibleName + "----pew----  to " + currentTarget.p.SO.visibleName); 
-                //}
-                //else
-                //{
-                //    //							Debug.Log ("server  " + host.p.SO.visibleName + "----pew----  to " + currentTarget.p.SO.visibleName); 
-                //}
-                ////							Debug.Log (weaponPoint.GetComponent<WeaponPoint> ());
 
 
             }

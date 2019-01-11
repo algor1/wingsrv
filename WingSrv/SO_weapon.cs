@@ -45,7 +45,6 @@ namespace Wingsrv
             {
                 mineTarget = target;
                 mine = true;
-                //		Debug.Log (host.p.SO.visibleName + " qqqqqqq " + target.p.SO.visibleName+  fire+ activated);
             }
         }
 
@@ -84,13 +83,7 @@ namespace Wingsrv
 
                         if (sqrDistance < p.sqrDistanse_max)
                         {
-                            //if (weaponPoint != null)
-                            //{
-                                ////							Debug.Log(host.p.SO.visibleName +  " weaponpoint not null");
-                                ////							Debug.Log (weaponPoint.GetComponent<WeaponPoint> ());
-
-                                //weaponPoint.GetComponent<WeaponPoint>().StartFire(currentTarget);
-                            //}
+                        
                             yield return new WaitForSeconds(2);
 
                             if (p.type == SO_weaponData.WeaponType.laser)
@@ -103,18 +96,11 @@ namespace Wingsrv
                             }
                             if (host.host != null)
                             {
-                                //							Debug.Log (host.host.name + "  " + host.p.SO.visibleName + "----pew----  to " + currentTarget.p.SO.visibleName); 
                             }
                             else
                             {
-                                //							Debug.Log ("server  " + host.p.SO.visibleName + "----pew----  to " + currentTarget.p.SO.visibleName); 
                             }
-                            //							Debug.Log (weaponPoint.GetComponent<WeaponPoint> ());
-                            //if (weaponPoint != null)
-                            //{
-                            //    weaponPoint.GetComponent<WeaponPoint>().StopFire();
-                            //}
-                            Debug.Log("******  damage from " + host.p.SO.visibleName + " to " + currentTarget.p.SO.visibleName + "  co  " + atack_co.GetHashCode());
+                          
                             if (currentTarget != null) currentTarget.Damage(p.damage);
                         }
                     }

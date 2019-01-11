@@ -38,15 +38,6 @@ namespace Wingsrv
             string filepath = "DB/" + p;
             string dbPath = Path.Combine(Environment.CurrentDirectory, filepath);
             string connectionString = string.Format("Data Source={0}", dbPath);
-            //if (!File.Exists(filepath))
-            //{
-            //    WWW loadDB = new WWW("jar:file://" + Application.dataPath + "!/assets/" + p);  // this is the path to your StreamingAssets in android
-            //    while (!loadDB.isDone)
-            //    {
-            //        Debug.Log("LOADING..." + loadDB.uploadProgress);
-            //    }
-            //    File.WriteAllBytes(filepath, loadDB.bytes);
-            //}
             dbSkillCon = (IDbConnection)new SqliteConnection(connectionString);
             dbSkillCon.Open();
         }
@@ -57,13 +48,10 @@ namespace Wingsrv
             {
                 InitDB();
             }
-            //		Debug.Log (dbSkillCon.Database);
             dbcmd = dbSkillCon.CreateCommand();
-            //		Debug.Log (dbcmd.CommandText);
             dbcmd.CommandText = dbselect;
             // Выполняем запрос
             reader = dbcmd.ExecuteReader();
-            //		Debug.Log (reader.Read());
         }
 
         public SpaceObject GetSpaceObject(int SO_id)
@@ -163,7 +151,6 @@ namespace Wingsrv
                         _SO.type = typeSO.container;
                         break;
                 }
-                Debug.Log("SODB  " + _SO.prefab + "  " + _SO.type);
                 returnSOList.Add(_SO);
             }
 
@@ -402,7 +389,6 @@ namespace Wingsrv
             int new_id = 0;
             int _type = 1;
             Item _item = serverManager.inventoryServer.GetItem(item_id);
-            Debug.Log(_item.itemType);
             switch (_item.itemType)
             {
                 case Item.Type_of_item.ship:
@@ -412,7 +398,6 @@ namespace Wingsrv
                     _type = 5;
                     break;
             }
-            Debug.Log(_item.itemType + " " + _item.prefab + _item.prefab.GetType());
             string qwery = "insert into server_objects (type,visibleName,position_x,position_y,position_z,rotation_x,rotation_y,rotation_z,rotation_w,speed,prefab_path) values (" +
                 _type.ToString() + ", " +
                 "\"" + _item.item.ToString() + "\", " +
@@ -428,7 +413,6 @@ namespace Wingsrv
                 ") ";
 
             GetReader(qwery);
-            Debug.Log("-");
             new_id = lastId("server_objects");
             return GetSpaceObject(new_id);
         }

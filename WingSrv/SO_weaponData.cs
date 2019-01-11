@@ -4,31 +4,29 @@ using UnityEngine;
 
 namespace Wingsrv
 {
-    [System.Serializable]
     public class SO_weaponData
     {
         public enum WeaponType { laser, missile, projective };
-        public WeaponType type;
-        public float damage;
-        public float reload;
-        public float ammoSpeed;
-        public float activeTime;//for laser
-        public float sqrDistanse_max;
-        public float capasitor_use;
+        public WeaponType type { get; set; }
+        public float damage { get; set; }
+        public float reload { get; set; }
+        public float ammoSpeed { get; set; }
+        public float activeTime { get; set; }//for laser
+        public float sqrDistanse_max { get; set; }
+        public float capasitor_use { get; set; }
 
         public SO_weaponData()
         {
         }
-        public SO_weaponData(SO_weaponData val)
+        public SO_weaponData(SO_weaponData value)
         {
-            type = val.type;
-            //		active = val.active;
-            damage = val.damage;
-            reload = val.reload;
-            ammoSpeed = val.ammoSpeed;
-            activeTime = val.activeTime;
-            sqrDistanse_max = val.sqrDistanse_max;
-            capasitor_use = val.capasitor_use;
+            type = value.type;
+            damage = value.damage;
+            reload = value.reload;
+            ammoSpeed = value.ammoSpeed;
+            activeTime = value.activeTime;
+            sqrDistanse_max = value.sqrDistanse_max;
+            capasitor_use = value.capasitor_use;
         }
 
     }

@@ -45,22 +45,17 @@ namespace Wingsrv
             //rotationToTarget = p.SO.rotation;
             //moveCommand = MoveType.move;
             //SendEvent(ShipEvenentsType.move);
-
             //host = _host;
-            //Debug.Log(host);
-
             //newtargetToMove = null;
             weapons = new SO_weapon[shipData.weapons.];
             for (int i = 0; i < shipData.weapons.Length; i++)
             {
-                Debug.Log(p.SO.id + " ---init  weapon  " + i + "    " + shipData.weapons[i].type + shipData.weapons.Count);
                 SO_weapon newweappon = new SO_weapon(shipData.weapons[i], this);
                 weapons.Add(newweappon);
             }
             equipments = new List<SO_equipment>();
             for (int i = 0; i < shipData.equipments.Count; i++)
             {
-                Debug.Log(p.SO.id + " ---init  active equipment  " + i + "    " + shipData.equipments.Count);
                 SO_equipment neweq = new SO_equipment(shipData.equipments[i], this);
                 equipments.Add(neweq);
             }
@@ -120,11 +115,8 @@ namespace Wingsrv
 #region user commands
         public void SetTarget(SpaceObject newtarget)
         {
-            Debug.Log("new target  " + newtarget.visibleName);
             newtargetToMove = newtarget;
             newtargetToAtack = newtarget;
-            Debug.Log(p.SO.visibleName + " p" + p.SO.position + " set target to " + newtargetToAtack.visibleName + " p " + newtargetToAtack.position);
-            //		newtargetToAtack=null;
         }
         public void GoToTarget()
         {
@@ -143,7 +135,6 @@ namespace Wingsrv
         {
             if (newtargetToMove != null && Vector3.Distance(p.SO.position, newtargetToMove.position) > 100000)
             {
-                Debug.Log("warping");
                 moveCommand = MoveType.warp;
                 complexCommand = ComandType.warpTo;
                 targetToMove = newtargetToMove;
@@ -152,7 +143,7 @@ namespace Wingsrv
             }
             else
             {
-                Debug.Log("TO CLOSE TO WARP");
+                //Debug.Log("TO CLOSE TO WARP");
             }
 
         }
@@ -186,8 +177,6 @@ namespace Wingsrv
             {
                 complexCommand = ComandType.landTo;
                 targetToMove = newtargetToMove;
-                //            oldRotation = p.SO.rotation;
-                //			Debug.Log (targetToMove.position);
             }
         }
         public void OpenTarget()
@@ -197,16 +186,13 @@ namespace Wingsrv
                 complexCommand = ComandType.open;
                 targetToMove = newtargetToMove;
                 //            oldRotation = p.SO.rotation;
-                //			Debug.Log (targetToMove.position);
             }
         }
         public void Atack_target(int weaponnum)
         {
-            //		Debug.Log ("atacking");
             if (newtargetToAtack != null)
             {
                 targetToAtack = newtargetToAtack;
-                Debug.Log(p.SO.visibleName + " atacking " + targetToAtack.visibleName);
 
                 //atack = true;
                 weapons[weaponnum].Atack_target(targetToAtack);
@@ -220,7 +206,6 @@ namespace Wingsrv
         }
         public void StopFire(int weaponnum)
         {
-            Debug.Log(p.SO.visibleName + " stop fire ");
             //atack = false;
             weapons[weaponnum].stop();
         }
@@ -231,17 +216,13 @@ namespace Wingsrv
 
                 if (Vector3.Distance(p.SO.position, targetToMove.position) > 10 * p.SO.speed / p.acceleration_max)
                 {
-                    //				Debug.Log ("command goto");
                     moveCommand = MoveType.move;
-                    //SendEvent(ShipEvenentsType.move);
 
                 }
                 else
                 {
-                    //				Debug.Log(Vector3.Distance (p.SO.position, targetToMove.position));
 
                     moveCommand = MoveType.stop;
-                    //SendEvent(ShipEvenentsType.stop);
 
                     complexCommand = ComandType.none;
                 }
@@ -255,14 +236,12 @@ namespace Wingsrv
                 if (Vector3.Distance(p.SO.position, targetToMove.position) > 10 * p.max_speed / p.acceleration_max)
                 {
                     moveCommand = MoveType.move;
-                    //SendEvent(ShipEvenentsType.move);
 
                 }
                 else
                 {
 
                     moveCommand = MoveType.stop;
-                    //SendEvent(ShipEvenentsType.stop);
 
 
                     OnLandCall(p.SO.id);
@@ -276,15 +255,12 @@ namespace Wingsrv
                 if (Vector3.Distance(p.SO.position, targetToMove.position) > 10 * p.max_speed / p.acceleration_max)
                 {
                     moveCommand = MoveType.move;
-                    //SendEvent(ShipEvenentsType.move);
 
                 }
                 else
                 {
 
                     moveCommand = MoveType.stop;
-                    //SendEvent(ShipEvenentsType.stop);
-                    //SendEvent(ShipEvenentsType.open);
                     complexCommand = ComandType.none;
 
                 }
@@ -300,22 +276,13 @@ namespace Wingsrv
         {
             if (targetToMove != null)
             {
-                //			Debug.Log ("id " + p.id + "targettomove " + targetToMove.position + "  p  " + p.SO.position);
                 rotationToTarget = Quaternion.LookRotation(targetToMove.position - p.SO.position);
                 Vector3 rt = new Vector3(rotationToTarget.eulerAngles.x, rotationToTarget.eulerAngles.y, p.SO.rotation.eulerAngles.z);
                 rotationToTarget = Quaternion.Euler(rt);
 
                 if (Mathf.Abs(p.SO.rotation.eulerAngles.x - rotationToTarget.eulerAngles.x) > 1 || Mathf.Abs(p.SO.rotation.eulerAngles.y - rotationToTarget.eulerAngles.y) > 1)
                 {
-                    //				Debug.Log ("id " + p.id + "  rotating " + p.rotation.eulerAngles + "  to  " + rotationToTarget.eulerAngles);
-                    //				Debug.Log ("id " + p.id + "  position " + p.SO.position + "  target pos" + targetToMove.position);
-                    //				Debug.Log("sin z " +  Mathf.Sin(Mathf.Deg2Rad*p.rotation.z)+ "  cos z " +  Mathf.Cos(Mathf.Deg2Rad*p.rotation.z));
-
                     p.SO.rotation = Quaternion.RotateTowards(p.SO.rotation, rotationToTarget, p.rotation_speed * TickDeltaTime/1000);
-                    //				float difx = p.rotation.eulerAngles.x - oldRotation.eulerAngles.x;
-                    //				float dify = p.rotation.eulerAngles.y - oldRotation.eulerAngles.y;
-                    //				Debug.Log("dif x " +  (difx*Mathf.Sin(Mathf.Deg2Rad*p.rotation.z)) + "  dif y " + (dify*Mathf.Cos(Mathf.Deg2Rad*p.rotation.z)) );
-                    //				Debug.Log("roll" +(difx*Mathf.Sin(Mathf.Deg2Rad*p.rotation.z) + dify*Mathf.Cos(Mathf.Deg2Rad*p.rotation.z)) );
                     return false;
                 }
                 else
@@ -363,13 +330,11 @@ namespace Wingsrv
         {
             if (moveCommand == MoveType.stop)
             {
-                //			SendEvent(ShipEvenentsType.stop);
                 p.newSpeed = 0;
             }
         }
         public void Damage(float damage)
         {
-            Debug.Log(p.SO.visibleName + " damage recieved");
             if (p.shield - damage > 0)
             {
                 p.shield += -damage;
@@ -428,13 +393,10 @@ namespace Wingsrv
         {
             if (p.mob && !p.destroyed)
             {
-                //			Debug.Log ("mob "+p.id);
                 if (newtargetToAtack != null && !atack)
                 {
-                    //				Debug.Log ("mob "+p.id+" targ "+newtargetToAtack.p.id +" dist " + Vector3.Distance(p.SO.position, newtargetToAtack.p.SO.position)+" adist "+ p.agr_distance);
                     if (Vector3.Distance(p.SO.position, newtargetToAtack.position) < p.agr_distance)
                     {
-                        //					Debug.Log ("agr");
                         SetTarget(newtargetToAtack);
                         GoToTarget();
                         for (int i = 0; i < weapons.Count; i++)
@@ -470,15 +432,8 @@ namespace Wingsrv
             moveCommand = MoveType.stop;
             complexCommand = ComandType.none;
         }
-        private void Spawn(Vector3 _position)
-        {
-            //p.SO.position = _position;
-            //Debug.Log(host);
-            //if (host != null)
-            //{
-            //    //			host.GetComponent<ShipMotor>().Spawn(p.SO.id);
-            //}
-        }
+        private void Spawn(Vector3 _position){}
+      
         private void Hide()
         {
             p.hidden = true;
