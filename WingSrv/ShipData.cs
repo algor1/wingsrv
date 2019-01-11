@@ -6,10 +6,10 @@ namespace Wingsrv
 
     public class ShipData: SpaceObject
     {
-        public float Max_Speed { get; set; }
+        public float SpeedMax { get; set; }
         public float RotationSpeed { get; set; }
         public float AccelerationMax{get; set;}
-        public float NewSpeed{get; set;}
+        public float SpeedNew { get; set; }
 
         public float Hull_full { get; set; }
         public float Armor_full { get; set; }
@@ -42,10 +42,10 @@ namespace Wingsrv
 
         public ShipData(ShipData value)
         {
-            Max_Speed = value.Max_Speed;
+            SpeedMax = value.SpeedMax;
             RotationSpeed = value.RotationSpeed;
             AccelerationMax = value.AccelerationMax;
-            NewSpeed = value.NewSpeed;
+            SpeedNew = value.SpeedNew;
 
             Hull_full = value.Hull_full;
             Armor_full = value.Armor_full;

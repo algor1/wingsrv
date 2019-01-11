@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Wingsrv
 {
+    public enum ComandType { warpTo, goTo, landTo, none, open };
+    public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal, destroyed, open };
+
 
     public class SO_ship
     {
@@ -16,18 +19,18 @@ namespace Wingsrv
         //private Quaternion rotationToTarget;
 
         //private SpaceObject target;
-        public SpaceObject targetToMove;
-        public SpaceObject newtargetToMove;
+        public SpaceObject TargetToMove {get;private set;}
+        public SpaceObject NewTargetToMove {get;private set;}
         //	private Quaternion oldRotation; //for roll calc
 
-        private SpaceObject targetToAtack;
-        private SpaceObject newtargetToAtack;
+        private SpaceObject TargetToAtack {get;private set;}
+        private SpaceObject NewTargetToAtack {get;private set;}
         public enum MoveType { move, warp, stop };
-        public MoveType moveCommand;
-        public enum ComandType { warpTo, goTo, landTo, none, open };
-        public ComandType complexCommand;
-        public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal, destroyed, open };
-        public bool warpActivated;
+        private MoveType moveCommand;
+        
+        private ComandType complexCommand;
+    
+        private bool warpActivated;
         //public bool warpCoroutineStarted;
         //public bool landed;
 
@@ -65,12 +68,12 @@ namespace Wingsrv
             for (int i = 0; i < weapons.Length; i++)
             {
                 weapons[i].BeforeDestroy();
-                weapons.RemoveAt(i);
+                //weapons.RemoveAt(i);
             }
             for (int i = 0; i < equipments.Length; i++)
             {
                 equipments[i].BeforeDestroy();
-                equipments.RemoveAt(i);
+                //equipments.RemoveAt(i);
 
             }
         }
@@ -109,18 +112,18 @@ namespace Wingsrv
 
 
 #region user commands
-        public void SetTarget(SpaceObject newtarget)
+        public void SetTarget(SpaceObject newTarget)
         {
-            newtargetToMove = newtarget;
-            newtargetToAtack = newtarget;
+            NewTargetToMove = newTarget;
+            NewTargetToAtack = newTarget.type== typeSO.ship ? newTarget : null;
         }
         public void GoToTarget()
         {
-            if (newtargetToMove != null)
+            if (NewTargetToMove != null)
             {
 
                 complexCommand = ComandType.goTo;
-                targetToMove = newtargetToMove;
+                TargetToMove = NewTargetToMove;
                 //			oldRotation = p.SO.rotation;
 
 
@@ -129,11 +132,11 @@ namespace Wingsrv
         }
         public void WarpToTarget()
         {
-            if (newtargetToMove != null && Vector3.Distance(p.SO.position, newtargetToMove.position) > 100000)
+            if (NewTargetToMove != null && Vector3.Distance(p.position, NewTargetToMove.position) > 100000)
             {
                 moveCommand = MoveType.warp;
                 complexCommand = ComandType.warpTo;
-                targetToMove = newtargetToMove;
+                TargetToMove = NewTargetToMove;
                 //			oldRotation = p.SO.rotation;
                 warpActivated = false;
             }
@@ -145,7 +148,7 @@ namespace Wingsrv
         }
         public void StartEquipment()
         {
-            for (int i = 0; i < equipments.Count; i++)
+            for (int i = 0; i < equipments.Length; i++)
             {
                 if (!equipments[i].activate)
                 {
@@ -160,7 +163,7 @@ namespace Wingsrv
         }
         public void StopEquipment()
         {
-            for (int i = 0; i < equipments.Count; i++)
+            for (int i = 0; i < equipments.Length; i++)
             {
                 equipments[i].Stop();
 
@@ -169,29 +172,29 @@ namespace Wingsrv
         }
         public void LandToTarget()
         {
-            if (newtargetToMove != null)
+            if (NewTargetToMove != null)
             {
                 complexCommand = ComandType.landTo;
-                targetToMove = newtargetToMove;
+                TargetToMove = NewTargetToMove;
             }
         }
         public void OpenTarget()
         {
-            if (newtargetToMove != null)
+            if (NewTargetToMove != null)
             {
                 complexCommand = ComandType.open;
-                targetToMove = newtargetToMove;
+                TargetToMove = NewTargetToMove;
                 //            oldRotation = p.SO.rotation;
             }
         }
         public void Atack_target(int weaponnum)
         {
-            if (newtargetToAtack != null)
+            if (NewTargetToAtack != null)
             {
-                targetToAtack = newtargetToAtack;
+                TargetToAtack = NewTargetToAtack;
 
                 //atack = true;
-                weapons[weaponnum].Atack_target(targetToAtack);
+                weapons[weaponnum].Atack_target(TargetToAtack);
 
             }
             else
@@ -210,7 +213,7 @@ namespace Wingsrv
             if (complexCommand == ComandType.goTo)
             {
 
-                if (Vector3.Distance(p.SO.position, targetToMove.position) > 10 * p.SO.speed / p.acceleration_max)
+                if (Vector3.Distance(p.position, TargetToMove.position) > 10 * p.speed / p.AccelerationMax)
                 {
                     moveCommand = MoveType.move;
 
@@ -229,7 +232,7 @@ namespace Wingsrv
             }
             if (complexCommand == ComandType.landTo)
             {
-                if (Vector3.Distance(p.SO.position, targetToMove.position) > 10 * p.max_speed / p.acceleration_max)
+                if (Vector3.Distance(p.position, TargetToMove.position) > 10 * p.Max_Speed / p.AccelerationMax)
                 {
                     moveCommand = MoveType.move;
 
@@ -248,7 +251,7 @@ namespace Wingsrv
             }
             if (complexCommand == ComandType.open)
             {
-                if (Vector3.Distance(p.SO.position, targetToMove.position) > 10 * p.max_speed / p.acceleration_max)
+                if (Vector3.Distance(p.position, TargetToMove.position) > 10 * p.MaxSpeed / p.AccelerationMax)
                 {
                     moveCommand = MoveType.move;
 
