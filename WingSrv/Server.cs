@@ -102,9 +102,17 @@ namespace Wingsrv
         {
             Ship player = GetShip(player_id);
             Ship target = GetShip(target_id);
-            if (player_command == Command.SetTarget)
+            switch (player_command)
             {
-                player.SetTarget(target.p);
+                case Command.SetTarget:
+                    player.SetTarget(target.p);
+                    break;
+                case Command.WarpTo:
+                    player.WarpToTarget();
+                    break;
+                case Command.MoveTo:
+                    player.GoToTarget();
+                    break;
             }
 
         }

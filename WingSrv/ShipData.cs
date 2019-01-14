@@ -41,12 +41,12 @@ namespace Wingsrv
         public SO_equipmentData[] Equipments{get; set;}
 
 
-        public ShipData()
+        public ShipData():base()
         {
 
         }
 
-        public ShipData(ShipData value,Ship ship)
+        public ShipData(ShipData value,Ship ship): base(value)
         {
             ShipLink = ship;
             SpeedMax = value.SpeedMax;

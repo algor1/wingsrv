@@ -1,4 +1,5 @@
 using System;
+//using System.Numerics;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace Wingsrv
     public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal, destroyed, open };
 
 
-    public class Ship : SpaceObject
+    public class Ship 
     {
         public ShipData p; //ship properties	
         //public GameObject host;
@@ -116,7 +117,7 @@ namespace Wingsrv
         {
             NewTargetToMove = newTarget;
             NewTargetToAtack = newTarget.Type== typeSO.ship ? newTarget : null;
-            Console.WriteLine("Target set {0} Ship id {1} move {2}", p.Id, newTarget.Type, NewTargetToMove.Id);
+            Console.WriteLine("{0} id {1} target to move {2} , target to atack {3}",  newTarget.Type, p.Id, NewTargetToMove.Id, NewTargetToAtack.Id);
         }
         public void GoToTarget()
         {
@@ -125,6 +126,8 @@ namespace Wingsrv
 
                 complexCommand = ComandType.goTo;
                 TargetToMove = NewTargetToMove;
+                Console.WriteLine("{0} id {1} moving to {2} id{3}", p.Type, p.Id, NewTargetToMove.Type, NewTargetToMove.Id);
+
                 //			oldRotation = p.SO.rotation;
 
 
@@ -140,10 +143,12 @@ namespace Wingsrv
                 TargetToMove = NewTargetToMove;
                 //			oldRotation = p.SO.rotation;
                 warpActivated = false;
+                Console.WriteLine("{0} id {1} warping to {2} id{3}", p.Type, p.Id, NewTargetToMove.Type, NewTargetToMove.Id);
+
             }
             else
             {
-                //Debug.Log("TO CLOSE TO WARP");
+                Console.WriteLine("{0} id {1} TO CLOSE TO WARP to {2} id{3}",p.Type,p.Id,NewTargetToMove.Type,NewTargetToMove.Id);
             }
 
         }
@@ -217,6 +222,8 @@ namespace Wingsrv
                 if (Vector3.Distance(p.Position, TargetToMove.Position) > 10 * p.Speed / p.AccelerationMax)
                 {
                     moveCommand = MoveType.move;
+                    Console.WriteLine(p.Position);
+
 
                 }
                 else
@@ -276,13 +283,16 @@ namespace Wingsrv
         {
             if (TargetToMove != null)
             {
-                Quaternion rotationToTarget = Quaternion.LookRotation(TargetToMove.Position - p.Position);
-                Vector3 rt = new Vector3(rotationToTarget.eulerAngles.x, rotationToTarget.eulerAngles.y, p.Rotation.eulerAngles.z);
-                rotationToTarget = Quaternion.Euler(rt);
+                MyQuaternion rotationToTarget = MyQuaternion.LookRotation(TargetToMove.Position - p.Position);
+                //removeing z axis  
+                Vector3 rt = new Vector3(rotationToTarget.eulerAngles.x , rotationToTarget.eulerAngles.y, p.Rotation.eulerAngles.z);
+                rotationToTarget = MyQuaternion.Euler(rt);
 
-                if (Mathf.Abs(p.Rotation.eulerAngles.x - rotationToTarget.eulerAngles.x) > 1 || Mathf.Abs(p.Rotation.eulerAngles.y - rotationToTarget.eulerAngles.y) > 1)
+                if (Math.Abs(p.Rotation.eulerAngles.x - rt.x) > 1 || Mathf.Abs(p.Rotation.eulerAngles.y - rt.y) > 1)
                 {
-                    p.Rotation = Quaternion.RotateTowards(p.Rotation, rotationToTarget, p.RotationSpeed * TickDeltaTime/1000);
+                    p.Rotation = MyQuaternion.RotateTowards(p.Rotation, rotationToTarget, p.RotationSpeed * TickDeltaTime/1000);
+                    Console.WriteLine(rt);
+
                     return false;
                 }
                 else
@@ -330,6 +340,8 @@ namespace Wingsrv
         {
             if (moveCommand == MoveType.stop)
             {
+                Console.WriteLine(p.Position);
+
                 p.SpeedNew = 0;
             }
         }
@@ -444,6 +456,8 @@ namespace Wingsrv
         }
         public void Tick()
         {
+            //Console.WriteLine($"Tick {p.VisibleName}");
+
             Agr(); //TODO too heavy fo tick may be it must hav diffeent time of activation
             RestoreTick();
             //CommandManager();

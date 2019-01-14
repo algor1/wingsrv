@@ -13,5 +13,19 @@ namespace Wingsrv
         public string Prefab { get; set; }
         //public SO_ship ship { get; set; }
 
+
+        public SpaceObject() { }
+
+        public SpaceObject(SpaceObject value)
+        {
+            Id = value.Id;
+            VisibleName = value.VisibleName;
+            Type = value.Type;
+            Position = value.Position;
+            Rotation = value.Rotation;
+            Speed = value.Speed;
+            Prefab = value.Prefab;
+        }
     }
+    
 }

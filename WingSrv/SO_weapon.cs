@@ -38,7 +38,7 @@ namespace Wingsrv
 
             if (target.Type == typeSO.ship)
             {
-                currentTarget = (Ship) target;
+                currentTarget = ((ShipData) target).ShipLink;
                 fire = true;
             }
             if (target.Type == typeSO.asteroid)
