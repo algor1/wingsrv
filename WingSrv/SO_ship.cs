@@ -47,7 +47,7 @@ namespace Wingsrv
         {
             p = new ShipData(shipData,this);
             //rotationToTarget = p.SO.rotation;
-            //moveCommand = MoveType.move;
+            moveCommand = MoveType.stop;
             //SendEvent(ShipEvenentsType.move);
             //host = _host;
             //newtargetToMove = null;
@@ -218,19 +218,14 @@ namespace Wingsrv
         {
             if (complexCommand == ComandType.goTo)
             {
-
                 if (Vector3.Distance(p.Position, TargetToMove.Position) > 10 * p.Speed / p.AccelerationMax)
                 {
                     moveCommand = MoveType.move;
                     Console.WriteLine(p.Position);
-
-
                 }
                 else
                 {
-
                     moveCommand = MoveType.stop;
-
                     complexCommand = ComandType.none;
                 }
             }
@@ -290,7 +285,7 @@ namespace Wingsrv
 
                 if (Math.Abs(p.Rotation.eulerAngles.x - rt.x) > 1 || Mathf.Abs(p.Rotation.eulerAngles.y - rt.y) > 1)
                 {
-                    p.Rotation = MyQuaternion.RotateTowards(p.Rotation, rotationToTarget, p.RotationSpeed * TickDeltaTime/1000);
+                    p.Rotation = MyQuaternion.RotateTowards(p.Rotation, rotationToTarget, p.RotationSpeed * TickDeltaTime/1000f);
                     Console.WriteLine(rt);
 
                     return false;
@@ -308,7 +303,7 @@ namespace Wingsrv
             {
                 if (p.SpeedNew > p.Speed)
                 {
-                    p.Speed += TickDeltaTime/1000 * p.AccelerationMax;
+                    p.Speed += TickDeltaTime/1000f * p.AccelerationMax;
                     if (p.SpeedNew < p.Speed)
                     {
                         p.Speed = p.SpeedNew;
@@ -318,7 +313,7 @@ namespace Wingsrv
                 }
                 else
                 {
-                    p.Speed += -TickDeltaTime/1000 * p.AccelerationMax;
+                    p.Speed += -TickDeltaTime/1000f * p.AccelerationMax;
                     if (p.SpeedNew > p.Speed)
                     {
                         p.Speed = p.SpeedNew;
@@ -330,17 +325,18 @@ namespace Wingsrv
         {
             if (moveCommand == MoveType.move)
             {
+                p.SpeedNew = p.SpeedMax;
                 Rotate();
                 Accelerate();
-                p.Speed = Mathf.Lerp(p.Speed, p.SpeedMax, TickDeltaTime/1000 * p.AccelerationMax);
-                p.Position += p.Rotation * Vector3.forward * TickDeltaTime/1000 * p.Speed;
+                //p.Speed = Mathf.Lerp(p.Speed, p.SpeedMax, TickDeltaTime/1000f * p.AccelerationMax);
+                p.Position += p.Rotation * Vector3.forward * TickDeltaTime/1000f * p.Speed;
             }
         }
         private void Stop()
         {
             if (moveCommand == MoveType.stop)
             {
-                Console.WriteLine(p.Position);
+                //Console.WriteLine(p.Position);
 
                 p.SpeedNew = 0;
             }
@@ -377,16 +373,16 @@ namespace Wingsrv
         {
             if (p.Hull < p.Hull_full)
             {
-                p.Hull += p.Hull_restore * TickDeltaTime/1000;
+                p.Hull += p.Hull_restore * TickDeltaTime/1000f;
             }
             else { p.Hull = p.Hull_full; }
             if (p.Shield < p.Shield_full)
-            { p.Shield += p.Shield_restore * TickDeltaTime/1000; }
+            { p.Shield += p.Shield_restore * TickDeltaTime/1000f; }
             else { p.Shield = p.Shield_full; }
 
-            if (p.Armor < p.Armor_full) { p.Armor += p.Armor_restore * TickDeltaTime/1000; }
+            if (p.Armor < p.Armor_full) { p.Armor += p.Armor_restore * TickDeltaTime/1000f; }
             else { p.Armor = p.Armor_full; }
-            if (p.Capasitor < p.Capasitor_full) { p.Capasitor += p.Capasitor_restore * TickDeltaTime/1000; }
+            if (p.Capasitor < p.Capasitor_full) { p.Capasitor += p.Capasitor_restore * TickDeltaTime/1000f; }
             else { p.Capasitor = p.Capasitor_full; }
 
         }
@@ -426,7 +422,7 @@ namespace Wingsrv
         public async Task Warpdrive()
         {
             warpCoroutineStarted = true;
-            await Task.Delay((int)(1000*p.WarpDriveStartTime));
+            await Task.Delay((int)(1000f*p.WarpDriveStartTime));
             float warpDistance = Vector3.Distance(p.Position, TargetToMove.Position);
             float warpTime = warpDistance / p.WarpSpeed;
             Hide(); //TODO damage=0
@@ -460,7 +456,7 @@ namespace Wingsrv
 
             Agr(); //TODO too heavy fo tick may be it must hav diffeent time of activation
             RestoreTick();
-            //CommandManager();
+            CommandManager();
             Move();
             Stop();
             //Console.WriteLine("Ship {0} , position {1}", p.SO.id, p.SO.position);
