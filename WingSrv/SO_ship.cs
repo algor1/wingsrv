@@ -273,29 +273,20 @@ namespace Wingsrv
         }
         #endregion
 
-        #region actions
-        public bool Rotate()
+#region actions
+        private void Rotate()
         {
             if (TargetToMove != null)
             {
                 MyQuaternion rotationToTarget = MyQuaternion.LookRotation(TargetToMove.Position - p.Position);
                 //removeing z axis  
-                Vector3 rt = new Vector3(rotationToTarget.eulerAngles.x , rotationToTarget.eulerAngles.y, p.Rotation.eulerAngles.z);
-                rotationToTarget = MyQuaternion.Euler(rt);
-
-                if (Math.Abs(p.Rotation.eulerAngles.x - rt.x) > 1 || Mathf.Abs(p.Rotation.eulerAngles.y - rt.y) > 1)
+                rotationToTarget = MyQuaternion.Euler(rotationToTarget.eulerAngles.x , rotationToTarget.eulerAngles.y, p.Rotation.eulerAngles.z);
+                
+                if (p.Rotation!=rotationToTarget)
                 {
                     p.Rotation = MyQuaternion.RotateTowards(p.Rotation, rotationToTarget, p.RotationSpeed * TickDeltaTime/1000f);
-                    Console.WriteLine(rt);
-
-                    return false;
-                }
-                else
-                {
-                    return true;
                 }
             }
-            return false;
         }
         void Accelerate()
         {
@@ -462,7 +453,7 @@ namespace Wingsrv
             //Console.WriteLine("Ship {0} , position {1}", p.SO.id, p.SO.position);
 
         }
-        #endregion
+#endregion
 
 
     }
