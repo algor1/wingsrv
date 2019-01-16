@@ -225,6 +225,8 @@ namespace Wingsrv
                 }
                 else
                 {
+                    Console.WriteLine("{0} id {1} pos {2} stopped near {3} id {4} pos {5}", p.Type, p.Id, TargetToMove.Type, TargetToMove.Id ,TargetToMove.Position);
+
                     moveCommand = MoveType.stop;
                     complexCommand = ComandType.none;
                 }
