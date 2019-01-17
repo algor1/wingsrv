@@ -45,7 +45,8 @@ namespace Wingsrv
 
         public Ship(ShipData shipData)
         {
-            p = new ShipData(shipData,this);
+            p = new ShipData(shipData,this); ;
+            p.Rotation = new MyQuaternion(0f, 0f, 0f, 0f);
             //rotationToTarget = p.SO.rotation;
             moveCommand = MoveType.stop;
             //SendEvent(ShipEvenentsType.move);
@@ -280,13 +281,16 @@ namespace Wingsrv
         {
             if (TargetToMove != null)
             {
-                MyQuaternion rotationToTarget = MyQuaternion.LookRotation(TargetToMove.Position - p.Position);
+                MyQuaternion rotationToTarget = MyQuaternion.LookRotation(p.Position-TargetToMove.Position);
                 //removeing z axis  
                 rotationToTarget = MyQuaternion.Euler(rotationToTarget.eulerAngles.x , rotationToTarget.eulerAngles.y, p.Rotation.eulerAngles.z);
                 
                 if (p.Rotation!=rotationToTarget)
                 {
                     p.Rotation = MyQuaternion.RotateTowards(p.Rotation, rotationToTarget, p.RotationSpeed * TickDeltaTime/1000f);
+                    Console.WriteLine("Ship {0} , rotation {1} target {2} rotation to target {3}" , p.Id, p.Rotation.eulerAngles, TargetToMove.Id,rotationToTarget.eulerAngles);
+                    
+
                 }
             }
         }
@@ -300,7 +304,7 @@ namespace Wingsrv
                     if (p.SpeedNew < p.Speed)
                     {
                         p.Speed = p.SpeedNew;
-                        Console.WriteLine("Ship {0} , position {1}", p.Id,p.Position);
+                        //Console.WriteLine("Ship {0} , position {1}", p.Id,p.Position);
 
                     }
                 }
