@@ -46,7 +46,7 @@ namespace Wingsrv
         public Ship(ShipData shipData)
         {
             p = new ShipData(shipData,this); ;
-            p.Rotation = new MyQuaternion(0f, 0f, 0f, 0f);
+            if  (p.Rotation == new MyQuaternion(0f, 0f, 0f, 0f)) p.Rotation = new MyQuaternion(0f, 0f, 0f, 1f);
             //rotationToTarget = p.SO.rotation;
             moveCommand = MoveType.stop;
             //SendEvent(ShipEvenentsType.move);
