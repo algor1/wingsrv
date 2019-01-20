@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Wingsrv
 {
     public enum Command { MoveTo, WarpTo, Atack, SetTarget, LandTo, Equipment, Open, TakeOff };
-    public enum typeSO { asteroid, ship, station, waypoint, container };
+    public enum TypeSO { asteroid, ship, station, waypoint, container };
 
     public class Server
     {
@@ -74,6 +74,8 @@ namespace Wingsrv
         {
             if (!ships.ContainsKey(ship.Id)){
                 Ship s = new Ship(ship);
+                Console.WriteLine("added {0} id {1} position {2} , rotation {3}", s.p.Type, s.p.Id, s.p.Position, s.p.Rotation);
+
                 ships.TryAdd(s.p.Id,s);
                 onTick += s.Tick;
                 

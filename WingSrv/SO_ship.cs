@@ -17,7 +17,7 @@ namespace Wingsrv
         //public GameObject host;
 
         //public bool atack;
-        //private Quaternion rotationToTarget;
+        private float zBeforeRotation;
 
         //private SpaceObject target;
         public SpaceObject TargetToMove {get;private set;}
@@ -47,6 +47,8 @@ namespace Wingsrv
         {
             p = new ShipData(shipData,this); ;
             if  (p.Rotation == new MyQuaternion(0f, 0f, 0f, 0f)) p.Rotation = new MyQuaternion(0f, 0f, 0f, 1f);
+
+
             //rotationToTarget = p.SO.rotation;
             moveCommand = MoveType.stop;
             //SendEvent(ShipEvenentsType.move);
@@ -117,14 +119,14 @@ namespace Wingsrv
         public void SetTarget(SpaceObject newTarget)
         {
             NewTargetToMove = newTarget;
-            NewTargetToAtack = newTarget.Type== typeSO.ship ? newTarget : null;
+            NewTargetToAtack = newTarget.Type== TypeSO.ship ? newTarget : null;
             Console.WriteLine("{0} id {1} target to move {2} , target to atack {3}",  newTarget.Type, p.Id, NewTargetToMove.Id, NewTargetToAtack.Id);
         }
         public void GoToTarget()
         {
             if (NewTargetToMove != null)
             {
-
+                zBeforeRotation = p.Rotation.eulerAngles.z;
                 complexCommand = ComandType.goTo;
                 TargetToMove = NewTargetToMove;
                 Console.WriteLine("{0} id {1} moving to {2} id{3}", p.Type, p.Id, NewTargetToMove.Type, NewTargetToMove.Id);
@@ -139,6 +141,8 @@ namespace Wingsrv
         {
             if (NewTargetToMove != null && Vector3.Distance(p.Position, NewTargetToMove.Position) > 100000)
             {
+                zBeforeRotation = p.Rotation.eulerAngles.z;
+
                 moveCommand = MoveType.warp;
                 complexCommand = ComandType.warpTo;
                 TargetToMove = NewTargetToMove;
@@ -181,6 +185,8 @@ namespace Wingsrv
         {
             if (NewTargetToMove != null)
             {
+                zBeforeRotation = p.Rotation.eulerAngles.z;
+
                 complexCommand = ComandType.landTo;
                 TargetToMove = NewTargetToMove;
             }
@@ -189,6 +195,8 @@ namespace Wingsrv
         {
             if (NewTargetToMove != null)
             {
+                zBeforeRotation = p.Rotation.eulerAngles.z;
+
                 complexCommand = ComandType.open;
                 TargetToMove = NewTargetToMove;
                 //            oldRotation = p.SO.rotation;
@@ -226,7 +234,7 @@ namespace Wingsrv
                 }
                 else
                 {
-                    Console.WriteLine("{0} id {1} pos {2} stopped near {3} id {4} pos {5}", p.Type, p.Id, TargetToMove.Type, TargetToMove.Id ,TargetToMove.Position);
+                    Console.WriteLine("{0} id {1} pos {2} stopped near {3} id {4} pos {5}", p.Type, p.Id,p.Position, TargetToMove.Type, TargetToMove.Id ,TargetToMove.Position);
 
                     moveCommand = MoveType.stop;
                     complexCommand = ComandType.none;
@@ -281,9 +289,9 @@ namespace Wingsrv
         {
             if (TargetToMove != null)
             {
-                MyQuaternion rotationToTarget = MyQuaternion.LookRotation(p.Position-TargetToMove.Position);
+                MyQuaternion rotationToTarget = MyQuaternion.LookRotation(TargetToMove.Position-p.Position);
                 //removeing z axis  
-                rotationToTarget = MyQuaternion.Euler(rotationToTarget.eulerAngles.x , rotationToTarget.eulerAngles.y, p.Rotation.eulerAngles.z);
+                rotationToTarget = MyQuaternion.Euler(rotationToTarget.eulerAngles.x , rotationToTarget.eulerAngles.y, zBeforeRotation);
                 
                 if (p.Rotation!=rotationToTarget)
                 {

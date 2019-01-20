@@ -85,19 +85,19 @@ namespace Wingsrv
                 switch (_type)
                 {
                     case 1:
-                        returnSO.Type = typeSO.ship;
+                        returnSO.Type = TypeSO.ship;
                         break;
                     case 2:
-                        returnSO.Type = typeSO.station;
+                        returnSO.Type = TypeSO.station;
                         break;
                     case 3:
-                        returnSO.Type = typeSO.asteroid;
+                        returnSO.Type = TypeSO.asteroid;
                         break;
                     case 4:
-                        returnSO.Type = typeSO.waypoint;
+                        returnSO.Type = TypeSO.waypoint;
                         break;
                     case 5:
-                        returnSO.Type = typeSO.container;
+                        returnSO.Type = TypeSO.container;
                         break;
                 }
             }
@@ -136,19 +136,19 @@ namespace Wingsrv
                 switch (_type)
                 {
                     case 1:
-                        _SO.Type = typeSO.ship;
+                        _SO.Type = TypeSO.ship;
                         break;
                     case 2:
-                        _SO.Type = typeSO.station;
+                        _SO.Type = TypeSO.station;
                         break;
                     case 3:
-                        _SO.Type = typeSO.asteroid;
+                        _SO.Type = TypeSO.asteroid;
                         break;
                     case 4:
-                        _SO.Type = typeSO.waypoint;
+                        _SO.Type = TypeSO.waypoint;
                         break;
                     case 5:
-                        _SO.Type = typeSO.container;
+                        _SO.Type = TypeSO.container;
                         break;
                 }
                 returnSOList.Add(_SO);
@@ -244,13 +244,13 @@ namespace Wingsrv
                 switch (_type)
                 {
                     case 1:
-                        retShipData.Type = typeSO.ship;
+                        retShipData.Type = TypeSO.ship;
                         break;
                     case 2:
-                        retShipData.Type = typeSO.station;
+                        retShipData.Type = TypeSO.station;
                         break;
                     case 3:
-                        retShipData.Type = typeSO.asteroid;
+                        retShipData.Type = TypeSO.asteroid;
                         break;
                 }
             }
@@ -343,13 +343,13 @@ namespace Wingsrv
                 switch (_type)
                 {
                     case 1:
-                        retShipData.Type = typeSO.ship;
+                        retShipData.Type = TypeSO.ship;
                         break;
                     case 2:
-                        retShipData.Type = typeSO.station;
+                        retShipData.Type = TypeSO.station;
                         break;
                     case 3:
-                        retShipData.Type = typeSO.asteroid;
+                        retShipData.Type = TypeSO.asteroid;
                         break;
                 }
                 retListShip.Add(retShipData);
@@ -460,7 +460,7 @@ namespace Wingsrv
         {
             SpaceObject SO = AddNewSO(position, rotation, item_id);
             ShipData retSOShipData;
-            if (SO.Type == typeSO.ship)
+            if (SO.Type == TypeSO.ship)
             {
                 ShipItem _shipItem = serverManager.inventoryServer.GetShipItem(item_id);
 
