@@ -7,21 +7,16 @@ using System.Xml.Linq;
 using DarkRift;
 using DarkRift.Server;
 using LoginPlugin;
-using RoomSystemPlugin;
 
 namespace Wingsrv
 {
     public class Game : Plugin
     {
-        //public override Version Version => new Version(1, 0, 0);
-        //public override bool ThreadSafe => true;
-        //public override Command[] Commands => new[]
-        //{
-        //    new Command("groups", "Shows all chatgroups [groups username(optional]", "", GetChatGroupsCommand)
-        //};
+        public override Version Version => new Version(1, 0, 0);
+        public override bool ThreadSafe => true;
 
-        public ConcurrentDictionary<string, ChatGroup> ChatGroups { get; } = new ConcurrentDictionary<string, ChatGroup>();
-        public ConcurrentDictionary<string, List<ChatGroup>> ChatGroupsOfPlayer { get; } = new ConcurrentDictionary<string, List<ChatGroup>>();
+        //public ConcurrentDictionary<string, ChatGroup> ChatGroups { get; } = new ConcurrentDictionary<string, ChatGroup>();
+        //public ConcurrentDictionary<string, List<ChatGroup>> ChatGroupsOfPlayer { get; } = new ConcurrentDictionary<string, List<ChatGroup>>();
 
         // Tag
         private const byte GameTag = 1;
