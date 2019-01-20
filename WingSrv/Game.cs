@@ -9,7 +9,7 @@ using DarkRift.Server;
 using LoginPlugin;
 using RoomSystemPlugin;
 
-namespace GamePlugin
+namespace Wingsrv
 {
     public class Game : Plugin
     {
