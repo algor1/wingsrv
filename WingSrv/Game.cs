@@ -8,6 +8,7 @@ using DarkRift;
 using DarkRift.Server;
 using LoginPlugin;
 
+
 namespace Wingsrv
 {
     public class Game : Plugin
@@ -24,16 +25,18 @@ namespace Wingsrv
 
         // Subjects
 
-        private const ushort NearestSpaceObjects = 0 + Shift;
-
+        private const ushort InitPlayer = 0 + Shift;
         private const ushort SetTarget = 1 + Shift;
         private const ushort MoveToTarget = 2 + Shift;
+        private const ushort NearestSpaceObjects = 3 + Shift;
+        private const ushort MessageFailed = 4 + Shift;
         //TODO ------------------------------------------
 
         private const string ConfigPath = @"Plugins/Game.xml";
         private static readonly object InitializeLock = new object();
         private bool _debug = true;
         private Login _loginPlugin;
+        private ServerManager serverManager;
         
 
         public Game(PluginLoadData pluginLoadData) : base(pluginLoadData)
@@ -87,6 +90,7 @@ namespace Wingsrv
                     {
                         _loginPlugin = PluginManager.GetPluginByType<Login>();
                         _loginPlugin.onLogout += RemovePlayerFromChatGroups;
+                        serverManager = new ServerManager();
                         //ChatGroups["General"] = new ChatGroup("General");
                     }
                 }
@@ -110,15 +114,18 @@ namespace Wingsrv
                 // Private Message
                 switch (message.Tag)
                 {
-                    case PrivateMessage:
+                    case InitPlayer:
                     {
                         // If player isn't logged in -> return error 1
-                        if (!_loginPlugin.PlayerLoggedIn(client, MessageFailed, "Private Message failed.")) return;
+                        if (!_loginPlugin.PlayerLoggedIn(client, MessageFailed, "Init player failed.")) return;
 
                         var senderName = _loginPlugin.UsersLoggedIn[client];
-                        string receiver;
-                        string content;
+                        
+                        serverManager.server.LoadPlayer();
 
+                        
+                        
+                        
                         try
                         {
                             using (var reader = message.GetReader())
