@@ -15,9 +15,10 @@ namespace Wingsrv
     {
         public override Version Version => new Version(1, 0, 0);
         public override bool ThreadSafe => true;
-
-        //public ConcurrentDictionary<string, ChatGroup> ChatGroups { get; } = new ConcurrentDictionary<string, ChatGroup>();
-        //public ConcurrentDictionary<string, List<ChatGroup>> ChatGroupsOfPlayer { get; } = new ConcurrentDictionary<string, List<ChatGroup>>();
+        //public override Command[] Commands => new []
+        //{
+        //    new Command("groups", "Shows all chatgroups [groups username(optional]", "", GetChatGroupsCommand)
+        //};
 
         // Tag
         private const byte GameTag = 1;
@@ -28,7 +29,7 @@ namespace Wingsrv
         private const ushort InitPlayer = 0 + Shift;
         private const ushort SetTarget = 1 + Shift;
         private const ushort MoveToTarget = 2 + Shift;
-        private const ushort NearestSpaceObjects = 3 + Shift;
+        public const ushort NearestSpaceObjects = 3 + Shift;
         private const ushort MessageFailed = 4 + Shift;
         //TODO ------------------------------------------
 
@@ -89,7 +90,7 @@ namespace Wingsrv
                     if (_loginPlugin == null)
                     {
                         _loginPlugin = PluginManager.GetPluginByType<Login>();
-                        _loginPlugin.onLogout += RemovePlayerFromChatGroups;
+                        _loginPlugin.onLogout+= RemovePlayerFromServer;
                         serverManager = new ServerManager();
                         //ChatGroups["General"] = new ChatGroup("General");
                     }
@@ -115,390 +116,24 @@ namespace Wingsrv
                 switch (message.Tag)
                 {
                     case InitPlayer:
-                    {
-                        // If player isn't logged in -> return error 1
-                        if (!_loginPlugin.PlayerLoggedIn(client, MessageFailed, "Init player failed.")) return;
-
-                        var senderName = _loginPlugin.UsersLoggedIn[client];
-                        
-                        serverManager.server.LoadPlayer();
-
-                        
-                        
-                        
-                        try
                         {
-                            using (var reader = message.GetReader())
-                            {
-                                receiver = reader.ReadString();
-                                content = reader.ReadString();
-                            }
+                            // If player isn't logged in -> return error 1
+                            if (!_loginPlugin.PlayerLoggedIn(client, MessageFailed, "Init player failed.")) return;
+
+                            var senderName = _loginPlugin.UsersLoggedIn[client];
+                            if (!serverManager.server.LoadPlayer(client)) _loginPlugin.PlayerLoggedIn(client, MessageFailed, "Init player on server failed");
+                            break;
                         }
-                        catch (Exception ex)
-                        {
-                            // Return Error 0 for Invalid Data Packages Recieved
-                            _loginPlugin.InvalidData(client, MessageFailed, ex, "Send Message failed! ");
-                            return;
-                        }
-
-                        if (!_loginPlugin.Clients.ContainsKey(receiver))
-                        {
-                            // If receiver isn't logged in -> return error 3
-                            using (var writer = DarkRiftWriter.Create())
-                            {
-                                writer.Write((byte) 3);
-
-                                using (var msg = Message.Create(MessageFailed, writer))
-                                {
-                                    client.SendMessage(msg, SendMode.Reliable);
-                                }
-                            }
-
-                            if (_debug)
-                            {
-                                WriteEvent("Send Message failed. Receiver wasn't logged in.", LogType.Info);
-                            }
-                            return;
-                        }
-
-                        var receivingClient = _loginPlugin.Clients[receiver];
-
-                        // Let sender know message got transmitted
-                        using (var writer = DarkRiftWriter.Create())
-                        {
-                            writer.Write(senderName);
-                            writer.Write(receiver);
-                            writer.Write(content);
-
-                            using (var msg = Message.Create(SuccessfulPrivateMessage, writer))
-                            {
-                                client.SendMessage(msg, SendMode.Reliable);
-                            }
-                        }
-
-                        // Let receiver know about the new message
-                        using (var writer = DarkRiftWriter.Create())
-                        {
-                            writer.Write(senderName);
-                            writer.Write(content);
-
-                            using (var msg = Message.Create(PrivateMessage, writer))
-                            {
-                                receivingClient.SendMessage(msg, SendMode.Reliable);
-                            }
-                        }
-                        break;
-                    }
-
-                    case RoomMessage:
-                    {
-                        // If player isn't logged in -> return error 1
-                        if (!_loginPlugin.PlayerLoggedIn(client, MessageFailed, "Group/Room Message failed.")) return;
-
-                        var senderName = _loginPlugin.UsersLoggedIn[client];
-                        ushort roomId;
-                        string content;
-
-                        try
-                        {
-                            using (var reader = message.GetReader())
-                            {
-                                roomId = reader.ReadUInt16();
-                                content = reader.ReadString();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            // Return Error 0 for Invalid Data Packages Recieved
-                            _loginPlugin.InvalidData(client, MessageFailed, ex, "Send Message failed! ");
-                            return;
-                        }
-
-                        if (!_roomSystem.RoomList[roomId].Clients.Contains(client))
-                        {
-                            // If player isn't actually in the room -> return error 2
-                            using (var writer = DarkRiftWriter.Create())
-                            {
-                                writer.Write((byte) 2);
-
-                                using (var msg = Message.Create(MessageFailed, writer))
-                                {
-                                    client.SendMessage(msg, SendMode.Reliable);
-                                }
-                            }
-
-                            WriteEvent("Send Message failed. Player wasn't part of the room.", LogType.Warning);
-                            return;
-                        }
-
-                        using (var writer = DarkRiftWriter.Create())
-                        {
-                            writer.Write(senderName);
-                            writer.Write(content);
-
-                            using (var msg = Message.Create(RoomMessage, writer))
-                            {
-                                foreach (var cl in _roomSystem.RoomList[roomId].Clients)
-                                    cl.SendMessage(msg, SendMode.Reliable);
-                            }
-                        }
-                        break;
-                    }
-
-                    case GroupMessage:
-                    {
-                        // If player isn't logged in -> return error 1
-                        if (!_loginPlugin.PlayerLoggedIn(client, MessageFailed, "Group/Room Message failed.")) return;
-
-                        var senderName = _loginPlugin.UsersLoggedIn[client];
-                        string groupName;
-                        string content;
-
-                        try
-                        {
-                            using (var reader = message.GetReader())
-                            {
-                                groupName = reader.ReadString();
-                                content = reader.ReadString();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            // Return Error 0 for Invalid Data Packages Recieved
-                            _loginPlugin.InvalidData(client, MessageFailed, ex, "Send Message failed! ");
-                            return;
-                        }
-
-                        if (!ChatGroups[groupName].Users.Values.Contains(client))
-                        {
-                            // If player isn't actually in the chatgroup -> return error 2
-                            using (var writer = DarkRiftWriter.Create())
-                            {
-                                writer.Write((byte) 2);
-
-                                using (var msg = Message.Create(MessageFailed, writer))
-                                {
-                                    client.SendMessage(msg, SendMode.Reliable);
-                                }
-                            }
-
-                            WriteEvent("Send Message failed. Player wasn't part of the chat group.", LogType.Warning);
-                            return;
-                        }
-
-                        using (var writer = DarkRiftWriter.Create())
-                        {
-                            writer.Write(groupName);
-                            writer.Write(senderName);
-                            writer.Write(content);
-
-                            using (var msg = Message.Create(GroupMessage, writer))
-                            {
-                                foreach (var cl in ChatGroups[groupName].Users.Values)
-                                    cl.SendMessage(msg, SendMode.Reliable);
-                            }
-                        }
-                        break;
-                    }
-
-                    case JoinGroup:
-                    {
-                        // If player isn't logged in -> return error 1
-                        if (!_loginPlugin.PlayerLoggedIn(client, JoinGroupFailed, "Join ChatGroup failed.")) return;
-
-                        var playerName = _loginPlugin.UsersLoggedIn[client];
-                        string groupName;
-
-                        try
-                        {
-                            using (var reader = message.GetReader())
-                            {
-                                groupName = reader.ReadString();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            // Return Error 0 for Invalid Data Packages Recieved
-                            _loginPlugin.InvalidData(client, JoinGroupFailed, ex, "Join Chatgroup failed! ");
-                            return;
-                        }
-
-                        // Create chatgroup if necessary and add player to it
-                        var chatGroup = ChatGroups.FirstOrDefault(x =>
-                            string.Equals(x.Key, groupName, StringComparison.CurrentCultureIgnoreCase)).Value;
-                        if (chatGroup == null)
-                        {
-                            chatGroup = new ChatGroup(groupName);
-                            ChatGroups[groupName] = chatGroup;
-                        }
-
-                        if (!chatGroup.AddPlayer(playerName, client))
-                        {
-                            // Already in Chatgroup -> return error 2
-                            using (var writer = DarkRiftWriter.Create())
-                            {
-                                writer.Write((byte) 2);
-
-                                using (var msg = Message.Create(JoinGroupFailed, writer))
-                                {
-                                    client.SendMessage(msg, SendMode.Reliable);
-                                }
-                            }
-                            return;
-                        }
-                        if (!ChatGroupsOfPlayer.ContainsKey(playerName))
-                        {
-                            ChatGroupsOfPlayer[playerName] = new List<ChatGroup>();
-                        }
-                        ChatGroupsOfPlayer[playerName].Add(chatGroup);
-
-                        using (var writer = DarkRiftWriter.Create())
-                        {
-                            writer.Write(chatGroup);
-
-                            using (var msg = Message.Create(JoinGroup, writer))
-                            {
-                                client.SendMessage(msg, SendMode.Reliable);
-                            }
-                        }
-
-                        if (_debug)
-                        {
-                            WriteEvent("Player joined ChatGroup: " + groupName, LogType.Info);
-                        }
-                        break;
-                    }
-
-                    case LeaveGroup:
-                    {
-                        // If player isn't logged in -> return error 1
-                        if (!_loginPlugin.PlayerLoggedIn(client, JoinGroupFailed, "Leave ChatGroup failed.")) return;
-
-                        var playerName = _loginPlugin.UsersLoggedIn[client];
-                        string groupName;
-
-                        try
-                        {
-                            using (var reader = message.GetReader())
-                            {
-                                groupName = reader.ReadString();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            // Return Error 0 for Invalid Data Packages Recieved
-                            _loginPlugin.InvalidData(client, JoinGroupFailed, ex, "Leave ChatGroup failed! ");
-                            return;
-                        }
-
-                        // get chatgroup if necessary and remove player from it
-                        var chatGroup = ChatGroups.FirstOrDefault(x =>
-                            string.Equals(x.Key, groupName, StringComparison.CurrentCultureIgnoreCase)).Value;
-                        if (chatGroup == null)
-                        {
-                            // No such Chatgroup -> return error 2
-                            using (var writer = DarkRiftWriter.Create())
-                            {
-                                writer.Write((byte) 2);
-
-                                using (var msg = Message.Create(LeaveGroupFailed, writer))
-                                {
-                                    client.SendMessage(msg, SendMode.Reliable);
-                                }
-                            }
-                            return;
-                        }
-                        chatGroup.RemovePlayer(playerName);
-
-                        // Remove Chatgroup if he was the last player in it
-                        if (chatGroup.Users.Count == 0 && chatGroup.Name != "General")
-                        {
-                            ChatGroups.TryRemove(chatGroup.Name, out _);
-                        }
-
-                        // Remove chatgroup from the players groups
-                        if (ChatGroupsOfPlayer[playerName].Count == 0)
-                        {
-                            ChatGroupsOfPlayer.TryRemove(playerName, out _);
-                        }
-                        else
-                        {
-                            ChatGroupsOfPlayer[playerName].Remove(chatGroup);
-                        }
-
-                        using (var writer = DarkRiftWriter.Create())
-                        {
-                            writer.Write(chatGroup.Name);
-
-                            using (var msg = Message.Create(LeaveGroup, writer))
-                            {
-                                client.SendMessage(msg, SendMode.Reliable);
-                            }
-                        }
-
-                        if (_debug)
-                        {
-                            WriteEvent("Player left ChatGroup: " + groupName, LogType.Info);
-                        }
-                        break;
-                    }
-                    case GetActiveGroups:
-                    {
-                        // If player isn't logged in -> return error 1
-                        if (!_loginPlugin.PlayerLoggedIn(client, GetActiveGroupsFailed, "Get ChatGroups failed.")) return;
-
-                        var groupNames = ChatGroups.Values.Select(chatGroup => chatGroup.Name).ToArray();
-
-                        using (var writer = DarkRiftWriter.Create())
-                        {
-                            writer.Write(groupNames);
-
-                            using (var msg = Message.Create(GetActiveGroups, writer))
-                            {
-                                client.SendMessage(msg, SendMode.Reliable);
-                            }
-                        }
-                        break;
-                    }
                 }
             }
         }
 
-        private void RemovePlayerFromChatGroups(string username)
+        private void RemovePlayerFromServer(string username)
         {
-            if (!ChatGroupsOfPlayer.ContainsKey(username)) return;
-
-            foreach (var chatGroup in ChatGroupsOfPlayer[username])
-            {
-                ChatGroups[chatGroup.Name].RemovePlayer(username);
-                if (chatGroup.Users.Count == 0 && chatGroup.Name != "General")
-                {
-                    ChatGroups.TryRemove(chatGroup.Name, out _);
-                }
-            }
-            ChatGroupsOfPlayer.TryRemove(username, out _);
+            IClient cl = _loginPlugin.Clients[username];
+            serverManager.server.RemovePlayer(cl);
         }
 
-        private void GetChatGroupsCommand(object sender, CommandEventArgs e)
-        {
-            WriteEvent("Active Chatgroups:", LogType.Info);
-            var chatGroups = ChatGroups.Values.ToList();
-            if (e.Arguments.Length == 0)
-            {
-                foreach (var chatGroup in chatGroups)
-                    WriteEvent(chatGroup.Name + " - " + chatGroup.Users.Count, LogType.Info);
-            }
-            else
-            {
-                var username = e.Arguments[0];
-                if (!ChatGroupsOfPlayer.ContainsKey(username))
-                {
-                    WriteEvent(username + " doesn't exist in any chatgroups.", LogType.Info);
-                    return;
-                }
-                foreach (var chatGroup in ChatGroupsOfPlayer[username])
-                    WriteEvent(chatGroup.Name, LogType.Info);
-            }
-        }
+ 
     }
 }

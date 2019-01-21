@@ -4,7 +4,9 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-
+using DarkRift;
+using DarkRift.Server;
+using LoginPlugin;
 
 namespace Wingsrv
 {
@@ -16,6 +18,7 @@ namespace Wingsrv
 
         public bool started;
         private ConcurrentDictionary<int, Ship> ships;
+        private Dictionary<IClient, int> playerShip;
 
 
         public delegate void TickHandler();
@@ -24,10 +27,11 @@ namespace Wingsrv
         public InventoryServer inventoryServer;
         private ServerManager serverManager;
         public int TickDeltaTime = 20;
+        //private Login _loginPlugin;
 
 
 
-        public  Server(ServerManager manager)
+        public Server(ServerManager manager)
         {
             serverManager = manager;
         }
@@ -44,6 +48,8 @@ namespace Wingsrv
                 Console.WriteLine("loading ships...");
                 LoadShips();
                 Console.WriteLine("Starting server...");
+                playerShip = new Dictionary<IClient, int>();
+
                 Run();
             }
 
@@ -53,6 +59,7 @@ namespace Wingsrv
         {
             Console.WriteLine(" Server started.");
             started = true;
+            SendNearest();
             while (started)
             {
                 onTick();
@@ -67,8 +74,76 @@ namespace Wingsrv
                 //Console.WriteLine("Ship tick {0}",i);
             }
         }
+        #region PlayerList
+        public bool LoadPlayer(IClient player)
+        {
+            playerShip.Add(player, 0);
+            return true;
+        }
+        public bool RemovePlayer(IClient player)
+        {
+            Task.Delay(1000);
+            return playerShip.Remove(player);
+        }
+        private void SendNearest()
+        {
+            while (started)
+            {
+                foreach (KeyValuePair<IClient, int> entry in playerShip)
+                {
+                    using (var writer = DarkRiftWriter.Create())
+                    {
+                        foreach (Ship ship in Nearest(entry.Value))
+                        {
+                            writer.Write(ship.p.Id);
+                            writer.Write(ship.p.Position.x);
+                            writer.Write(ship.p.Position.y);
+                            writer.Write(ship.p.Position.z);
+                            writer.Write(ship.p.Rotation.x);
+                            writer.Write(ship.p.Rotation.y);
+                            writer.Write(ship.p.Rotation.z);
+                            writer.Write(ship.p.Rotation.w);
+                            writer.Write(ship.p.Prefab);
+                        }
+                        using (var msg = Message.Create(Game.NearestSpaceObjects, writer))
+                        {
+                            entry.Key.SendMessage(msg, SendMode.Reliable);
+                        }
+                    }
+                }
+                Task.Delay(1000);
+            }
+        } 
+
+
+
+
+        #endregion
+
 
         #region ShipList
+
+        private List<Ship> Nearest(int ship_id)
+                
+        {
+            Ship _playerShip = GetShip(ship_id);
+            List<Ship> resultShipList = new List<Ship>();
+            for (int i = 0; i < ships.Count; i++)
+            {
+                if (ships[i].p.Id == ship_id || ships[i].p.Hidden) continue;//remove player from list
+                if (ships[i].p.Id == ship_id || ships[i].p.Destroyed) continue;//remove player from list
+
+                float dist = Vector3.Distance(_playerShip.p.Position, ships[i].p.Position);
+                //          print (dist);
+                if (dist < _playerShip.p.VisionDistance)
+                {
+                    resultShipList.Add(ships[i]);
+                }
+
+            }
+            return resultShipList;
+        }
+
 
         private void AddShip(ShipData ship)
         {
