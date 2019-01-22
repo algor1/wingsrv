@@ -31,7 +31,7 @@ namespace Wingsrv
         private const ushort MoveToTarget = 2 + Shift;
         public const ushort NearestSpaceObjects = 3 + Shift;
         private const ushort MessageFailed = 4 + Shift;
-        //TODO ------------------------------------------
+        //TODO add tags ------------------------------------------
 
         private const string ConfigPath = @"Plugins/Game.xml";
         private static readonly object InitializeLock = new object();
