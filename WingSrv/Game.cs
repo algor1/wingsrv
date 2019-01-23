@@ -21,7 +21,7 @@ namespace Wingsrv
         //};
 
         // Tag
-        private const byte GameTag = 1;
+        private const byte GameTag = 4;
         private const ushort Shift = GameTag * Login.TagsPerPlugin;
 
         // Subjects
