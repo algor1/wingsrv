@@ -43,6 +43,7 @@ namespace Wingsrv
         public Game(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
             LoadConfig();
+
             ClientManager.ClientConnected += OnPlayerConnected;
         }
 
@@ -92,6 +93,7 @@ namespace Wingsrv
                         _loginPlugin = PluginManager.GetPluginByType<Login>();
                         _loginPlugin.onLogout+= RemovePlayerFromServer;
                         serverManager = new ServerManager();
+                        serverManager.Run();
                         //ChatGroups["General"] = new ChatGroup("General");
                     }
                 }
@@ -121,7 +123,8 @@ namespace Wingsrv
                             if (!_loginPlugin.PlayerLoggedIn(client, MessageFailed, "Init player failed.")) return;
 
                             var senderName = _loginPlugin.UsersLoggedIn[client];
-                            if (!serverManager.server.LoadPlayer(client)) _loginPlugin.PlayerLoggedIn(client, MessageFailed, "Init player on server failed");
+                            serverManager.server.LoadPlayer(senderName);
+
                             break;
                         }
                 }

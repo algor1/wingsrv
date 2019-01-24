@@ -75,7 +75,7 @@ namespace Wingsrv
             }
         }
         #region PlayerList
-        public bool LoadPlayer(IClient player)
+        public bool LoadPlayer(string player)
         {
             playerShip.Add(player, 0);
             return true;
@@ -89,21 +89,16 @@ namespace Wingsrv
         {
             while (started)
             {
+               //serverManager.WriteEvent("Send Nearest.", LogType.Info);
+
                 foreach (KeyValuePair<IClient, int> entry in playerShip)
                 {
                     using (var writer = DarkRiftWriter.Create())
                     {
+
                         foreach (Ship ship in Nearest(entry.Value))
                         {
-                            writer.Write(ship.p.Id);
-                            writer.Write(ship.p.Position.x);
-                            writer.Write(ship.p.Position.y);
-                            writer.Write(ship.p.Position.z);
-                            writer.Write(ship.p.Rotation.x);
-                            writer.Write(ship.p.Rotation.y);
-                            writer.Write(ship.p.Rotation.z);
-                            writer.Write(ship.p.Rotation.w);
-                            writer.Write(ship.p.Prefab);
+                            writer.Write(ship.p);
                         }
                         using (var msg = Message.Create(Game.NearestSpaceObjects, writer))
                         {
