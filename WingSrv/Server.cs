@@ -24,16 +24,17 @@ namespace Wingsrv
         public delegate void TickHandler();
         public event TickHandler onTick;
         private ServerDB serverDB;
-        public InventoryServer inventoryServer;
+        private InventoryServer inventoryServer;
         private ServerManager serverManager;
         public int TickDeltaTime = 20;
+        private Plugin gamePlugin;
         //private Login _loginPlugin;
 
 
 
-        public Server(ServerManager manager)
+        public Server(Plugin game)
         {
-            serverManager = manager;
+            gamePlugin = game;
         }
         public void RunServer()
         {

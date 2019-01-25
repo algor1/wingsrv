@@ -5,6 +5,8 @@ using Microsoft.Data.Sqlite;
 using System.IO;
 using System.Collections.Generic;
 using System;
+using DarkRift;
+using DarkRift.Server;
 
 namespace Wingsrv
 {
@@ -15,15 +17,16 @@ namespace Wingsrv
         private IDataReader reader;
         private IDbCommand dbcmd;
         public bool started;
-
+        private Plugin gamePlugin;
 
         private ServerManager serverManager;
 
 
 
-        public ServerDB(ServerManager manager)
+        public ServerDB(Plugin game)
         {
-            serverManager = manager;
+            gamePlugin = game;
+ 
             started = true;
         }
 

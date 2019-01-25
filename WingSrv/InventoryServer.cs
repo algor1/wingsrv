@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using DarkRift;
+using DarkRift.Server;
 
 namespace Wingsrv
 {
@@ -8,13 +10,13 @@ namespace Wingsrv
     {
         public bool started;
         private ItemDB itemDB;
-        private ServerManager serverManager;
+        private Plugin gamePlugin;
 
-        public InventoryServer(ServerManager manager)
+        public InventoryServer(Plugin game)
         {
             started = true;
-            serverManager = manager;
-            itemDB = serverManager.itemDB;
+            gamePlugin = game;
+            itemDB = gamePlugin.itemDB;
         }
 
         public List<InventoryItem> PlayerInventory(int player_id, int holder_id)

@@ -7,6 +7,8 @@ using System.Xml.Linq;
 using DarkRift;
 using DarkRift.Server;
 using LoginPlugin;
+using System.Threading;
+
 
 
 namespace Wingsrv
@@ -26,11 +28,11 @@ namespace Wingsrv
 
         // Subjects
 
-        private const ushort InitPlayer = 0 + Shift;
-        private const ushort SetTarget = 1 + Shift;
-        private const ushort MoveToTarget = 2 + Shift;
-        public const ushort NearestSpaceObjects = 3 + Shift;
-        private const ushort MessageFailed = 4 + Shift;
+        private const ushort InitPlayer =(ushort)( 0 + Shift);
+        private const ushort SetTarget = (ushort)(1 + Shift);
+        private const ushort MoveToTarget = (ushort)(2 + Shift);
+        public const ushort NearestSpaceObjects = (ushort)(3 + Shift);
+        private const ushort MessageFailed = (ushort)(4 + Shift);
         //TODO add tags ------------------------------------------
 
         private const string ConfigPath = @"Plugins/Game.xml";
@@ -39,6 +41,13 @@ namespace Wingsrv
         private Login _loginPlugin;
         private ServerManager serverManager;
         
+        // Servers
+        public  Server server;
+        public  ServerDB serverDB;
+        public  InventoryServer inventoryServer;
+        public  ItemDB itemDB;
+
+
 
         public Game(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
@@ -46,6 +55,29 @@ namespace Wingsrv
 
             ClientManager.ClientConnected += OnPlayerConnected;
         }
+
+        
+
+        public  void RunServers ()
+        {
+            itemDB = new ItemDB(this);
+            inventoryServer = new InventoryServer(this);
+            serverDB = new ServerDB(this);
+            server = new Server(this);
+            Thread myThread = new Thread(new ThreadStart(server.RunServer));
+            myThread.Start();
+
+
+        }
+        public void Stop()
+        {
+            itemDB.OnApplicationQuit();
+        }
+
+
+
+
+
 
         private void LoadConfig()
         {

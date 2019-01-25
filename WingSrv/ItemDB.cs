@@ -4,6 +4,9 @@ using System.Data;
 using Microsoft.Data.Sqlite;
 using System.IO;
 using System.Collections.Generic;
+using DarkRift;
+using DarkRift.Server;
+
 namespace Wingsrv {
 
     public class ItemDB
@@ -12,11 +15,11 @@ namespace Wingsrv {
         private IDbConnection dbSkillCon;
         private IDataReader reader;
         private IDbCommand dbcmd;
-        private ServerManager serverManager;
+        private Plugin gamePlugin;
 
-        public ItemDB(ServerManager manager) {
+        public ItemDB(Plugin game) {
             started = true;
-            serverManager = manager;
+            gamePlugin = game;
         }
 
         public void OnApplicationQuit()
