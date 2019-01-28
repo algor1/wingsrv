@@ -10,9 +10,9 @@ namespace Wingsrv
     {
         public bool started;
         private ItemDB itemDB;
-        private Plugin gamePlugin;
+        private Game gamePlugin;
 
-        public InventoryServer(Plugin game)
+        public InventoryServer(Game game)
         {
             started = true;
             gamePlugin = game;

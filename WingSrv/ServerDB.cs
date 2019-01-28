@@ -17,13 +17,13 @@ namespace Wingsrv
         private IDataReader reader;
         private IDbCommand dbcmd;
         public bool started;
-        private Plugin gamePlugin;
+        private Game gamePlugin;
 
-        private ServerManager serverManager;
+        //private ServerManager serverManager;
 
 
 
-        public ServerDB(Plugin game)
+        public ServerDB(Game game)
         {
             gamePlugin = game;
  
@@ -38,7 +38,7 @@ namespace Wingsrv
         private void InitDB()
         {
             string p = "wing_srv.db";
-            string filepath = "DB/" + p;
+            string filepath = "./Data/Game/DB/" + p;
             string dbPath = Path.Combine(Environment.CurrentDirectory, filepath);
             string connectionString = string.Format("Data Source={0}", dbPath);
             dbSkillCon = (IDbConnection)new SqliteConnection(connectionString);
@@ -430,7 +430,7 @@ namespace Wingsrv
         {
             int new_id = 0;
             int _type = 1;
-            Item _item = serverManager.inventoryServer.GetItem(item_id);
+            Item _item = gamePlugin.inventoryServer.GetItem(item_id);
             switch (_item.itemType)
             {
                 case Item.Type_of_item.ship:
@@ -465,7 +465,7 @@ namespace Wingsrv
             ShipData retSOShipData;
             if (SO.Type == TypeSO.ship)
             {
-                ShipItem _shipItem = serverManager.inventoryServer.GetShipItem(item_id);
+                ShipItem _shipItem = gamePlugin.inventoryServer.GetShipItem(item_id);
 
                 string qwery = @"insert into SO_shipdata (
                    SO_id,

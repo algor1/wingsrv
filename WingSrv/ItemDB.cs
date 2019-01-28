@@ -15,9 +15,9 @@ namespace Wingsrv {
         private IDbConnection dbSkillCon;
         private IDataReader reader;
         private IDbCommand dbcmd;
-        private Plugin gamePlugin;
+        private Game gamePlugin;
 
-        public ItemDB(Plugin game) {
+        public ItemDB(Game game) {
             started = true;
             gamePlugin = game;
         }
@@ -29,8 +29,9 @@ namespace Wingsrv {
         private void InitDB()
         {
             string p = "inventory.db";
-            string filepath = "./DB/" + p; 
+            string filepath = "./Data/Game/DB/" + p; 
             string connectionString = "URI=file:" + filepath;
+            gamePlugin.WriteToLog(connectionString,DarkRift.LogType.Info);
             dbSkillCon = (IDbConnection)new SqliteConnection(connectionString);
             dbSkillCon.Open();
         }

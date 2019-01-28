@@ -14,15 +14,12 @@ namespace Wingsrv
     public class Ship 
     {
         public ShipData p; //ship properties	
-        //public GameObject host;
 
         //public bool atack;
         private float zBeforeRotation;
 
-        //private SpaceObject target;
         public SpaceObject TargetToMove {get;private set;}
         public SpaceObject NewTargetToMove {get;private set;}
-        //	private Quaternion oldRotation; //for roll calc
 
         public SpaceObject TargetToAtack {get;private set;}
         public SpaceObject NewTargetToAtack {get;private set;}
@@ -45,15 +42,10 @@ namespace Wingsrv
 
         public Ship(ShipData shipData)
         {
-            p = new ShipData(shipData,this); ;
-            if  (p.Rotation == new MyQuaternion(0f, 0f, 0f, 0f)) p.Rotation = new MyQuaternion(0f, 0f, 0f, 1f);
+            p = new ShipData(shipData,this); 
 
 
-            //rotationToTarget = p.SO.rotation;
             moveCommand = MoveType.stop;
-            //SendEvent(ShipEvenentsType.move);
-            //host = _host;
-            //newtargetToMove = null;
             weapons = new SO_weapon[shipData.Weapons.Length];
             for (int i = 0; i < shipData.Weapons.Length; i++)
             {
@@ -107,13 +99,6 @@ namespace Wingsrv
         }
 
 #endregion
-        //public void SendEvent(ShipEvenentsType evnt)
-        //{
-        //    onland?.Invoke(p.SO.id);
-        //    Console.WriteLine("onland");
-
-        //}
-
 
 #region user commands
         public void SetTarget(SpaceObject newTarget)
@@ -130,8 +115,6 @@ namespace Wingsrv
                 complexCommand = ComandType.goTo;
                 TargetToMove = NewTargetToMove;
                 Console.WriteLine("{0} id {1} moving to {2} id{3}", p.Type, p.Id, NewTargetToMove.Type, NewTargetToMove.Id);
-
-                //			oldRotation = p.SO.rotation;
 
 
             }
@@ -202,27 +185,21 @@ namespace Wingsrv
                 //            oldRotation = p.SO.rotation;
             }
         }
+
         public void Atack_target(int weaponnum)
         {
             if (NewTargetToAtack != null)
             {
                 TargetToAtack = NewTargetToAtack;
-
-                //atack = true;
                 weapons[weaponnum].Atack_target(TargetToAtack);
-
             }
-            else
-            {
-                //atack = false;
-            }
-
         }
+
         public void StopFire(int weaponnum)
         {
-            //atack = false;
             weapons[weaponnum].stop();
         }
+
         private void CommandManager()
         {
             if (complexCommand == ComandType.goTo)
@@ -333,7 +310,6 @@ namespace Wingsrv
                 p.SpeedNew = p.SpeedMax;
                 Rotate();
                 Accelerate();
-                //p.Speed = Mathf.Lerp(p.Speed, p.SpeedMax, TickDeltaTime/1000f * p.AccelerationMax);
                 p.Position += p.Rotation * Vector3.forward * TickDeltaTime/1000f * p.Speed;
             }
         }
@@ -457,14 +433,12 @@ namespace Wingsrv
         }
         public void Tick()
         {
-            //Console.WriteLine($"Tick {p.VisibleName}");
 
             Agr(); //TODO too heavy fo tick may be it must hav diffeent time of activation
             RestoreTick();
             CommandManager();
             Move();
             Stop();
-            //Console.WriteLine("Ship {0} , position {1}", p.SO.id, p.SO.position);
 
         }
 #endregion

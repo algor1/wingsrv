@@ -18,23 +18,24 @@ namespace Wingsrv
 
         public bool started;
         private ConcurrentDictionary<int, Ship> ships;
-        private Dictionary<IClient, int> playerShip;
+        private Dictionary<string, int> playerShip;
 
 
         public delegate void TickHandler();
         public event TickHandler onTick;
         private ServerDB serverDB;
         private InventoryServer inventoryServer;
-        private ServerManager serverManager;
+        //private ServerManager serverManager;
         public int TickDeltaTime = 20;
-        private Plugin gamePlugin;
-        //private Login _loginPlugin;
+        private Game gamePlugin;
+        private Login _loginPlugin;
 
 
 
-        public Server(Plugin game)
+        public Server(Game game)
         {
             gamePlugin = game;
+            _loginPlugin = game._loginPlugin;
         }
         public void RunServer()
         {
@@ -43,13 +44,13 @@ namespace Wingsrv
                 this.onTick += new TickHandler(Tick);
                 ships = new ConcurrentDictionary<int, Ship>();
                 Console.WriteLine("Starting DB server...");
-                serverDB = serverManager.serverDB;
+                serverDB = gamePlugin.serverDB;
                 Console.WriteLine("Starting inventory server...");
-                inventoryServer = serverManager.inventoryServer;
+                inventoryServer = gamePlugin.inventoryServer;
                 Console.WriteLine("loading ships...");
                 LoadShips();
                 Console.WriteLine("Starting server...");
-                playerShip = new Dictionary<IClient, int>();
+                playerShip = new Dictionary<string, int>();
 
                 Run();
             }
@@ -58,7 +59,7 @@ namespace Wingsrv
 
         private void Run()
         {
-            Console.WriteLine(" Server started.");
+            gamePlugin.WriteToLog(" Server started.", DarkRift.LogType.Info);
             started = true;
             SendNearest();
             while (started)
@@ -75,13 +76,14 @@ namespace Wingsrv
                 //Console.WriteLine("Ship tick {0}",i);
             }
         }
+
         #region PlayerList
         public bool LoadPlayer(string player)
         {
             playerShip.Add(player, 0);
             return true;
         }
-        public bool RemovePlayer(IClient player)
+        public bool RemovePlayer(string player)
         {
             Task.Delay(1000);
             return playerShip.Remove(player);
@@ -92,7 +94,7 @@ namespace Wingsrv
             {
                //serverManager.WriteEvent("Send Nearest.", LogType.Info);
 
-                foreach (KeyValuePair<IClient, int> entry in playerShip)
+                foreach (KeyValuePair<string, int> entry in playerShip)
                 {
                     using (var writer = DarkRiftWriter.Create())
                     {
@@ -103,7 +105,9 @@ namespace Wingsrv
                         }
                         using (var msg = Message.Create(Game.NearestSpaceObjects, writer))
                         {
-                            entry.Key.SendMessage(msg, SendMode.Reliable);
+                            IClient cl = _loginPlugin.Clients[entry.Key];
+
+                            cl.SendMessage(msg, SendMode.Reliable);
                         }
                     }
                 }

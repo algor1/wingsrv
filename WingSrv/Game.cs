@@ -38,8 +38,8 @@ namespace Wingsrv
         private const string ConfigPath = @"Plugins/Game.xml";
         private static readonly object InitializeLock = new object();
         private bool _debug = true;
-        private Login _loginPlugin;
-        private ServerManager serverManager;
+        public Login _loginPlugin;
+        //private ServerManager serverManager;
         
         // Servers
         public  Server server;
@@ -52,7 +52,7 @@ namespace Wingsrv
         public Game(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
             LoadConfig();
-
+            RunServers();
             ClientManager.ClientConnected += OnPlayerConnected;
         }
 
@@ -64,8 +64,9 @@ namespace Wingsrv
             inventoryServer = new InventoryServer(this);
             serverDB = new ServerDB(this);
             server = new Server(this);
-            Thread myThread = new Thread(new ThreadStart(server.RunServer));
-            myThread.Start();
+            server.RunServer();
+            //Thread myThread = new Thread(new ThreadStart(server.RunServer));
+            //myThread.Start();
 
 
         }
@@ -124,9 +125,6 @@ namespace Wingsrv
                     {
                         _loginPlugin = PluginManager.GetPluginByType<Login>();
                         _loginPlugin.onLogout+= RemovePlayerFromServer;
-                        serverManager = new ServerManager();
-                        serverManager.Run();
-                        //ChatGroups["General"] = new ChatGroup("General");
                     }
                 }
             }
@@ -155,7 +153,7 @@ namespace Wingsrv
                             if (!_loginPlugin.PlayerLoggedIn(client, MessageFailed, "Init player failed.")) return;
 
                             var senderName = _loginPlugin.UsersLoggedIn[client];
-                            serverManager.server.LoadPlayer(senderName);
+                            server.LoadPlayer(senderName);
 
                             break;
                         }
@@ -166,9 +164,15 @@ namespace Wingsrv
         private void RemovePlayerFromServer(string username)
         {
             IClient cl = _loginPlugin.Clients[username];
-            serverManager.server.RemovePlayer(cl);
+            server.RemovePlayer(username);
+        }
+        public void WriteToLog(string _event, LogType typeInfo)
+        {
+            WriteEvent(_event, typeInfo);
         }
 
- 
+
+        
+
     }
 }
