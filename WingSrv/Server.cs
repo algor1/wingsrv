@@ -26,7 +26,7 @@ namespace Wingsrv
         private ServerDB serverDB;
         private InventoryServer inventoryServer;
         //private ServerManager serverManager;
-        public int TickDeltaTime = 20;
+        public int TickDeltaTime = 2000;
         private Game gamePlugin;
         private Login _loginPlugin;
 

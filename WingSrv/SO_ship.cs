@@ -35,7 +35,7 @@ namespace Wingsrv
         private SO_weapon[] weapons;
         private SO_equipment[] equipments;
         
-        public int TickDeltaTime=20; //{get;set;}
+        public int TickDeltaTime=2000; //{get;set;}
 
 
 
