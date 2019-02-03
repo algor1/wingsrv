@@ -28,12 +28,13 @@ namespace Wingsrv
 
         // Subjects
 
-        private const ushort InitPlayer =(ushort)( 0 + Shift);
-        private const ushort SetTarget = (ushort)(1 + Shift);
-        private const ushort MoveToTarget = (ushort)(2 + Shift);
+        public const ushort InitPlayer =(ushort)( 0 + Shift);
+        public const ushort SetTarget = (ushort)(1 + Shift);
+        public const ushort MoveToTarget = (ushort)(2 + Shift);
         public const ushort NearestSpaceObjects = (ushort)(3 + Shift);
-        private const ushort MessageFailed = (ushort)(4 + Shift);
-        //TODO add tags ------------------------------------------
+        public const ushort MessageFailed = (ushort)(4 + Shift);
+        public const ushort PlayerShipData = (ushort)(5 + Shift);
+
 
         private const string ConfigPath = @"Plugins/Game.xml";
         private static readonly object InitializeLock = new object();
@@ -46,6 +47,9 @@ namespace Wingsrv
         public  ServerDB serverDB;
         public  InventoryServer inventoryServer;
         public  ItemDB itemDB;
+
+        private ConcurrentDictionary<string, int> PlayerOnShips;
+
 
 
 
@@ -67,6 +71,7 @@ namespace Wingsrv
             server.RunServer();
             //Thread myThread = new Thread(new ThreadStart(server.RunServer));
             //myThread.Start();
+            //Console.WriteLine(myThread.IsBackground);
 
 
         }
@@ -124,6 +129,7 @@ namespace Wingsrv
                     if (_loginPlugin == null)
                     {
                         _loginPlugin = PluginManager.GetPluginByType<Login>();
+                        server._loginPlugin = _loginPlugin;
                         _loginPlugin.onLogout+= RemovePlayerFromServer;
                     }
                 }
