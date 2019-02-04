@@ -40,8 +40,8 @@ namespace Wingsrv
 
         public float WarpDriveStartTime { get; set; }
         public float WarpSpeed { get; set; }
-        public SO_weaponData[] Weapons { get; set; }
-        public SO_equipmentData[] Equipments{get; set;}
+        public WeaponData[] Weapons { get; set; }
+        public EquipmentData[] Equipments{get; set;}
 
 
         public ShipData():base()
@@ -135,6 +135,8 @@ namespace Wingsrv
 
             WarpDriveStartTime = e.Reader.ReadSingle();
             WarpSpeed = e.Reader.ReadSingle();
+            Weapons = e.Reader.ReadSerializables<WeaponData>();
+            Equipments = e.Reader.ReadSerializables<EquipmentData>();
         }
 
         public void Serialize(SerializeEvent e)
@@ -182,6 +184,9 @@ namespace Wingsrv
 
             e.Writer.Write(WarpDriveStartTime);
             e.Writer.Write(WarpSpeed);
+            e.Writer.Write(Weapons);
+            e.Writer.Write(Equipments);
+
         }
 
 
