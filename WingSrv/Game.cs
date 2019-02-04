@@ -169,7 +169,6 @@ namespace Wingsrv
 
         private void RemovePlayerFromServer(string username)
         {
-            IClient cl = _loginPlugin.Clients[username];
             server.RemovePlayer(username);
         }
         public void WriteToLog(string _event, LogType typeInfo)

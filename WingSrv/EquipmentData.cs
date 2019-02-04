@@ -4,7 +4,7 @@ using UnityEngine;
 using DarkRift;
 using DarkRift.Server;
 
-namespace Wingsrv
+namespace SpaceObjects
 {
 
     public class EquipmentData:IDarkRiftSerializable

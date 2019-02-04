@@ -1,8 +1,10 @@
 using UnityEngine;
 using DarkRift;
 
-namespace Wingsrv
+namespace SpaceObjects
 {
+    public enum TypeSO { asteroid, ship, station, waypoint, container };
+
     public class SpaceObject // :IDarkRiftSerializable
     {
         public int Id { get; set; }

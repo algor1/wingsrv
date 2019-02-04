@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using DarkRift;
-using UnityEngine; 
+using UnityEngine;
 
-namespace Wingsrv
+namespace SpaceObjects
 {
     // Properties of spaceship that will be stored to DB
     public class ShipData: SpaceObject,IDarkRiftSerializable
@@ -83,16 +83,16 @@ namespace Wingsrv
             WarpDriveStartTime = value.WarpDriveStartTime;
             WarpSpeed = value.WarpSpeed;
             
-            Weapons = new SO_weaponData[value.Weapons.Length];
+            Weapons = new WeaponData[value.Weapons.Length];
             for (int i = 0; i < value.Weapons.Length; i++)
 			{
-                Weapons[i] = new SO_weaponData (value.Weapons[i]);
+                Weapons[i] = new WeaponData (value.Weapons[i]);
 			}
 
-            Equipments = new SO_equipmentData[value.Equipments.Length];
+            Equipments = new EquipmentData[value.Equipments.Length];
             for (int i = 0; i < value.Equipments.Length; i++)
             {
-                Equipments[i] = new SO_equipmentData(value.Equipments[i]);
+                Equipments[i] = new EquipmentData(value.Equipments[i]);
             }
         }
         public void Deserialize(DeserializeEvent e)
@@ -101,7 +101,7 @@ namespace Wingsrv
             VisibleName = e.Reader.ReadString();
             Type = (TypeSO)e.Reader.ReadInt32();
             Position = new Vector3(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
-            Rotation = new MyQuaternion(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
+            Rotation = new Quaternion(e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle(), e.Reader.ReadSingle());
             Speed = e.Reader.ReadSingle();
             Prefab = e.Reader.ReadString();
 

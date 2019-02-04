@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Server;
+using SpaceObjects;
 
 namespace Wingsrv
 {

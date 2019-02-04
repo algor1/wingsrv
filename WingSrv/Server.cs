@@ -7,11 +7,11 @@ using UnityEngine;
 using DarkRift;
 using DarkRift.Server;
 using LoginPlugin;
+using SpaceObjects;
 
 namespace Wingsrv
 {
     public enum Command { MoveTo, WarpTo, Atack, SetTarget, LandTo, Equipment, Open, TakeOff };
-    public enum TypeSO { asteroid, ship, station, waypoint, container };
 
     public class Server
     {
@@ -94,10 +94,13 @@ namespace Wingsrv
 
             //return true;
         }
-        public bool RemovePlayer(string player)
+        public void RemovePlayer(string player)
         {
-            Task.Delay(1000);
-            return playerShip.Remove(player);
+            if (playerShip.ContainsKey(player))
+            {
+                playerShip.Remove(player);
+                gamePlugin.WriteToLog("player " + player + " removed", DarkRift.LogType.Info);
+            }
         }
         private async Task SendNearest()
         {

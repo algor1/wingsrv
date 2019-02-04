@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System;
 using DarkRift;
 using DarkRift.Server;
+using SpaceObjects;
+
 
 namespace Wingsrv
 {
@@ -365,16 +367,16 @@ namespace Wingsrv
             return retListShip;
         }
 
-        private SO_equipmentData[] GetEquip(int Ship_id)
+        private EquipmentData[] GetEquip(int Ship_id)
         {
-            SO_equipmentData[] retList = new SO_equipmentData[0];
+            EquipmentData[] retList = new EquipmentData[0];
             return retList;
         }
 
-        private SO_weaponData[] GetWeapons(int ship_id)
+        private WeaponData[] GetWeapons(int ship_id)
         {
-            List<SO_weaponData> retList = new List<SO_weaponData>();
-            SO_weaponData _weapon;
+            List<WeaponData> retList = new List<WeaponData>();
+            WeaponData _weapon;
             string qwery = @"SELECT 
 					SO_id ,
  					WeaponType, 
@@ -391,7 +393,7 @@ namespace Wingsrv
             while (reader.Read())
             {
                 int _type = 0;
-                _weapon = new SO_weaponData();
+                _weapon = new WeaponData();
 
                 //			if (!reader.IsDBNull(0)) _weapon. = reader.GetInt32(0);
                 if (!reader.IsDBNull(1)) _type = reader.GetInt32(1);
@@ -405,18 +407,18 @@ namespace Wingsrv
                 switch (_type)
                 {
                     case 1:
-                        _weapon.Type = SO_weaponData.WeaponType.laser;
+                        _weapon.Type = WeaponData.WeaponType.laser;
                         break;
                     case 2:
-                        _weapon.Type = SO_weaponData.WeaponType.missile;
+                        _weapon.Type = WeaponData.WeaponType.missile;
                         break;
                     case 3:
-                        _weapon.Type = SO_weaponData.WeaponType.projective;
+                        _weapon.Type = WeaponData.WeaponType.projective;
                         break;
                 }
                 retList.Add(_weapon);
             }
-            SO_weaponData[] retArray = new SO_weaponData[retList.Count];
+            WeaponData[] retArray = new WeaponData[retList.Count];
             for (int i = 0; i < retList.Count; i++)
             {
                 retArray[i] = retList[i];

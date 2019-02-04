@@ -5,21 +5,25 @@ using UnityEngine;
 using System.Threading.Tasks;
 
 
-namespace Wingsrv
+namespace SpaceObjects
 {
     public enum ComandType { warpTo, goTo, landTo, none, open };
     public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal, destroyed, open };
+    public enum Command { MoveTo, WarpTo, Atack, SetTarget, LandTo, Equipment, Open, TakeOff };
 
 
     public class Ship 
     {
         public ShipData p; //ship properties	
+        //public GameObject host;
 
         //public bool atack;
         private float zBeforeRotation;
 
+        //private SpaceObject target;
         public SpaceObject TargetToMove {get;private set;}
         public SpaceObject NewTargetToMove {get;private set;}
+        //	private Quaternion oldRotation; //for roll calc
 
         public SpaceObject TargetToAtack {get;private set;}
         public SpaceObject NewTargetToAtack {get;private set;}
@@ -32,30 +36,35 @@ namespace Wingsrv
         public bool warpCoroutineStarted;
         //public bool landed;
         private bool atackAI;
-        private SO_weapon[] weapons;
-        private SO_equipment[] equipments;
+        private Weapon[] weapons;
+        private Equipment[] equipments;
         
-        public int TickDeltaTime=2000; //{get;set;}
+        public int TickDeltaTime=20; //{get;set;}
 
 
 
 
         public Ship(ShipData shipData)
         {
-            p = new ShipData(shipData,this); 
+            p = new ShipData(shipData,this); ;
+            if  (p.Rotation == new MyQuaternion(0f, 0f, 0f, 0f)) p.Rotation = new MyQuaternion(0f, 0f, 0f, 1f);
 
 
+            //rotationToTarget = p.SO.rotation;
             moveCommand = MoveType.stop;
-            weapons = new SO_weapon[shipData.Weapons.Length];
+            //SendEvent(ShipEvenentsType.move);
+            //host = _host;
+            //newtargetToMove = null;
+            weapons = new Weapon[shipData.Weapons.Length];
             for (int i = 0; i < shipData.Weapons.Length; i++)
             {
-                weapons[i] = new SO_weapon(shipData.Weapons[i], this);
+                weapons[i] = new Weapon(shipData.Weapons[i], this);
                 
             }
-            equipments = new SO_equipment[shipData.Equipments.Length];
+            equipments = new Equipment[shipData.Equipments.Length];
             for (int i = 0; i < shipData.Equipments.Length; i++)
             {
-                equipments[i] = new SO_equipment(shipData.Equipments[i], this);
+                equipments[i] = new Equipment(shipData.Equipments[i], this);
             }
         }
 
@@ -75,6 +84,7 @@ namespace Wingsrv
         }
 #region events
         public event EventHandler<LandEventArgs> ShipLanded;
+
         protected virtual void OnLand(LandEventArgs e)
         {
             EventHandler<LandEventArgs> handler = ShipLanded;
@@ -86,6 +96,7 @@ namespace Wingsrv
         }
 
         public event EventHandler<DestroyEventArgs> ShipDestroyed;
+
         protected virtual void OnDestroy(DestroyEventArgs e)
         {
             EventHandler<DestroyEventArgs> handler = ShipDestroyed;
@@ -122,6 +133,8 @@ namespace Wingsrv
                 complexCommand = ComandType.goTo;
                 TargetToMove = NewTargetToMove;
                 Console.WriteLine("{0} id {1} moving to {2} id{3}", p.Type, p.Id, NewTargetToMove.Type, NewTargetToMove.Id);
+
+                //			oldRotation = p.SO.rotation;
 
 
             }
@@ -192,21 +205,27 @@ namespace Wingsrv
                 //            oldRotation = p.SO.rotation;
             }
         }
-
         public void Atack_target(int weaponnum)
         {
             if (NewTargetToAtack != null)
             {
                 TargetToAtack = NewTargetToAtack;
-                weapons[weaponnum].Atack_target(TargetToAtack);
-            }
-        }
 
+                //atack = true;
+                weapons[weaponnum].Atack_target(TargetToAtack);
+
+            }
+            else
+            {
+                //atack = false;
+            }
+
+        }
         public void StopFire(int weaponnum)
         {
+            //atack = false;
             weapons[weaponnum].stop();
         }
-
         private void CommandManager()
         {
             if (complexCommand == ComandType.goTo)
@@ -317,6 +336,7 @@ namespace Wingsrv
                 p.SpeedNew = p.SpeedMax;
                 Rotate();
                 Accelerate();
+                //p.Speed = Mathf.Lerp(p.Speed, p.SpeedMax, TickDeltaTime/1000f * p.AccelerationMax);
                 p.Position += p.Rotation * Vector3.forward * TickDeltaTime/1000f * p.Speed;
             }
         }
@@ -442,12 +462,14 @@ namespace Wingsrv
         }
         public void Tick()
         {
+            //Console.WriteLine($"Tick {p.VisibleName}");
 
             Agr(); //TODO too heavy fo tick may be it must hav diffeent time of activation
             RestoreTick();
             CommandManager();
             Move();
             Stop();
+            //Console.WriteLine("Ship {0} , position {1}", p.SO.id, p.SO.position);
 
         }
 #endregion
