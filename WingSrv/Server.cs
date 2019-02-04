@@ -73,7 +73,7 @@ namespace Wingsrv
             {
                 onTick();
 
-                await Task.Delay(TickDeltaTime); //await?????????????
+                await Task.Delay(TickDeltaTime); 
                 //Console.WriteLine("tick {0}", DateTime.Now);
             }
         }
@@ -257,6 +257,7 @@ namespace Wingsrv
             this.onTick += new TickHandler(ship.Tick);//избавится от делегата
             ship.ShipLanded += ShipLand;
             ship.ShipDestroyed += ShipDestroy;
+            ship.ShipSpawn += ShipSpawn;
             
         }
         private void ShipLand(object sender, LandEventArgs e)
@@ -266,6 +267,10 @@ namespace Wingsrv
         private void ShipDestroy(object sender, DestroyEventArgs e)
         {
             Console.WriteLine(" Ship id: {0}  landed ", e.ship_id);
+        }
+         private void ShipSpawn(object sender, SpawnEventArgs e)
+        {
+            Console.WriteLine(" Ship id: {0}  spawn ", e.ship_id);
         }
         #endregion
     }

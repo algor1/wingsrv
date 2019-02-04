@@ -75,7 +75,6 @@ namespace Wingsrv
         }
 #region events
         public event EventHandler<LandEventArgs> ShipLanded;
-
         protected virtual void OnLand(LandEventArgs e)
         {
             EventHandler<LandEventArgs> handler = ShipLanded;
@@ -87,7 +86,6 @@ namespace Wingsrv
         }
 
         public event EventHandler<DestroyEventArgs> ShipDestroyed;
-
         protected virtual void OnDestroy(DestroyEventArgs e)
         {
             EventHandler<DestroyEventArgs> handler = ShipDestroyed;
@@ -97,7 +95,16 @@ namespace Wingsrv
             DestroyEventArgs args = new DestroyEventArgs();
             OnDestroy(args);
         }
-
+        public event EventHandler<SpawnEventArgs> ShipSpawn;
+        protected virtual void OnSpawn(SpawnEventArgs e)
+        {
+            EventHandler<SpawnEventArgs> handler = ShipSpawn;
+        }
+        private void OnSpawnCall(int ship_id)
+        {
+            SpawnEventArgs args = new SpawnEventArgs();
+            OnSpawn(args);
+        }
 #endregion
 
 #region user commands
@@ -421,7 +428,9 @@ namespace Wingsrv
             moveCommand = MoveType.stop;
             complexCommand = ComandType.none;
         }
-        private void Spawn(Vector3 _position){}
+        private void Spawn(Vector3 _position){
+            OnSpawnCall(p.Id);
+        }
       
         private void Hide()
         {
@@ -456,7 +465,10 @@ namespace Wingsrv
     {
         public int ship_id {get; set;}
     }
-
+    public class SpawnEventArgs: EventArgs
+    {
+        public int ship_id {get; set;}
+    }
 
 #endregion
 }
