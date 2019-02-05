@@ -92,6 +92,7 @@ namespace SpaceObjects
         private void OnLandCall(int ship_id)
         {
             LandEventArgs args = new LandEventArgs();
+            args.ship_id=ship_id;
             OnLand(args);
         }
 
@@ -104,6 +105,7 @@ namespace SpaceObjects
         private void OnDestroyCall(int ship_id)
         {
             DestroyEventArgs args = new DestroyEventArgs();
+            args.ship_id=ship_id;
             OnDestroy(args);
         }
         public event EventHandler<SpawnEventArgs> ShipSpawn;
@@ -114,8 +116,20 @@ namespace SpaceObjects
         private void OnSpawnCall(int ship_id)
         {
             SpawnEventArgs args = new SpawnEventArgs();
+            args.ship_id=ship_id;
             OnSpawn(args);
         }
+        public event EventHandler ShipAccelerated;
+        protected virtual void OnAccelerated()
+        {
+            EventHandler handler = ShipAccelerated;
+        }
+        private void OnSpawnCall()
+        {
+            OnAccelerated();
+        }
+
+
 #endregion
 
 #region user commands
