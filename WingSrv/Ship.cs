@@ -40,7 +40,7 @@ namespace SpaceObjects
         private Equipment[] equipments;
         
         public int TickDeltaTime=20; //{get;set;}
-
+        public int RestoreTickDeltaTime=3000; //TODO store it from shipdata
 
 
 
@@ -66,6 +66,7 @@ namespace SpaceObjects
             {
                 equipments[i] = new Equipment(shipData.Equipments[i], this);
             }
+            RestoreTick();
         }
 
         public void BeforeDestroy()
@@ -119,16 +120,20 @@ namespace SpaceObjects
             args.ship_id=ship_id;
             OnSpawn(args);
         }
-        public event EventHandler ShipAccelerated;
-        protected virtual void OnAccelerated()
+        // Event for animation in client
+        public event EventHandler<ChangeStateArgs> ChangeState;
+        protected virtual void OnChangeState(ChangeStateArgs e)
         {
-            EventHandler handler = ShipAccelerated;
+            EventHandler<ChangeStateArgs> handler = ChangeState;
         }
-        private void OnSpawnCall()
+        private void OnChangeStateCall(ShipEvenentsType _eventType)
         {
-            OnAccelerated();
+            ChangeStateArgs args = new ChangeStateArgs();
+            args.ChangeState=_eventType;
+            OnChangeState(args);
         }
 
+        
 
 #endregion
 
@@ -285,14 +290,11 @@ namespace SpaceObjects
                 if (Vector3.Distance(p.Position, TargetToMove.Position) > 10 * p.SpeedMax / p.AccelerationMax)
                 {
                     moveCommand = MoveType.move;
-
                 }
                 else
                 {
-
                     moveCommand = MoveType.stop;
                     complexCommand = ComandType.none;
-
                 }
 
             }
@@ -391,22 +393,25 @@ namespace SpaceObjects
                 }
             }
         }
-        private void RestoreTick()
+        private async Task  RestoreTick()
         {
-            if (p.Hull < p.Hull_full)
+            while (true)
             {
-                p.Hull += p.Hull_restore * TickDeltaTime/1000f;
+                if (p.Hull < p.Hull_full)
+                {
+                    p.Hull += p.Hull_restore * TickDeltaTime/1000f;
+                }
+                else { p.Hull = p.Hull_full; }
+                if (p.Shield < p.Shield_full)
+                { p.Shield += p.Shield_restore * TickDeltaTime/1000f; }
+                else { p.Shield = p.Shield_full; }
+
+                if (p.Armor < p.Armor_full) { p.Armor += p.Armor_restore * TickDeltaTime/1000f; }
+                else { p.Armor = p.Armor_full; }
+                if (p.Capasitor < p.Capasitor_full) { p.Capasitor += p.Capasitor_restore * TickDeltaTime/1000f; }
+                else { p.Capasitor = p.Capasitor_full; }
+                await Task.Delay(restoreTickDeltaTime);
             }
-            else { p.Hull = p.Hull_full; }
-            if (p.Shield < p.Shield_full)
-            { p.Shield += p.Shield_restore * TickDeltaTime/1000f; }
-            else { p.Shield = p.Shield_full; }
-
-            if (p.Armor < p.Armor_full) { p.Armor += p.Armor_restore * TickDeltaTime/1000f; }
-            else { p.Armor = p.Armor_full; }
-            if (p.Capasitor < p.Capasitor_full) { p.Capasitor += p.Capasitor_restore * TickDeltaTime/1000f; }
-            else { p.Capasitor = p.Capasitor_full; }
-
         }
         private void Destroyed()
         {
@@ -419,28 +424,28 @@ namespace SpaceObjects
             OnDestroyCall(p.Id);
             
         }
-        private void Agr()
-        {
-            if (p.Mob && !p.Destroyed)
-            {
-                if (NewTargetToAtack != null && !atackAI)
-                {
-                    if (Vector3.Distance(p.Position, NewTargetToAtack.Position) < p.AgrDistance)
-                    {
-                        SetTarget(NewTargetToAtack);
-                        GoToTarget();
-                        for (int i = 0; i < weapons.Length; i++)
-                        {
-                            Atack_target(i);
-                        }
-                    }
-                    else
-                    {
-                        atackAI = false;
-                    }
-                }
-            }
-        }
+        //private void Agr()
+        //{
+        //    if (p.Mob && !p.Destroyed)
+        //    {
+        //        if (NewTargetToAtack != null && !atackAI)
+        //        {
+        //            if (Vector3.Distance(p.Position, NewTargetToAtack.Position) < p.AgrDistance)
+        //            {
+        //                SetTarget(NewTargetToAtack);
+        //                GoToTarget();
+        //                for (int i = 0; i < weapons.Length; i++)
+        //                {
+        //                    Atack_target(i);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                atackAI = false;
+        //            }
+        //        }
+        //    }
+        //}
         public async Task Warpdrive()
         {
             warpCoroutineStarted = true;
@@ -478,8 +483,8 @@ namespace SpaceObjects
         {
             //Console.WriteLine($"Tick {p.VisibleName}");
 
-            Agr(); //TODO too heavy fo tick may be it must hav diffeent time of activation
-            RestoreTick();
+            //Agr(); //TODO too heavy fo tick may be it must hav diffeent time of activation
+            //RestoreTick();
             CommandManager();
             Move();
             Stop();
@@ -487,8 +492,6 @@ namespace SpaceObjects
 
         }
 #endregion
-
-
     }
 
 #region  Events Args Classes
@@ -505,6 +508,10 @@ namespace SpaceObjects
     {
         public int ship_id {get; set;}
     }
-
+    
+    public class ChangeStateArgs: EventArgs
+    {
+        public ShipEvenentsType ChangeState {get;set;}
+    }
 #endregion
 }
