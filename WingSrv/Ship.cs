@@ -36,8 +36,8 @@ namespace SpaceObjects
         public bool warpCoroutineStarted;
         //public bool landed;
         private bool atackAI;
-        private Weapon[] weapons;
-        private Equipment[] equipments;
+        public Weapon[] Weapons;
+        public Equipment[] Equipments;
         
         public int TickDeltaTime=20; //{get;set;}
         public int RestoreTickDeltaTime=3000; //TODO store it from shipdata
@@ -55,31 +55,31 @@ namespace SpaceObjects
             //SendEvent(ShipEvenentsType.move);
             //host = _host;
             //newtargetToMove = null;
-            weapons = new Weapon[shipData.Weapons.Length];
+            Weapons = new Weapon[shipData.Weapons.Length];
             for (int i = 0; i < shipData.Weapons.Length; i++)
             {
-                weapons[i] = new Weapon(shipData.Weapons[i], this);
+                Weapons[i] = new Weapon(shipData.Weapons[i], this);
                 
             }
-            equipments = new Equipment[shipData.Equipments.Length];
+            Equipments = new Equipment[shipData.Equipments.Length];
             for (int i = 0; i < shipData.Equipments.Length; i++)
             {
-                equipments[i] = new Equipment(shipData.Equipments[i], this);
+                Equipments[i] = new Equipment(shipData.Equipments[i], this);
             }
             RestoreTick();
         }
 
         public void BeforeDestroy()
         {
-            for (int i = 0; i < weapons.Length; i++)
+            for (int i = 0; i < Weapons.Length; i++)
             {
-                weapons[i].BeforeDestroy();
-                //weapons.RemoveAt(i);
+                Weapons[i].BeforeDestroy();
+                //Weapons.RemoveAt(i);
             }
-            for (int i = 0; i < equipments.Length; i++)
+            for (int i = 0; i < Equipments.Length; i++)
             {
-                equipments[i].BeforeDestroy();
-                //equipments.RemoveAt(i);
+                Equipments[i].BeforeDestroy();
+                //Equipments.RemoveAt(i);
 
             }
         }
@@ -181,24 +181,24 @@ namespace SpaceObjects
         }
         public void StartEquipment()
         {
-            for (int i = 0; i < equipments.Length; i++)
+            for (int i = 0; i < Equipments.Length; i++)
             {
-                if (!equipments[i].activate)
+                if (!Equipments[i].activate)
                 {
-                    equipments[i].Use();
+                    Equipments[i].Use();
                 }
                 else
                 {
-                    equipments[i].Stop();
+                    Equipments[i].Stop();
                 }
             }
 
         }
         public void StopEquipment()
         {
-            for (int i = 0; i < equipments.Length; i++)
+            for (int i = 0; i < Equipments.Length; i++)
             {
-                equipments[i].Stop();
+                Equipments[i].Stop();
 
             }
 
@@ -231,7 +231,7 @@ namespace SpaceObjects
                 TargetToAtack = NewTargetToAtack;
 
                 //atack = true;
-                weapons[weaponnum].Atack_target(TargetToAtack);
+                Weapons[weaponnum].Atack_target(TargetToAtack);
 
             }
             else
@@ -243,7 +243,7 @@ namespace SpaceObjects
         public void StopFire(int weaponnum)
         {
             //atack = false;
-            weapons[weaponnum].stop();
+            Weapons[weaponnum].stop();
         }
         private void CommandManager()
         {
@@ -416,7 +416,7 @@ namespace SpaceObjects
         private void Destroyed()
         {
             p.Destroyed = true;
-            for (int i = 0; i < weapons.Length; i++)
+            for (int i = 0; i < Weapons.Length; i++)
             {
                 StopFire(i);
             }
@@ -434,7 +434,7 @@ namespace SpaceObjects
         //            {
         //                SetTarget(NewTargetToAtack);
         //                GoToTarget();
-        //                for (int i = 0; i < weapons.Length; i++)
+        //                for (int i = 0; i < Weapons.Length; i++)
         //                {
         //                    Atack_target(i);
         //                }
