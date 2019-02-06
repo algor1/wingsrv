@@ -221,20 +221,20 @@ namespace Wingsrv
         #endregion
 
         #region user commands
-        public void PlayerControlSetTarget(int player_id, Command player_command, int target_id)
+        public void GetPlayerShipCommand(string player, Command player_command, int target_id,int point_id)
         {
-            Ship player = GetShip(player_id);
-            Ship target = GetShip(target_id);
+            Ship _playerShip = ships [playerShip[player]];
+            Ship _target = ships [target_id];
             switch (player_command)
             {
                 case Command.SetTarget:
-                    player.SetTarget(target.p);
+                    _playerShip.SetTarget(_target.p);
                     break;
                 case Command.WarpTo:
-                    player.WarpToTarget();
+                    _playerShip.WarpToTarget();
                     break;
                 case Command.MoveTo:
-                    player.GoToTarget();
+                    _playerShip.GoToTarget();
                     break;
             }
 

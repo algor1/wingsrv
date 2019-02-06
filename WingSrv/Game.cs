@@ -8,6 +8,7 @@ using DarkRift;
 using DarkRift.Server;
 using LoginPlugin;
 using System.Threading;
+using SpaceObjects;
 
 
 
@@ -29,7 +30,7 @@ namespace Wingsrv
         // Subjects
 
         public const ushort InitPlayer =(ushort)( 0 + Shift);
-        public const ushort SetTarget = (ushort)(1 + Shift);
+        public const ushort PlayerShipCommand = (ushort)(1 + Shift);
         public const ushort MoveToTarget = (ushort)(2 + Shift);
         public const ushort NearestSpaceObjects = (ushort)(3 + Shift);
         public const ushort MessageFailed = (ushort)(4 + Shift);
@@ -161,6 +162,32 @@ namespace Wingsrv
                             var senderName = _loginPlugin.UsersLoggedIn[client];
                             server.LoadPlayer(senderName);
 
+                            break;
+                        }
+                    case PlayerShipCommand:
+                        {
+                            if (!_loginPlugin.PlayerLoggedIn(client, MessageFailed, "Init player failed.")) return;
+                            Command command;
+                            int target_id;
+                            int point_id;
+                            try
+                            {
+                                using (var reader = message.GetReader())
+                                {
+                                    command = (Command)reader.ReadUInt32();
+                                    target_id = reader.ReadInt32();
+                                    point_id = reader.ReadInt32();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                // Return Error 0 for Invalid Data Packages Recieved
+                                _loginPlugin.InvalidData(client, MessageFailed, ex, "Send Message failed! ");
+                                return;
+                            }
+                            var senderName = _loginPlugin.UsersLoggedIn[client];
+
+                            server.GetPlayerShipCommand(senderName, command, target_id, point_id);
                             break;
                         }
                 }

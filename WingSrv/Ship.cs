@@ -138,6 +138,27 @@ namespace SpaceObjects
 #endregion
 
 #region user commands
+
+        public void GetCommand(Command command, SpaceObject target=null,int point_id=0)
+        {
+            switch (command)
+            {
+                case Command.MoveTo:
+                    if (target == null)
+                    {
+                        GoToTarget();
+                        break;
+                    }
+                    SetTarget(target);
+                    GoToTarget();
+                    break;
+                case Command.SetTarget:
+                    SetTarget(target);
+                    break;
+            }
+        }
+
+
         public void SetTarget(SpaceObject newTarget)
         {
             NewTargetToMove = newTarget;
@@ -331,7 +352,7 @@ namespace SpaceObjects
                     if (p.SpeedNew < p.Speed)
                     {
                         p.Speed = p.SpeedNew;
-                        //Console.WriteLine("Ship {0} , position {1}", p.Id,p.Position);
+                        Console.WriteLine("Ship {0} , position {1}", p.Id,p.Position);
 
                     }
                 }
@@ -410,7 +431,7 @@ namespace SpaceObjects
                 else { p.Armor = p.Armor_full; }
                 if (p.Capasitor < p.Capasitor_full) { p.Capasitor += p.Capasitor_restore * TickDeltaTime/1000f; }
                 else { p.Capasitor = p.Capasitor_full; }
-                await Task.Delay(restoreTickDeltaTime);
+                await Task.Delay(RestoreTickDeltaTime);
             }
         }
         private void Destroyed()
