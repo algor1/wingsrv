@@ -46,6 +46,7 @@ namespace Wingsrv
         // Servers
         public  Server server;
         public  ServerDB serverDB;
+        //public  ServerSO serverSO;
         public  InventoryServer inventoryServer;
         public  ItemDB itemDB;
 
@@ -69,6 +70,7 @@ namespace Wingsrv
             inventoryServer = new InventoryServer(this);
             serverDB = new ServerDB(this);
             server = new Server(this);
+            ServerSO = new ServerSO(this);
             server.RunServer();
             //Thread myThread = new Thread(new ThreadStart(server.RunServer));
             //myThread.Start();
