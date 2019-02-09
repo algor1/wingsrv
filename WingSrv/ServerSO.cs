@@ -17,13 +17,12 @@ namespace Wingsrv
     {
 
         public bool started;
-        private ConcurrentDictionary<int, Ship> ships;
-        private Dictionary<string, int> playerShip;
+        private Dictionary<int, SpaceObject> spaceObjects;
 
 
-        public delegate void TickHandler();
-        public event TickHandler onTick;
+        private Server server;
         private ServerDB serverDB;
+
         private InventoryServer inventoryServer;
         //private ServerManager serverManager;
         public int TickDeltaTime = 2000;
@@ -43,47 +42,42 @@ namespace Wingsrv
         {
             if (!started)
             {
-                this.onTick += new TickHandler(Tick);
-                ships = new ConcurrentDictionary<int, Ship>();
-                Console.WriteLine("Starting DB server...");
+                spaceObjects = new Dictionary<int, SpaceObject>();
+                server = gamePlugin.server;
                 serverDB = gamePlugin.serverDB;
-                Console.WriteLine("Starting inventory server...");
                 inventoryServer = gamePlugin.inventoryServer;
-                Console.WriteLine("loading ships...");
-                LoadShips();
+                Console.WriteLine("loading Space objects...");
+                LoadserverObjects();
                 Console.WriteLine("Starting server...");
-                playerShip = new Dictionary<string, int>();
                 //Thread myThread = new Thread(new ThreadStart(Run));
                 //myThread.Start();
                 //Console.WriteLine(myThread.IsBackground);
 
-                RunTick();
+                
                 SendNearest();
 
             }
 
         }
 
-        private async  Task RunTick()
+        private void LoadserverObjects()
         {
-            gamePlugin.WriteToLog(" Server started.", DarkRift.LogType.Info);
-            started = true;
-            //SendNearest();
-            while (started)
+            List<SpaceObject> SOList = serverDB.GetAllSO();
+            Debug.Log("all SO count" + SOList.Count);
+            for (int i = 0; i < SOList.Count; i++)
             {
-                onTick();
+                if (SOList[i].Type != TypeSO.ship)
+                {
+                    Debug.Log("SO " + i);
 
-                await Task.Delay(TickDeltaTime); 
-                //Console.WriteLine("tick {0}", DateTime.Now);
+                    SpaceObject s = new SpaceObject(SOList[i]);
+                    spaceObjects.Add(s.Id,s);
+                }
             }
         }
-        private void Tick()
-        {
-            for (int i = 0; i < ships.Count; i++)
-            {
-                //Console.WriteLine("Ship tick {0}",i);
-            }
-        }
+
+
+
 
         #region PlayerList
         public void LoadPlayer(string player)
@@ -108,7 +102,7 @@ namespace Wingsrv
             {
                 //serverManager.WriteEvent("Send Nearest.", LogType.Info);
                 //Console.WriteLine("trying to send nearest");
-                foreach (KeyValuePair<string, int> entry in playerShip)
+                foreach (KeyValuePair<string, int> entry in server.playerShip)
                 {
                     using (var writer = DarkRiftWriter.Create())
                     {
@@ -169,25 +163,23 @@ namespace Wingsrv
 
         #region ShipList
 
-        private ShipData[] Nearest(int ship_id)
+        private SpaceObject[] Nearest(int ship_id)
                 
         {
-            Ship _playerShip = GetShip(ship_id);
-            List<ShipData> resultShipList = new List<ShipData>();
-            for (int i = 0; i < ships.Count; i++)
+            Ship _playerShip = server.GetShip(ship_id);
+            List<SpaceObject> resultSOList = new List<SpaceObject>();
+            foreach (KeyValuePair<int,SpaceObject> entry in spaceObjects)
             {
-                if (ships[i].p.Id == ship_id || ships[i].p.Hidden) continue;//remove player from list
-                if (ships[i].p.Id == ship_id || ships[i].p.Destroyed) continue;//remove player from list
 
-                float dist = Vector3.Distance(_playerShip.p.Position, ships[i].p.Position);
+                float dist = Vector3.Distance(_playerShip.p.Position, entry.Value.Position);
                 //          print (dist);
                 if (dist < _playerShip.p.VisionDistance)
                 {
-                    resultShipList.Add(ships[i].p);
+                    resultSOList.Add(entry.Value);
                 }
 
             }
-            return resultShipList.ToArray();
+            return resultSOList.ToArray();
         }
 
 

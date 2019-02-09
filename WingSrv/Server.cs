@@ -18,7 +18,7 @@ namespace Wingsrv
 
         public bool started;
         private ConcurrentDictionary<int, Ship> ships;
-        private Dictionary<string, int> playerShip;
+        public Dictionary<string, int> playerShip;
 
 
         public delegate void TickHandler();
@@ -224,7 +224,7 @@ namespace Wingsrv
         public void GetPlayerShipCommand(string player, Command player_command, int target_id,int point_id)
         {
             Ship _playerShip = ships [playerShip[player]];
-            Ship _target = ships [target_id];
+            Ship _target = target_id!=-1? ships [target_id]: null;
             switch (player_command)
             {
                 case Command.SetTarget:

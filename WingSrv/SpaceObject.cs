@@ -5,7 +5,7 @@ namespace SpaceObjects
 {
     public enum TypeSO { asteroid, ship, station, waypoint, container };
 
-    public class SpaceObject // :IDarkRiftSerializable
+    public class SpaceObject :IDarkRiftSerializable
     {
         public int Id { get; set; }
         public string VisibleName { get; set; }

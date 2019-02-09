@@ -70,7 +70,7 @@ namespace Wingsrv
             inventoryServer = new InventoryServer(this);
             serverDB = new ServerDB(this);
             server = new Server(this);
-            ServerSO = new ServerSO(this);
+            //ServerSO = new ServerSO(this);
             server.RunServer();
             //Thread myThread = new Thread(new ThreadStart(server.RunServer));
             //myThread.Start();
