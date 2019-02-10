@@ -32,9 +32,10 @@ namespace Wingsrv
         public const ushort InitPlayer =(ushort)( 0 + Shift);
         public const ushort PlayerShipCommand = (ushort)(1 + Shift);
         public const ushort MoveToTarget = (ushort)(2 + Shift);
-        public const ushort NearestSpaceObjects = (ushort)(3 + Shift);
+        public const ushort NearestShips = (ushort)(3 + Shift);
         public const ushort MessageFailed = (ushort)(4 + Shift);
         public const ushort PlayerShipData = (ushort)(5 + Shift);
+        public const ushort NearestSpaceObjects = (ushort)(6 + Shift);
 
 
         private const string ConfigPath = @"Plugins/Game.xml";
@@ -46,7 +47,7 @@ namespace Wingsrv
         // Servers
         public  Server server;
         public  ServerDB serverDB;
-        //public  ServerSO serverSO;
+        public  ServerSO serverSO;
         public  InventoryServer inventoryServer;
         public  ItemDB itemDB;
 
@@ -70,8 +71,9 @@ namespace Wingsrv
             inventoryServer = new InventoryServer(this);
             serverDB = new ServerDB(this);
             server = new Server(this);
-            //ServerSO = new ServerSO(this);
+            serverSO = new ServerSO(this);
             server.RunServer();
+            serverSO.RunServer();
             //Thread myThread = new Thread(new ThreadStart(server.RunServer));
             //myThread.Start();
             //Console.WriteLine(myThread.IsBackground);
@@ -133,6 +135,7 @@ namespace Wingsrv
                     {
                         _loginPlugin = PluginManager.GetPluginByType<Login>();
                         server._loginPlugin = _loginPlugin;
+                        serverSO._loginPlugin = _loginPlugin;
                         _loginPlugin.onLogout+= RemovePlayerFromServer;
                     }
                 }

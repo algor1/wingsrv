@@ -26,7 +26,7 @@ namespace Wingsrv
         private ServerDB serverDB;
         private InventoryServer inventoryServer;
         //private ServerManager serverManager;
-        public int TickDeltaTime = 2000;
+        public int TickDeltaTime = 20;
         private Game gamePlugin;
         public Login _loginPlugin;
 
@@ -116,7 +116,7 @@ namespace Wingsrv
 
                         //Console.WriteLine("sending {0} bytes to player {1}",writer.Length,entry.Key);
 
-                        using (var msg = Message.Create(Game.NearestSpaceObjects, writer))
+                        using (var msg = Message.Create(Game.NearestShips, writer))
                         {
                             //Console.WriteLine("sending message tag {0} of {1} bytes to player {2}", msg.Tag,msg.DataLength,entry.Key);
                             //Console.WriteLine(_loginPlugin);

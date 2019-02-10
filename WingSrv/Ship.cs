@@ -420,16 +420,16 @@ namespace SpaceObjects
             {
                 if (p.Hull < p.Hull_full)
                 {
-                    p.Hull += p.Hull_restore * TickDeltaTime/1000f;
+                    p.Hull += p.Hull_restore * RestoreTickDeltaTime / 1000f;
                 }
                 else { p.Hull = p.Hull_full; }
                 if (p.Shield < p.Shield_full)
-                { p.Shield += p.Shield_restore * TickDeltaTime/1000f; }
+                { p.Shield += p.Shield_restore * RestoreTickDeltaTime / 1000f; }
                 else { p.Shield = p.Shield_full; }
 
-                if (p.Armor < p.Armor_full) { p.Armor += p.Armor_restore * TickDeltaTime/1000f; }
+                if (p.Armor < p.Armor_full) { p.Armor += p.Armor_restore * RestoreTickDeltaTime / 1000f; }
                 else { p.Armor = p.Armor_full; }
-                if (p.Capasitor < p.Capasitor_full) { p.Capasitor += p.Capasitor_restore * TickDeltaTime/1000f; }
+                if (p.Capasitor < p.Capasitor_full) { p.Capasitor += p.Capasitor_restore * RestoreTickDeltaTime / 1000f; }
                 else { p.Capasitor = p.Capasitor_full; }
                 await Task.Delay(RestoreTickDeltaTime);
             }

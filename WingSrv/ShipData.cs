@@ -95,7 +95,7 @@ namespace SpaceObjects
                 Equipments[i] = new EquipmentData(value.Equipments[i]);
             }
         }
-        public void Deserialize(DeserializeEvent e)
+        public new void Deserialize(DeserializeEvent e)
         {
             Id = e.Reader.ReadInt32();
             VisibleName = e.Reader.ReadString();
@@ -139,7 +139,7 @@ namespace SpaceObjects
             Equipments = e.Reader.ReadSerializables<EquipmentData>();
         }
 
-        public void Serialize(SerializeEvent e)
+        public new void Serialize(SerializeEvent e)
         {
             e.Writer.Write(Id);
             e.Writer.Write(VisibleName);
