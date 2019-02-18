@@ -41,7 +41,7 @@ namespace Wingsrv
         private const string ConfigPath = @"Plugins/Game.xml";
         private static readonly object InitializeLock = new object();
         private bool _debug = true;
-        public Login _loginPlugin;
+        private Login _loginPlugin;
         //private ServerManager serverManager;
         
         // Servers
@@ -135,6 +135,7 @@ namespace Wingsrv
                     {
                         _loginPlugin = PluginManager.GetPluginByType<Login>();
                         server._loginPlugin = _loginPlugin;
+                        server._database=_loginPlugin._database;
                         serverSO._loginPlugin = _loginPlugin;
                         _loginPlugin.onLogout+= RemovePlayerFromServer;
                     }

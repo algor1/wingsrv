@@ -45,7 +45,7 @@ namespace Wingsrv {
             dbcmd = dbSkillCon.CreateCommand();
 
             dbcmd.CommandText = dbselect;
-            // Выполняем запрос
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             reader = dbcmd.ExecuteReader();
 
         }

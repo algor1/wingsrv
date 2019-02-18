@@ -20,6 +20,7 @@ namespace Wingsrv
         private IDbCommand dbcmd;
         public bool started;
         private Game gamePlugin;
+        private DatabaseProxy _database;
 
         //private ServerManager serverManager;
 
@@ -28,6 +29,7 @@ namespace Wingsrv
         public ServerDB(Game game)
         {
             gamePlugin = game;
+            _database=game._loginPlugin._database;
  
             started = true;
         }

@@ -28,7 +28,9 @@ namespace Wingsrv
         //private ServerManager serverManager;
         public int TickDeltaTime = 20;
         private Game gamePlugin;
-        public Login _loginPlugin;
+        public Login _loginPlugin {get;set;}
+        public  DatabaseProxy _database{get;set;}
+
 
 
 
@@ -36,7 +38,8 @@ namespace Wingsrv
         {
             gamePlugin = game;
 
-            //_loginPlugin = game.PluginManager.GetPluginByType<Login>();
+
+        
 
         }
         public void RunServer()
@@ -45,9 +48,7 @@ namespace Wingsrv
             {
                 this.onTick += new TickHandler(Tick);
                 ships = new ConcurrentDictionary<int, Ship>();
-                Console.WriteLine("Starting DB server...");
                 serverDB = gamePlugin.serverDB;
-                Console.WriteLine("Starting inventory server...");
                 inventoryServer = gamePlugin.inventoryServer;
                 Console.WriteLine("loading ships...");
                 LoadShips();
