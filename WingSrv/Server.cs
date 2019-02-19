@@ -211,11 +211,24 @@ namespace Wingsrv
 
         private void LoadShips()
         {
-            List<ShipData> shipList = serverDB.GetAllShips();
-            
-            for (int i = 0; i < shipList.Count; i++)
+            try
             {
-                AddShip(shipList[i]);
+                _database.DataLayer.GetAllShips( shipList =>
+                {
+                    for (int i = 0; i < shipList.Count; i++)
+                        {
+                            AddShip(shipList[i]);
+                        }
+                        //if (_debug)
+                        //   {
+                        //       WriteEvent("Ships loaded count:"+shipList.Count, LogType.Info);
+                        //   }
+                });
+            }
+            catch (Exception ex)
+            {
+                // Return Error 2 for Database error
+                //_database.DatabaseError(client, **********, ex);
             }
         }
 
