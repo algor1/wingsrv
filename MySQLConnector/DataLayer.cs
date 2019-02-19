@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Database;
 using MySql.Data.MySqlClient;
 using SpaceObjects;
+using UnityEngine;
 
 namespace MySQLConnector
 {
@@ -167,19 +168,155 @@ namespace MySQLConnector
                     speed,
                     prefab_path
                     FROM server_objects
-                    where id = @id",                
-                new QueryParameter("@id", MySqlDbType.Int,32 , "id", _id));
+                    where id = @id",
+                new QueryParameter("@id", MySqlDbType.Int, 32, "id", _id));
 
+            var data = rows[0].GetRow();
             SpaceObject returnSO = new SpaceObject();
             int _type = 0;
-            returnSO.Id = rows[0]["id"];
-            returnSO.Type = (TypeSO) rows[0]["type"];
-            returnSO.VisibleName = rows[0]["visibleName"];
-            returnSO.Position = new Vector3(rows[0]["position_x"],rows[0]["position_y"],rows[0]["position_z"]);
-            returnSO.Rotation = new MyQuaternion(rows[0]["rotation_x"],rows[0]["rotation_y"],rows[0]["rotation_z"],rows[0]["rotation_w"]);
-            returnSO.Speed = rows[0]["speed"];
-            returnSO.Prefab = rows[0]["prefab_path"];
+            returnSO.Id = (int)data["id"];
+            returnSO.Type = (TypeSO)data["type"];
+            returnSO.VisibleName = (String)data["visibleName"];
+            returnSO.Position = new Vector3((float)data["position_x"], (float)data["position_y"], (float)data["position_z"]);
+            returnSO.Rotation = new MyQuaternion((float)data["rotation_x"], (float)data["rotation_y"], (float)data["rotation_z"], (float)data["rotation_w"]);
+            returnSO.Speed = (float)data["speed"];
+            returnSO.Prefab = (string)data["prefab_path"];
+
             callback(returnSO);
+        }
+
+        public void GetAllShips(int _id, Action<List<ShipData>> callback)
+        {
+            List<ShipData> retListShip = new List<ShipData>();
+            var rows = _database.ExecuteQuery(@"SELECT 
+                            server_objects.id,
+                            server_objects.type,
+                            server_objects.visibleName,
+                            server_objects.position_x,
+                            server_objects.position_y,
+                            server_objects.position_z,
+                            server_objects.rotation_x,
+                            server_objects.rotation_y,
+                            server_objects.rotation_z,
+                            server_objects.rotation_w,
+                            server_objects.speed,
+                            server_objects.prefab_path,
+                            SO_shipdata.max_speed,
+                            SO_shipdata.rotation_speed,
+                            SO_shipdata.acceleration_max,
+                            SO_shipdata.newSpeed,
+                            SO_shipdata.hull_full,
+                            SO_shipdata.armor_full,
+                            SO_shipdata.shield_full,
+                            SO_shipdata.capasitor_full,
+                            SO_shipdata.hull,
+                            SO_shipdata.armor,
+                            SO_shipdata.shield,
+                            SO_shipdata.capasitor,
+                            SO_shipdata.hull_restore,
+                            SO_shipdata.armor_restore,
+                            SO_shipdata.shield_restore,
+                            SO_shipdata.capasitor_restore,
+                            SO_shipdata.agr_distance,
+                            SO_shipdata.vision_distance,
+                            SO_shipdata.destroyed,
+                            SO_shipdata.hidden,
+                            SO_shipdata.mob,
+                            SO_shipdata.warpDriveStartTime,
+                            SO_shipdata.warpSpeed
+                        FROM SO_shipdata INNER JOIN server_objects
+                        ON SO_shipdata.SO_id=server_objects.id");
+
+            
+            foreach (var row in rows)
+            {
+
+                ShipData retShipData = new ShipData();
+                var data = row.GetRow();
+
+                retShipData.Id = (int)data["id"];
+                retShipData.Type = (TypeSO)data["type"];
+                retShipData.VisibleName = (string)data["visibleName"];
+                retShipData.Position = new Vector3((float)data["position_x"], (float)data["position_y"], (float)data["position_z"]);
+                retShipData.Rotation = new MyQuaternion((float)data["rotation_x"], (float)data["rotation_y"], (float)data["rotation_z"], (float)data["rotation_w"]);
+                retShipData.Speed = (float)data["speed"];
+                retShipData.Prefab = (string)data["prefab_path"];
+                retShipData.SpeedMax = (float)data["max_speed"];
+                retShipData.RotationSpeed = (float)data["rotation_speed"];
+                retShipData.AccelerationMax = (float)data["acceleration_max"];
+                retShipData.SpeedNew = (float)data["newSpeed"];
+                retShipData.Hull_full = (float)data["hull_full"];
+                retShipData.Armor_full = (float)data["armor_full"];
+                retShipData.Shield_full = (float)data["shield_full"];
+                retShipData.Capasitor_full = (float)data["capasitor_full"];
+                retShipData.Hull = (float)data["hull"];
+                retShipData.Armor = (float)data["armor"];
+                retShipData.Shield = (float)data["shield"];
+                retShipData.Capasitor = (float)data["capasitor"];
+                retShipData.Hull_restore = (float)data["hull_restore"];
+                retShipData.Armor_restore = (float)data["armor_restore"];
+                retShipData.Shield_restore = (float)data["shield_restore"];
+                retShipData.Capasitor_restore = (float)data["capasitor_restore"];
+                retShipData.AgrDistance = (float)data["agr_distance"];
+                retShipData.VisionDistance = (float)data["vision_distance"];
+                retShipData.Destroyed = (bool)data["destroyed"];
+                retShipData.Hidden = (bool)data["hidden"];
+                retShipData.Mob = (bool)data["mob"];
+                retShipData.WarpDriveStartTime = (float)data["warpDriveStartTime"];
+                retShipData.WarpSpeed = (float)data["warpSpeed"];
+
+                retListShip.Add(retShipData);
+            }
+            for (int i = 0; i < retListShip.Count; i++)
+            {
+                retListShip[i].Weapons = GetWeapons(retListShip[i].Id);
+                retListShip[i].Equipments = GetEquip(retListShip[i].Id);
+            }
+            
+            callback(retListShip);
+
+        }
+        private EquipmentData[] GetEquip(int Ship_id)
+        {
+            EquipmentData[] retList = new EquipmentData[0];
+            return retList;
+        }
+
+        private WeaponData[] GetWeapons(int ship_id)
+        {
+            List<WeaponData> retList = new List<WeaponData>();
+ 
+            var rows = _database.ExecuteQuery(@"SELECT 
+					WeaponType, 
+					damage, 
+					reload, 
+					ammoSpeed, 
+					activeTime, 
+					sqrDistanse_max, 
+					capasitor_use
+					FROM SO_weapondata
+					WHERE SO_id=@id",
+                new QueryParameter("@id", MySqlDbType.Int, 32, "id", ship_id));
+
+            foreach (var row in rows)
+            {
+                WeaponData weapon = new WeaponData();
+                var data = row.GetRow();
+
+                weapon.Type = (WeaponData.WeaponType)data["WeaponType"];
+                weapon.Damage = (float)data["damage"];
+                weapon.Reload = (float)data["reload"];
+                weapon.AmmoSpeed = (float)data["ammoSpeed"];
+                weapon.ActiveTime = (float)data["activeTime"];
+                weapon.SqrDistanse_max = (float)data["sqrDistanse_max"];
+                weapon.Capasitor_use = (float)data["capasitor_use"];
+
+                retList.Add(weapon);
+            }
+            
+            return retList.ToArray();
+
+
         }
     }
 }
