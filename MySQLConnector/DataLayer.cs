@@ -169,7 +169,7 @@ namespace MySQLConnector
                     prefab_path
                     FROM server_objects
                     where id = @id",
-                new QueryParameter("@id", MySqlDbType.Int, 32, "id", _id));
+                new QueryParameter("@id", MySqlDbType.Int32, 32, "id", _id));
 
             var data = rows[0].GetRow();
             SpaceObject returnSO = new SpaceObject();
@@ -185,7 +185,7 @@ namespace MySQLConnector
             callback(returnSO);
         }
 
-        public void GetAllShips(int _id, Action<List<ShipData>> callback)
+        public void GetAllShips( Action<List<ShipData>> callback)
         {
             List<ShipData> retListShip = new List<ShipData>();
             var rows = _database.ExecuteQuery(@"SELECT 
@@ -296,7 +296,7 @@ namespace MySQLConnector
 					capasitor_use
 					FROM SO_weapondata
 					WHERE SO_id=@id",
-                new QueryParameter("@id", MySqlDbType.Int, 32, "id", ship_id));
+                new QueryParameter("@id", MySqlDbType.Int32, 32, "id", ship_id));
 
             foreach (var row in rows)
             {

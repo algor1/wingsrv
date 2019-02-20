@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SpaceObjects;
 
 namespace Database
 {
@@ -23,6 +24,14 @@ namespace Database
         void AddFriend(string sender, string receiver, Action callback);
         void RemoveFriend(string sender, string receiver, Action callback);
         void GetFriends(string username, Action<IFriendList> callback);
+
+        #endregion
+
+        #region Space
+
+        void GetAllShips( Action<List<ShipData>> callback);
+        void GetSpaceObject(int _id, Action<SpaceObject> callback);
+
 
         #endregion
     }

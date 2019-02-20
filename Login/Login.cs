@@ -10,17 +10,17 @@ namespace LoginPlugin
 {
     public class Login : Plugin
     {
-        //public override Version Version => new Version(1, 0, 0);
-        //public override bool ThreadSafe => true;
-        //public override Command[] Commands => new[]        {
-        //    new Command("AllowAddUser", "Allow Users to be added to the Database [AllowAddUser on/off]", "",
-        //        AllowAddUserCommand),
-        //    new Command("AddUser", "Adds a User to the Database [AddUser name password]", "", AddUserCommand),
-        //    new Command("DelUser", "Deletes a User from the Database [DelUser name]", "", DelUserCommand),
-        //    new Command("LPDebug", "Enables Plugin Debug", "", DebugCommand),
-        //    new Command("LoggedIn", "Logs number of online users", "", UsersLoggedInCommand),
-        //    new Command("Online", "Logs number of online users", "", UsersOnlineCommand)
-        //};
+        public override Version Version => new Version(1, 0, 0);
+        public override bool ThreadSafe => true;
+        public override Command[] Commands => new[]        {
+            new Command("AllowAddUser", "Allow Users to be added to the Database [AllowAddUser on/off]", "",
+                AllowAddUserCommand),
+            new Command("AddUser", "Adds a User to the Database [AddUser name password]", "", AddUserCommand),
+            new Command("DelUser", "Deletes a User from the Database [DelUser name]", "", DelUserCommand),
+            new Command("LPDebug", "Enables Plugin Debug", "", DebugCommand),
+            new Command("LoggedIn", "Logs number of online users", "", UsersLoggedInCommand),
+            new Command("Online", "Logs number of online users", "", UsersOnlineCommand)
+        };
 
         public ConcurrentDictionary<string, IClient> Clients { get; } = new ConcurrentDictionary<string, IClient>();
         public ConcurrentDictionary<IClient, string> UsersLoggedIn { get; } = new ConcurrentDictionary<IClient, string>();

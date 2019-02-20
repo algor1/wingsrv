@@ -13,12 +13,12 @@ namespace ChatPlugin
 {
     public class Chat : Plugin
     {
-        //public override Version Version => new Version(1, 0, 0);
-        //public override bool ThreadSafe => true;
-        //public override Command[] Commands => new[]
-        //{
-        //    new Command("groups", "Shows all chatgroups [groups username(optional]", "", GetChatGroupsCommand)
-        //};
+        public override Version Version => new Version(1, 0, 0);
+        public override bool ThreadSafe => true;
+        public override Command[] Commands => new[]
+        {
+            new Command("groups", "Shows all chatgroups [groups username(optional]", "", GetChatGroupsCommand)
+        };
 
         public ConcurrentDictionary<string, ChatGroup> ChatGroups { get; } = new ConcurrentDictionary<string, ChatGroup>();
         public ConcurrentDictionary<string, List<ChatGroup>> ChatGroupsOfPlayer { get; } = new ConcurrentDictionary<string, List<ChatGroup>>();

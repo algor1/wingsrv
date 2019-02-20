@@ -8,6 +8,7 @@ using DarkRift;
 using DarkRift.Server;
 using LoginPlugin;
 using SpaceObjects;
+using Database;
 
 namespace Wingsrv
 {

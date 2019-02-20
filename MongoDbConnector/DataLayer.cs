@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Database;
 using MongoDB.Driver;
+using SpaceObjects;
 
 namespace MongoDbConnector
 {
@@ -188,6 +189,16 @@ namespace MongoDbConnector
             }
 
             callback(friendLists.ToArray());
+        }
+
+        public void GetAllShips( Action<List<ShipData>> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetSpaceObject(int _id, Action<SpaceObject> callback)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
