@@ -9,8 +9,7 @@ using DarkRift.Server;
 using LoginPlugin;
 using System.Threading;
 using SpaceObjects;
-
-
+using Database;
 
 namespace Wingsrv
 {
@@ -72,8 +71,7 @@ namespace Wingsrv
             serverDB = new ServerDB(this);
             server = new Server(this);
             serverSO = new ServerSO(this);
-            server.RunServer();
-            serverSO.RunServer();
+
             //Thread myThread = new Thread(new ThreadStart(server.RunServer));
             //myThread.Start();
             //Console.WriteLine(myThread.IsBackground);
@@ -135,12 +133,25 @@ namespace Wingsrv
                     {
                         _loginPlugin = PluginManager.GetPluginByType<Login>();
                         server._loginPlugin = _loginPlugin;
-                        server._database=_loginPlugin._database;
                         serverSO._loginPlugin = _loginPlugin;
                         _loginPlugin.onLogout+= RemovePlayerFromServer;
                     }
                 }
+
             }
+            if (server._database == null)
+            {
+                lock (InitializeLock)
+                {
+                    if (server._database == null)
+                    {
+                        server._database = PluginManager.GetPluginByType<DatabaseProxy>();
+                    }
+                }
+            }
+            server.RunServer();
+            serverSO.RunServer();
+
 
             e.Client.MessageReceived += OnMessageReceived;
         }

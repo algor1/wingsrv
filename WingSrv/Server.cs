@@ -223,14 +223,16 @@ namespace Wingsrv
                         }
                         //if (_debug)
                         //   {
-                        //       WriteEvent("Ships loaded count:"+shipList.Count, LogType.Info);
+                              gamePlugin.WriteToLog("Ships loaded count:"+shipList.Count, DarkRift.LogType.Info);
                         //   }
                 });
             }
             catch (Exception ex)
             {
-                // Return Error 2 for Database error
-                //_database.DatabaseError(client, **********, ex);
+                gamePlugin.WriteToLog("Database error on loading ships" +ex, DarkRift.LogType.Error);
+
+                //Return Error 2 for Database error
+                _database.DatabaseError(null , 0 , ex);
             }
         }
 
