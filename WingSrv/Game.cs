@@ -16,7 +16,7 @@ namespace Wingsrv
 {
     public class Game : Plugin
     {
-        public override Version Version => new Version(1, 0, 0);
+        public override Version Version => new Version(1, 0, 1);
         public override bool ThreadSafe => true;
         //public override Command[] Commands => new []
         //{
@@ -173,17 +173,18 @@ namespace Wingsrv
                     case PlayerShipCommand:
                         {
                             if (!_loginPlugin.PlayerLoggedIn(client, MessageFailed, "Init player failed.")) return;
-                            Command command;
+                            ShipCommand command;
                             int target_id;
                             int point_id;
                             try
                             {
                                 using (var reader = message.GetReader())
                                 {
-                                    command = (Command)reader.ReadUInt32();
+                                    command = (ShipCommand)reader.ReadUInt32();
                                     target_id = reader.ReadInt32();
                                     point_id = reader.ReadInt32();
                                 }
+                                Console.WriteLine("Command {0}  target {1}", command, target_id);
                             }
                             catch (Exception ex)
                             {

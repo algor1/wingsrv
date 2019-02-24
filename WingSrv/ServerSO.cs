@@ -48,7 +48,7 @@ namespace Wingsrv
                 inventoryServer = gamePlugin.inventoryServer;
                 Console.WriteLine("loading Space objects...");
                 LoadserverObjects();
-                Console.WriteLine("Starting server...");
+                Console.WriteLine("Starting SpaceObjects server...");
                 //Thread myThread = new Thread(new ThreadStart(Run));
                 //myThread.Start();
                 //Console.WriteLine(myThread.IsBackground);
@@ -138,8 +138,13 @@ namespace Wingsrv
             }
             return resultSOList.ToArray();
         }
-    }
 
+        public SpaceObject GetSpaceObject(int id)
+        {
+            return spaceObjects[id];
+        }
+
+    }
 
 
 

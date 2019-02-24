@@ -12,13 +12,14 @@ using Database;
 
 namespace Wingsrv
 {
-    public enum Command { MoveTo, WarpTo, Atack, SetTarget, LandTo, Equipment, Open, TakeOff };
+    //public enum Command { MoveTo, WarpTo, Atack, SetTarget, SetTargetShip, LandTo, Equipment, Open, TakeOff };
 
     public class Server
     {
 
         public bool started;
         private ConcurrentDictionary<int, Ship> ships;
+        //private Dictionary<int, SpaceObject> spaseObjects;
         public Dictionary<string, int> playerShip;
 
 
@@ -236,19 +237,27 @@ namespace Wingsrv
         #endregion
 
         #region user commands
-        public void GetPlayerShipCommand(string player, Command player_command, int target_id,int point_id)
+        public void GetPlayerShipCommand(string player, ShipCommand player_command, int target_id,int point_id)
         {
+            gamePlugin.WriteToLog(player + "  " + player_command + " " + target_id + " " + point_id,DarkRift.LogType.Info);
             Ship _playerShip = ships [playerShip[player]];
-            Ship _target = target_id!=-1? ships [target_id]: null;
+
+            SpaceObject _target;
+
             switch (player_command)
             {
-                case Command.SetTarget:
-                    _playerShip.SetTarget(_target.p);
+                case ShipCommand.SetTargetShip:
+                    _target = target_id != -1 ? ships[target_id].p : null;
+                    _playerShip.SetTarget(_target);
                     break;
-                case Command.WarpTo:
+                case ShipCommand.SetTarget:
+                    _target = target_id != -1 ? gamePlugin.serverSO.GetSpaceObject(target_id) : null;
+                    _playerShip.SetTarget(_target);
+                    break;
+                case ShipCommand.WarpTo:
                     _playerShip.WarpToTarget();
                     break;
-                case Command.MoveTo:
+                case ShipCommand.MoveTo:
                     _playerShip.GoToTarget();
                     break;
             }

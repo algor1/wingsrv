@@ -9,7 +9,7 @@ namespace SpaceObjects
 {
     public enum ComandType { warpTo, goTo, landTo, none, open };
     public enum ShipEvenentsType { spawn, warp, warmwarp, move, stop, land, hide, reveal, destroyed, open };
-    public enum Command { MoveTo, WarpTo, Atack, SetTarget, LandTo, Equipment, Open, TakeOff };
+    public enum ShipCommand { MoveTo, WarpTo, Atack, SetTarget, SetTargetShip, LandTo, Equipment, Open, TakeOff };
 
 
     public class Ship 
@@ -139,11 +139,11 @@ namespace SpaceObjects
 
 #region user commands
 
-        public void GetCommand(Command command, SpaceObject target=null,int point_id=0)
+        public void GetCommand(ShipCommand command, SpaceObject target=null,int point_id=0)
         {
             switch (command)
             {
-                case Command.MoveTo:
+                case ShipCommand.MoveTo:
                     if (target == null)
                     {
                         GoToTarget();
@@ -152,9 +152,13 @@ namespace SpaceObjects
                     SetTarget(target);
                     GoToTarget();
                     break;
-                case Command.SetTarget:
+                case ShipCommand.SetTarget:
                     SetTarget(target);
                     break;
+                case ShipCommand.SetTargetShip:
+                    SetTarget(target);
+                    break;
+
             }
         }
 
