@@ -167,7 +167,7 @@ namespace SpaceObjects
         {
             NewTargetToMove = newTarget;
             NewTargetToAtack = newTarget.Type== TypeSO.ship ? newTarget : null;
-            Console.WriteLine("{0} id {1} target to move {2} , target to atack {3}",  newTarget.Type, p.Id, NewTargetToMove.Id, NewTargetToAtack.Id);
+            Console.WriteLine("{0} id {1} target to move {2} , target to atack {3}",  newTarget.Type, p.Id, NewTargetToMove?.Id, NewTargetToAtack?.Id);
         }
         public void GoToTarget()
         {

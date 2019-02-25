@@ -173,7 +173,6 @@ namespace MySQLConnector
 
             var data = rows[0].GetRow();
             SpaceObject returnSO = new SpaceObject();
-            int _type = 0;
             returnSO.Id = (int)data["id"];
             returnSO.Type = (TypeSO)data["type"];
             returnSO.VisibleName = (String)data["visibleName"];
@@ -185,9 +184,8 @@ namespace MySQLConnector
             callback(returnSO);
         }
 
-        public void GetAllShips( Action<List<ShipData>> callback)
+        public void GetAllShips(Action<List<ShipData>> callback)
         {
-            Console.WriteLine("01");
             List<ShipData> retListShip = new List<ShipData>();
             var rows = _database.ExecuteQuery(@"SELECT 
                             server_objects.id,
@@ -228,82 +226,40 @@ namespace MySQLConnector
                         FROM SO_shipdata INNER JOIN server_objects
                         ON SO_shipdata.SO_id=server_objects.id");
 
-            Console.WriteLine("02");
-
             foreach (var row in rows)
             {
-                Console.WriteLine("03");
-
                 ShipData retShipData = new ShipData();
-
                 var data = row.GetRow();
-                Console.WriteLine("04");
-                int j = 0;
                 retShipData.Id = (int)data["id"];
-                Console.WriteLine("00"+j++);
-                retShipData.Type = TypeSO.ship; //(TypeSO)(int)data["type"];
-                Console.WriteLine("00" + j++);
-
+                retShipData.Type = (TypeSO)(int)data["type"];
                 retShipData.VisibleName = (string)data["visibleName"];
-                Console.WriteLine("00" + j++);
                 retShipData.Position = new Vector3((float)data["position_x"], (float)data["position_y"], (float)data["position_z"]);
-                Console.WriteLine("00" + j++);
                 retShipData.Rotation = new MyQuaternion((float)data["rotation_x"], (float)data["rotation_y"], (float)data["rotation_z"], (float)data["rotation_w"]);
-                Console.WriteLine("00" + j++);
                 retShipData.Speed = (float)data["speed"];
-                Console.WriteLine("00" + j++);
                 retShipData.Prefab = (string)data["prefab_path"];
-                Console.WriteLine("00" + j++);
                 retShipData.SpeedMax = (float)data["max_speed"];
-                Console.WriteLine("00" + j++);
                 retShipData.RotationSpeed = (float)data["rotation_speed"];
-                Console.WriteLine("00" + j++);
                 retShipData.AccelerationMax = (float)data["acceleration_max"];
-                Console.WriteLine("00" + j++);
                 retShipData.SpeedNew = (float)data["newSpeed"];
-                Console.WriteLine("00" + j++);
                 retShipData.Hull_full = (float)data["hull_full"];
-                Console.WriteLine("00" + j++);
                 retShipData.Armor_full = (float)data["armor_full"];
-                Console.WriteLine("00" + j++);
                 retShipData.Shield_full = (float)data["shield_full"];
-                Console.WriteLine("00" + j++);
                 retShipData.Capasitor_full = (float)data["capasitor_full"];
-                Console.WriteLine("00" + j++);
                 retShipData.Hull = (float)data["hull"];
-                Console.WriteLine("00" + j++);
                 retShipData.Armor = (float)data["armor"];
-                Console.WriteLine("00" + j++);
                 retShipData.Shield = (float)data["shield"];
-                Console.WriteLine("00" + j++);
                 retShipData.Capasitor = (float)data["capasitor"];
-                Console.WriteLine("00" + j++);
                 retShipData.Hull_restore = (float)data["hull_restore"];
-                Console.WriteLine("00" + j++);
                 retShipData.Armor_restore = (float)data["armor_restore"];
-                Console.WriteLine("00" + j++);
                 retShipData.Shield_restore = (float)data["shield_restore"];
-                Console.WriteLine("00" + j++);
                 retShipData.Capasitor_restore = (float)data["capasitor_restore"];
-                Console.WriteLine("00" + j++);
                 retShipData.AgrDistance = (float)data["agr_distance"];
-                Console.WriteLine("00" + j++);
                 retShipData.VisionDistance = (float)data["vision_distance"];
-                Console.WriteLine("00" + j++);
-                Console.WriteLine(data["destroyed"].GetType());
                 retShipData.Destroyed = (bool)data["destroyed"];
-                Console.WriteLine("00" + j++);
-
-
                 retShipData.Hidden = (bool)data["hidden"];
-                Console.WriteLine("00" + j++);
                 retShipData.Mob = (bool)data["mob"];
-                Console.WriteLine("00" + j++);
                 retShipData.WarpDriveStartTime = (float)data["warpDriveStartTime"];
-                Console.WriteLine("00" + j++);
                 retShipData.WarpSpeed = (float)data["warpSpeed"];
-                Console.WriteLine("00" + j++);
-
                 retListShip.Add(retShipData);
             }
             for (int i = 0; i < retListShip.Count; i++)
@@ -311,7 +267,7 @@ namespace MySQLConnector
                 retListShip[i].Weapons = GetWeapons(retListShip[i].Id);
                 retListShip[i].Equipments = GetEquip(retListShip[i].Id);
             }
-            
+
             callback(retListShip);
 
         }
@@ -324,7 +280,7 @@ namespace MySQLConnector
         private WeaponData[] GetWeapons(int ship_id)
         {
             List<WeaponData> retList = new List<WeaponData>();
- 
+
             var rows = _database.ExecuteQuery(@"SELECT 
 					WeaponType, 
 					damage, 
@@ -352,7 +308,7 @@ namespace MySQLConnector
 
                 retList.Add(weapon);
             }
-            
+
             return retList.ToArray();
 
 
