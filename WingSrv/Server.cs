@@ -67,7 +67,7 @@ namespace Wingsrv
 
         }
 
-        private async  Task RunTick()
+        private async Task RunTick()
         {
             gamePlugin.WriteToLog(" Server started.", DarkRift.LogType.Info);
             started = true;
@@ -250,17 +250,23 @@ namespace Wingsrv
             {
                 case ShipCommand.SetTargetShip:
                     _target = target_id != -1 ? ships[target_id].p : null;
-                    _playerShip.SetTarget(_target);
+                    _playerShip.Command(player_command, _target);
                     break;
                 case ShipCommand.SetTarget:
                     _target = target_id != -1 ? gamePlugin.serverSO.GetSpaceObject(target_id) : null;
-                    _playerShip.SetTarget(_target);
+                    _playerShip.Command(player_command, _target);
                     break;
                 case ShipCommand.WarpTo:
-                    _playerShip.WarpToTarget();
+                     _target = target_id != -1 ? gamePlugin.serverSO.GetSpaceObject(target_id) : null;
+                    _playerShip.Command(player_command, _target);
                     break;
                 case ShipCommand.MoveTo:
-                    _playerShip.GoToTarget();
+                     _target = target_id != -1 ? gamePlugin.serverSO.GetSpaceObject(target_id) : null;
+                    _playerShip.Command(player_command, _target);
+                    break;
+                case ShipCommand.Atack:
+                     _target = target_id != -1 ? gamePlugin.serverSO.GetSpaceObject(target_id) : null;
+                    _playerShip.Command(player_command, _target,point_id);
                     break;
             }
 

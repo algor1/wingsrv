@@ -9,3 +9,4 @@ obj/
 *.sln
 .vs/
 *.suo
+SpaceObjects/Properties/AssemblyInfo.cs

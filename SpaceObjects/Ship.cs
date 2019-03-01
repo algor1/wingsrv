@@ -139,37 +139,44 @@ namespace SpaceObjects
 
 #region user commands
 
-        public void GetCommand(ShipCommand command, SpaceObject target=null,int point_id=0)
+        public void Command(ShipCommand command, SpaceObject target=null,int point_id=0)
         {
+            if (target != null)
+                {
+                    SetTarget(target);
+                }
+
             switch (command)
             {
                 case ShipCommand.MoveTo:
-                    if (target == null)
-                    {
-                        GoToTarget();
-                        break;
-                    }
-                    SetTarget(target);
                     GoToTarget();
                     break;
-                case ShipCommand.SetTarget:
-                    SetTarget(target);
-                    break;
-                case ShipCommand.SetTargetShip:
-                    SetTarget(target);
+                //case ShipCommand.SetTarget:
+                //    SetTarget(target);
+                //    break;
+                //case ShipCommand.SetTargetShip:
+                //    SetTarget(target);
+                //    break;
+
+                case ShipCommand.Atack:
+                    Atack_target(point_id);
                     break;
 
+                case ShipCommand.WarpTo:
+                    WarpToTarget();
+                    break;
+                
             }
         }
 
 
-        public void SetTarget(SpaceObject newTarget)
+        private void SetTarget(SpaceObject newTarget)
         {
             NewTargetToMove = newTarget;
             NewTargetToAtack = newTarget.Type== TypeSO.ship ? newTarget : null;
             Console.WriteLine("{0} id {1} target to move {2} , target to atack {3}",  newTarget.Type, p.Id, NewTargetToMove?.Id, NewTargetToAtack?.Id);
         }
-        public void GoToTarget()
+        private void GoToTarget()
         {
             if (NewTargetToMove != null)
             {
@@ -177,14 +184,10 @@ namespace SpaceObjects
                 complexCommand = ComandType.goTo;
                 TargetToMove = NewTargetToMove;
                 Console.WriteLine("{0} id {1} moving to {2} id{3}", p.Type, p.Id, NewTargetToMove.Type, NewTargetToMove.Id);
-
                 //			oldRotation = p.SO.rotation;
-
-
             }
-
         }
-        public void WarpToTarget()
+        private void WarpToTarget()
         {
             if (NewTargetToMove != null && Vector3.Distance(p.Position, NewTargetToMove.Position) > 100000)
             {
@@ -204,7 +207,7 @@ namespace SpaceObjects
             }
 
         }
-        public void StartEquipment()
+        private void StartEquipment()
         {
             for (int i = 0; i < Equipments.Length; i++)
             {
@@ -219,7 +222,7 @@ namespace SpaceObjects
             }
 
         }
-        public void StopEquipment()
+        private void StopEquipment()
         {
             for (int i = 0; i < Equipments.Length; i++)
             {
@@ -228,7 +231,7 @@ namespace SpaceObjects
             }
 
         }
-        public void LandToTarget()
+        private void LandToTarget()
         {
             if (NewTargetToMove != null)
             {
@@ -238,7 +241,7 @@ namespace SpaceObjects
                 TargetToMove = NewTargetToMove;
             }
         }
-        public void OpenTarget()
+       private void OpenTarget()
         {
             if (NewTargetToMove != null)
             {
@@ -249,7 +252,7 @@ namespace SpaceObjects
                 //            oldRotation = p.SO.rotation;
             }
         }
-        public void Atack_target(int weaponnum)
+        private void Atack_target(int weaponnum)
         {
             if (NewTargetToAtack != null)
             {
@@ -265,7 +268,7 @@ namespace SpaceObjects
             }
 
         }
-        public void StopFire(int weaponnum)
+        private void StopFire(int weaponnum)
         {
             //atack = false;
             Weapons[weaponnum].stop();
