@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -66,7 +67,7 @@ namespace SpaceObjects
                     {
                         OnStartReload(EventArgs.Empty);
                         host.p.Capasitor += -p.Capasitor_use;
-                        await Task.Delay(p.Reload*1000);
+                        await Task.Delay((int)(p.Reload*1000f));
                         reloaded = true;
                         OnStopReload(EventArgs.Empty);
                     }
@@ -81,11 +82,11 @@ namespace SpaceObjects
             OnStartFireCall(currentTarget.p.Id);
             if (p.Type == WeaponData.WeaponType.laser)
             {
-                await Task.Delay(p.ActiveTime*1000);
+                await Task.Delay((int)(p.ActiveTime*1000f));
             }
             else
             {
-                await Task.Delay(Mathf.Sqrt(sqrDistance) / p.AmmoSpeed*1000);
+                await Task.Delay((int)(Mathf.Sqrt(sqrDistance) / p.AmmoSpeed*1000f));
             }
             currentTarget?.Damage(p.Damage);
             OnStopFire(EventArgs.Empty);
@@ -98,7 +99,7 @@ namespace SpaceObjects
             //activated = true;
             while (fire)
             {
-                if (!currentTarget?.p.Destroyed)
+                if (!currentTarget.p.Destroyed)
                 {
                     Stop();
                     return;

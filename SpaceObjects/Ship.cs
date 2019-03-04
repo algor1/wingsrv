@@ -271,7 +271,7 @@ namespace SpaceObjects
         private void StopFire(int weaponnum)
         {
             //atack = false;
-            Weapons[weaponnum].stop();
+            Weapons[weaponnum].Stop();
         }
         private void CommandManager()
         {
