@@ -33,7 +33,8 @@ namespace SpaceObjects
         private ComandType complexCommand;
     
         private bool warpActivated;
-        public bool warpCoroutineStarted;
+        private bool warpStarted;
+
         //public bool landed;
         private bool atackAI;
         public Weapon[] Weapons;
@@ -476,24 +477,27 @@ namespace SpaceObjects
         //}
         public async Task Warpdrive()
         {
-            warpCoroutineStarted = true;
+            
+            warpStarted = true;
+            OnChangeStateCall(ShipEvenentsType.warmwarp);
             await Task.Delay((int)(1000f*p.WarpDriveStartTime));
             float warpDistance = Vector3.Distance(p.Position, TargetToMove.Position);
             float warpTime = warpDistance / p.WarpSpeed;
+            OnChangeStateCall(ShipEvenentsType.warp);
             Hide(); //TODO damage=0
             warpActivated = true;
 
-
-            await Task.Delay((int)warpTime*1000);
-            Spawn(TargetToMove.Position - Vector3.forward * 10);
-
+            await Task.Delay((int)warpTime*1000f);
+            Spawn(TargetToMove.Position - Vector3.forward * 10);//10 metres before target
+            OnChangeStateCall(ShipEvenentsType.spawn);
             Reveal();
 
             warpActivated = false;
-            warpCoroutineStarted = false;
+            warpStarted = false;
             p.Speed = p.SpeedMax * 0.1f;
             moveCommand = MoveType.stop;
             complexCommand = ComandType.none;
+            OnChangeStateCall(ShipEvenentsType.stop);
         }
         private void Spawn(Vector3 _position){
             OnSpawnCall(p.Id);
@@ -511,7 +515,7 @@ namespace SpaceObjects
         {
             //Console.WriteLine($"Tick {p.VisibleName}");
 
-            //Agr(); //TODO too heavy fo tick may be it must hav diffeent time of activation
+            //Agr(); //TODO too heavy fo tick may be it must have diffeent time of activation
             //RestoreTick();
             CommandManager();
             Move();
