@@ -487,7 +487,7 @@ namespace SpaceObjects
             Hide(); //TODO damage=0
             warpActivated = true;
 
-            await Task.Delay((int)warpTime*1000f);
+            await Task.Delay((int)(warpTime*1000f));
             Spawn(TargetToMove.Position - Vector3.forward * 10);//10 metres before target
             OnChangeStateCall(ShipEvenentsType.spawn);
             Reveal();
