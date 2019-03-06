@@ -216,6 +216,10 @@ namespace Wingsrv
         {
             server.RemovePlayer(username);
         }
+        private void AddNewPlayer(string username)
+        {
+            server.AddNewPlayer(username);
+        }
         public void WriteToLog(string _event, LogType typeInfo)
         {
             WriteEvent(_event, typeInfo);

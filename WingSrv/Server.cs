@@ -89,6 +89,36 @@ namespace Wingsrv
         }
 
         #region PlayerList
+        
+        public void AddNewPlayer(string player)
+        {
+            int ship_id = 0;// 0 - ship id temporary TODO
+            playerShip.Add(player, ship_id);
+            SendPlayerShipData(player);
+            
+            try
+            {
+                _database.DataLayer.SaveShip(newship) shipList =>
+                {
+                    for (int i = 0; i < shipList.Count; i++)
+                        {
+                            AddShip(shipList[i]);
+                        }
+                        //if (_debug)
+                        //   {
+                              gamePlugin.WriteToLog("Ships loaded count:"+shipList.Count, DarkRift.LogType.Info);
+                        //   }
+                });
+            }
+            catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on loading ships" +ex, DarkRift.LogType.Error);
+
+                //Return Error 2 for Database error
+                _database.DatabaseError(null , 0 , ex);
+            }
+        }
+
         public void LoadPlayer(string player)
         {
             int ship_id = 0;// 0 - ship id temporary TODO

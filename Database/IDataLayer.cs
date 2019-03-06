@@ -31,7 +31,7 @@ namespace Database
 
         void GetAllShips( Action<List<ShipData>> callback);
         void GetSpaceObject(int _id, Action<SpaceObject> callback);
-
+        void AddNewShip (Ship ship, Action<int> callback);
 
         #endregion
     }

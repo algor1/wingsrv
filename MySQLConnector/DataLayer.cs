@@ -313,5 +313,60 @@ namespace MySQLConnector
 
 
         }
+        public void AddNewShip(Ship ship, Action<int> callback)
+        {
+            _database.ExecuteNonQuery(
+                "INSERT INTO Users(username,password) VALUES(@userName,@pass)",
+                new QueryParameter("@userName", MySqlDbType.VarChar, 60, "username", _database.EscapeString(username)),
+                new QueryParameter("@pass", MySqlDbType.VarChar, 255, "password", _database.EscapeString(password)));
+            callback();
+        }
+        private int AddNewSpaceObject(SpaceObject so)
+        {
+            _database.ExecuteNonQuery(
+                @"INSERT INTO server_objects (id,
+                            type,
+                            visibleName,
+                            position_x,
+                            position_y,
+                            position_z,
+                            rotation_x,
+                            rotation_y,
+                            rotation_z,
+                            rotation_w,
+                            speed,
+                            prefab_path) 
+                            VALUES(
+                            NULL
+                            @type,
+                            @visibleName,
+                            @position_x,
+                            @position_y,
+                            @position_z,
+                            @rotation_x,
+                            @rotation_y,
+                            @rotation_z,
+                            @rotation_w,
+                            @speed,
+                            @prefab_path)",
+                            new QueryParameter("@type",        MySqlDbType.VarChar, 60, "type",so.Type       ),
+                            new QueryParameter("@visibleName", MySqlDbType.VarChar, 60, "visibleName",so.VisibleName ),
+                            new QueryParameter("@position_x",  MySqlDbType.VarChar, 60, "position_x",so.Position.x ),
+                            new QueryParameter("@position_y",  MySqlDbType.VarChar, 60, "position_y",so.Position.y ),
+                            new QueryParameter("@position_z",  MySqlDbType.VarChar, 60, "position_z",so.Position.z ),
+                            new QueryParameter("@rotation_x",  MySqlDbType.VarChar, 60, "rotation_x",so.Rotation.x ),
+                            new QueryParameter("@rotation_y",  MySqlDbType.VarChar, 60, "rotation_y",so.Rotation.y ),
+                            new QueryParameter("@rotation_z",  MySqlDbType.VarChar, 60, "rotation_z",so.Rotation.z ),
+                            new QueryParameter("@rotation_w",  MySqlDbType.VarChar, 60, "rotation_w",so.Rotation.w ),
+                            new QueryParameter("@speed",       MySqlDbType.VarChar, 60, "speed",so.Speed      ),
+                            new QueryParameter("@prefab_path", MySqlDbType.VarChar, 60, "prefab_path",so.Prefab ));
+         
+         var id = _database.ExecuteScalar(
+         "SELECT ID FROM Users WHERE username = @userName");
+          return (int)id ;                
+
+
+        }
+
     }
 }
