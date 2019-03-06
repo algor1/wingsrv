@@ -26,6 +26,7 @@ namespace LoginPlugin
         public ConcurrentDictionary<IClient, string> UsersLoggedIn { get; } = new ConcurrentDictionary<IClient, string>();
 
         public delegate void LogoutEventHandler(string username);
+        public delegate void SignUpEventHandler(string username);
 
         // Maximum number of Tags per Plugin
         public const ushort TagsPerPlugin = 256;
@@ -61,6 +62,7 @@ namespace LoginPlugin
         }
 
         public event LogoutEventHandler onLogout;
+        public event LogoutEventHandler onSignUp;
 
         private void LoadConfig()
         {
@@ -311,6 +313,7 @@ namespace LoginPlugin
                                         using (var msg = Message.CreateEmpty(AddUserSuccess))
                                         {
                                             client.SendMessage(msg, SendMode.Reliable);
+                                            onSignUp?.Invoke(username);
                                         }
                                     });
                                 }
