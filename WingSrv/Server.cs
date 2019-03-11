@@ -21,7 +21,7 @@ namespace Wingsrv
         private ConcurrentDictionary<int, Ship> ships;
         //private Dictionary<int, SpaceObject> spaseObjects;
         public Dictionary<string, int> playerShip;
-
+        public Dictionary<int,string> playerShipInverse;
 
         public delegate void TickHandler();
         public event TickHandler onTick;
@@ -56,6 +56,7 @@ namespace Wingsrv
                 LoadShips();
                 Console.WriteLine("Starting server...");
                 playerShip = new Dictionary<string, int>();
+                playerShipInverse = new Dictionary<int,string >();
                 //Thread myThread = new Thread(new ThreadStart(Run));
                 //myThread.Start();
                 //Console.WriteLine(myThread.IsBackground);
@@ -94,6 +95,7 @@ namespace Wingsrv
         {
             int ship_id = 0;// 0 - ship id temporary TODO
             playerShip.Add(player, ship_id);
+            playerShipInverse.Add( ship_id,player);
             SendPlayerShipData(player);
             
             try
@@ -123,6 +125,7 @@ namespace Wingsrv
         {
             int ship_id = 0;// 0 - ship id temporary TODO
             playerShip.Add(player, ship_id);
+            playerShipInverse.Add(ship_id, player);
             SendPlayerShipData(player);
 
             //return true;
@@ -209,14 +212,32 @@ namespace Wingsrv
             List<ShipData> resultShipList = new List<ShipData>();
             for (int i = 0; i < ships.Count; i++)
             {
-                if (ships[i].p.Id == ship_id || ships[i].p.Hidden) continue;//remove player from list
-                if (ships[i].p.Id == ship_id || ships[i].p.Destroyed) continue;//remove player from list
+                if (ships[i].p.Id == ship_id || ships[i].p.Hidden || ships[i].p.Destroyed) continue;//remove player from list
+
 
                 float dist = Vector3.Distance(_playerShip.p.Position, ships[i].p.Position);
                 //          print (dist);
                 if (dist < _playerShip.p.VisionDistance)
                 {
                     resultShipList.Add(ships[i].p);
+                }
+
+            }
+            return resultShipList.ToArray();
+        }
+         private int[] NearestShipIds(int ship_id)
+                
+        {
+            Ship _playerShip = GetShip(ship_id);
+            List<int> resultShipList = new List<int>();
+            for (int i = 0; i < ships.Count; i++)
+            {
+                if (ships[i].p.Id == ship_id || ships[i].p.Hidden || ships[i].p.Destroyed) continue;//remove player from list
+                float dist = Vector3.Distance(_playerShip.p.Position, ships[i].p.Position);
+                //          print (dist);
+                if (dist < _playerShip.p.VisionDistance)
+                {
+                    resultShipList.Add(ships[i].p.Id);
                 }
 
             }
@@ -272,8 +293,10 @@ namespace Wingsrv
         public void GetPlayerShipCommand(string player, ShipCommand player_command, int target_id,int point_id)
         {
             gamePlugin.WriteToLog(player + "  " + player_command + " " + target_id + " " + point_id,DarkRift.LogType.Info);
+            
+            SendShipCommandToNearest(playerShip[player], player_command, target_id, point_id);
+            
             Ship _playerShip = ships [playerShip[player]];
-
             SpaceObject _target;
 
             switch (player_command)
@@ -300,7 +323,45 @@ namespace Wingsrv
                     break;
             }
 
+
         }
+        private void SendShipCommandToNearest(int shipId, ShipCommand player_command, int target_id,int point_id)
+        {
+            int[] nearest= NearestShipIds (shipId);
+            foreach (int entryId in nearest)
+            {
+                if (playerShipInverse.ContainsKey(entryId))
+                {
+                     using (var writer = DarkRiftWriter.Create())
+                    {
+                        
+                        writer.Write((int) player_command);
+                        writer.Write(target_id);
+                        writer.Write(point_id);
+
+                        //Console.WriteLine("sending {0} bytes to player {1}",writer.Length,entry.Key);
+
+                        using (var msg = Message.Create(Game.PlayerShipCommand, writer))
+                        {
+                            //Console.WriteLine("sending message tag {0} of {1} bytes to player {2}", msg.Tag,msg.DataLength,entry.Key);
+                            //Console.WriteLine(_loginPlugin);
+                            //Console.WriteLine(_loginPlugin.Clients.Count);
+                            //Console.WriteLine(_loginPlugin.UsersLoggedIn.Count);
+
+                            IClient cl = _loginPlugin.Clients[playerShipInverse[entryId]];
+                            //Console.WriteLine("client id {0}",cl.ID);
+
+                            cl.SendMessage(msg, SendMode.Unreliable);
+                        }
+                        //Console.WriteLine("sended {0} nearest ships to player {1}", Nearest(entry.Value).Length, entry.Key);
+
+                    }
+                }
+            }
+
+
+        }
+
         public Ship GetShip(int ship_id)
         {
             for (int i = 0; i < ships.Count; i++)
