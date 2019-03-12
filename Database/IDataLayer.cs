@@ -32,7 +32,8 @@ namespace Database
         void GetAllMOBShips( Action<List<ShipData>> callback);
         void GetShip(int ship_id, Action<ShipData> callback);
         void GetSpaceObject(int _id, Action<SpaceObject> callback);
-        void AddNewShip (Ship ship, Action<int> callback);
+        void AddNewShip (ShipData shipData, Action<int> callback);
+        void SetShip(ShipData shipData, Action<int> callback);
         void AddNewPlayerAndShip(String player, Action callback);
         void GetPlayerActiveShip(string player, Action<int> callback);
 

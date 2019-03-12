@@ -109,6 +109,7 @@ namespace Wingsrv
 
         public void LoadPlayer(string player)
         {
+            if 
             try
             {
                 _database.DataLayer.GetPlayerActiveShip (player) shipId =>
@@ -128,12 +129,23 @@ namespace Wingsrv
                 _database.DatabaseError(null , 0 , ex);
             }
         }
+        public void SavePlayer(string player)
+        {
+            _database.DataLayer.GetPlayerActiveShip (player) shipId =>
+                {
+                   _database.DataLayer.SetShip(shipId) ship =>
+                    {
+        }
 
         public void RemovePlayer(string player)
         {
             if (playerShip.ContainsKey(player))
             {
+                SavePlayer(player);
+                int shipIdToRemove=playerShip[player];
                 playerShip.Remove(player);
+                playerShipInverse.Remove(shipIdToRemove);
+                DeleteShip(shipIdToRemove);
                 gamePlugin.WriteToLog("player " + player + " removed", DarkRift.LogType.Info);
             }
         }
@@ -259,7 +271,11 @@ namespace Wingsrv
                 //TODO Log wrong ship adding
             }
         }
-        private void DeleteShip(ShipData ship) { }
+        private void DeleteShip(int shipId) 
+        {
+            ships[shipId].BeforeDestroy();
+            ships.TryRemove(shipId);
+        }
 
         private void LoadShips()
         {

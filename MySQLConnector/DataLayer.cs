@@ -152,6 +152,51 @@ namespace MySQLConnector
             callback(new FriendList(friends, inRequests, outRequests));
         }
 
+
+        private int AddNewSpaceObject(SpaceObject so)
+        {
+            _database.ExecuteNonQuery(
+                @"INSERT INTO server_objects (id,
+                            type,
+                            visibleName,
+                            position_x,
+                            position_y,
+                            position_z,
+                            rotation_x,
+                            rotation_y,
+                            rotation_z,
+                            rotation_w,
+                            speed,
+                            prefab_path) 
+                            VALUES(
+                            NULL
+                            @type,
+                            @visibleName,
+                            @position_x,
+                            @position_y,
+                            @position_z,
+                            @rotation_x,
+                            @rotation_y,
+                            @rotation_z,
+                            @rotation_w,
+                            @speed,
+                            @prefab_path)",
+                            new QueryParameter("@type",        MySqlDbType.Int32, 32, "type",so.Type       ),
+                            new QueryParameter("@visibleName", MySqlDbType.VarChar, 250, "visibleName",so.VisibleName ),
+                            new QueryParameter("@position_x",  MySqlDbType.Float, 32, "position_x", so.Position.x),
+                            new QueryParameter("@position_y", MySqlDbType.Float, 32, "position_y", so.Position.y),
+                            new QueryParameter("@position_z", MySqlDbType.Float, 32, "position_z", so.Position.z),
+                            new QueryParameter("@rotation_x", MySqlDbType.Float, 32, "rotation_x", so.Rotation.x),
+                            new QueryParameter("@rotation_y", MySqlDbType.Float, 32, "rotation_y", so.Rotation.y),
+                            new QueryParameter("@rotation_z", MySqlDbType.Float, 32, "rotation_z", so.Rotation.z),
+                            new QueryParameter("@rotation_w", MySqlDbType.Float, 32, "rotation_w", so.Rotation.w),
+                            new QueryParameter("@speed", MySqlDbType.Float, 32, "speed", so.Speed),
+                            new QueryParameter("@prefab_path", MySqlDbType.VarChar, 250, "prefab_path",so.Prefab ));
+         
+         var id = _database.ExecuteScalar("SELECT ID FROM Users WHERE username = @userName");
+         return (int)id ;                
+        }
+
         public void GetSpaceObject(int _id, Action<SpaceObject> callback)
         {
             var rows = _database.ExecuteQuery(
@@ -182,6 +227,125 @@ namespace MySQLConnector
             returnSO.Prefab = (string)data["prefab_path"];
 
             callback(returnSO);
+        }
+
+        private void SetSpaceObject(SpaceObject so)
+            {
+                    _database.ExecuteNonQuery(
+                    @"UPDATE server_objects SET
+                                type       = @type,
+                                visibleName= @visibleName,
+                                position_x = @position_x,
+                                position_y = @position_y,
+                                position_z = @position_z,
+                                rotation_x = @rotation_x,
+                                rotation_y = @rotation_y,
+                                rotation_z = @rotation_z,
+                                rotation_w = @rotation_w,
+                                speed      = @speed,
+                                prefab_path= @prefab_path
+                            WHERE id=@id" ,
+                            new QueryParameter("@type",        MySqlDbType.Int32, 32, "type",(int)so.Type       ),
+                            new QueryParameter("@visibleName", MySqlDbType.VarChar, 250, "visibleName",so.VisibleName ),
+                            new QueryParameter("@position_x",  MySqlDbType.Float, 32, "position_x", so.Position.x),
+                            new QueryParameter("@position_y", MySqlDbType.Float, 32, "position_y", so.Position.y),
+                            new QueryParameter("@position_z", MySqlDbType.Float, 32, "position_z", so.Position.z),
+                            new QueryParameter("@rotation_x", MySqlDbType.Float, 32, "rotation_x", so.Rotation.x),
+                            new QueryParameter("@rotation_y", MySqlDbType.Float, 32, "rotation_y", so.Rotation.y),
+                            new QueryParameter("@rotation_z", MySqlDbType.Float, 32, "rotation_z", so.Rotation.z),
+                            new QueryParameter("@rotation_w", MySqlDbType.Float, 32, "rotation_w", so.Rotation.w),
+                            new QueryParameter("@speed", MySqlDbType.Float, 32, "speed", so.Speed),
+                            new QueryParameter("@prefab_path", MySqlDbType.VarChar, 250, "prefab_path",so.Prefab ));
+            }
+
+        public void AddNewShip(ShipData shipData, Action<int> callback)
+        {
+            int newShip_id=AddNewSpaceObject(shipData);
+
+            _database.ExecuteNonQuery(
+                @"INSERT INTO SO_shipdata (id,
+                        max_speed,
+                        rotation_speed,
+                        acceleration_max,
+                        newSpeed,
+                        hull_full,
+                        armor_full,
+                        shield_full,
+                        capasitor_full,
+                        hull,
+                        armor,
+                        shield,
+                        capasitor,
+                        hull_restore,
+                        armor_restore,
+                        shield_restore,
+                        capasitor_restore,
+                        agr_distance,
+                        vision_distance,
+                        destroyed,
+                        hidden,
+                        mob,
+                        warpDriveStartTime,
+                        warpSpeed) 
+                 VALUES(
+                        @id
+                        @max_speed,
+                        @rotation_speed,
+                        @acceleration_max,
+                        @newSpeed,
+                        @hull_full,
+                        @armor_full,
+                        @shield_full,
+                        @capasitor_full,
+                        @hull,
+                        @armor,
+                        @shield,
+                        @capasitor,
+                        @hull_restore,
+                        @armor_restore,
+                        @shield_restore,
+                        @capasitor_restore,
+                        @agr_distance,
+                        @vision_distance,
+                        @destroyed,
+                        @hidden,
+                        @mob,
+                        @warpDriveStartTime,
+                        @warpSpeed)",
+                new QueryParameter("@id",MySqlDbType.Int32, 32,"id",newShip_id),
+                new QueryParameter("@max_speed", MySqlDbType.Float, 32, "max_speed", shipData.SpeedMax),
+                new QueryParameter("@rotation_speed", MySqlDbType.Float, 32, "rotation_speed", shipData.RotationSpeed),
+                new QueryParameter("@acceleration_max", MySqlDbType.Float, 32, "acceleration_max", shipData.AccelerationMax),
+                new QueryParameter("@newSpeed", MySqlDbType.Float, 32, "newSpeed", shipData.SpeedNew),
+                new QueryParameter("@hull_full", MySqlDbType.Float, 32, "hull_full", shipData.Hull_full),
+                new QueryParameter("@armor_full", MySqlDbType.Float, 32, "armor_full", shipData.Armor_full),
+                new QueryParameter("@shield_full", MySqlDbType.Float, 32, "shield_full", shipData.Shield_full),
+                new QueryParameter("@capasitor_full", MySqlDbType.Float, 32, "capasitor_full", shipData.Capasitor_full),
+                new QueryParameter("@hull", MySqlDbType.Float, 32, "hull", shipData.Hull),
+                new QueryParameter("@armor", MySqlDbType.Float, 32, "armor", shipData.Armor),
+                new QueryParameter("@shield", MySqlDbType.Float, 32, "shield", shipData.Shield),
+                new QueryParameter("@capasitor", MySqlDbType.Float, 32, "capasitor", shipData.Capasitor),
+                new QueryParameter("@hull_restore", MySqlDbType.Float, 32, "hull_restore", shipData.Hull_restore),
+                new QueryParameter("@armor_restore", MySqlDbType.Float, 32, "armor_restore", shipData.Armor_restore),
+                new QueryParameter("@shield_restore", MySqlDbType.Float, 32, "shield_restore", shipData.Shield_restore),
+                new QueryParameter("@capasitor_restore", MySqlDbType.Float, 32, "capasitor_restore", shipData.Capasitor_restore),
+                new QueryParameter("@agr_distance", MySqlDbType.Float, 32, "agr_distance", shipData.AgrDistance),
+                new QueryParameter("@vision_distance", MySqlDbType.Float, 32, "vision_distance", shipData.VisionDistance),
+                new QueryParameter("@destroyed", MySqlDbType.Int16, 16, "destroyed", shipData.Destroyed),
+                new QueryParameter("@hidden", MySqlDbType.Int16, 16, "hidden", shipData.Hidden),
+                new QueryParameter("@mob", MySqlDbType.Int16, 16, "mob", shipData.Mob),
+                new QueryParameter("@warpDriveStartTime", MySqlDbType.Float, 32, "warpDriveStartTime", shipData.WarpDriveStartTime),
+                new QueryParameter("@warpSpeed", MySqlDbType.Float, 32, "warpSpeed", shipData.WarpSpeed));
+            foreach (WeaponData weapon in shipData.Weapons)
+            {
+                AddNewWeapon(newShip_id, weapon);
+            }
+            foreach (EquipmentData eq in shipData.Equipments)
+            {
+                //AddNewEquipment(newShip_id, eq);
+            }
+
+            callback(newShip_id);
         }
 
         public void GetShip(int ship_id ,Action<ShipData> callback)
@@ -269,6 +433,76 @@ namespace MySQLConnector
 
             callback(retShipData);
 
+        }
+
+        public void SetShip(ShipData shipData, Action callback)
+        {
+            SetSpaceObject(shipData);
+                      
+            UPDATE `SO_shipdata` SET `max_speed`=? WHERE _rowid_='2';
+            _database.ExecuteNonQuery(
+                @"UPDATE SO_shipdata SET
+                    max_speed =@max_speed
+                    rotation_speed, =@rotation_speed,
+                    acceleration_max, =@acceleration_max,
+                    newSpeed, =@newSpeed,
+                    hull_full, =@hull_full,
+                    armor_full, =@armor_full,
+                    shield_full, =@shield_full,
+                    capasitor_full, =@capasitor_full,
+                    hull, =@hull,
+                    armor, =@armor,
+                    shield, =@shield,
+                    capasitor, =@capasitor,
+                    hull_restore, =@hull_restore,
+                    armor_restore, =@armor_restore,
+                    shield_restore, =@shield_restore,
+                    capasitor_restore,=@capasitor_restore,
+                    agr_distance, =@agr_distance,
+                    vision_distance, =@vision_distance,
+                    destroyed, =@destroyed,
+                    hidden, =@hidden,
+                    mob, =@mob,
+                    warpDriveStartTime=@warpDriveStartTime,
+                    warpSpeed =@warpSpeed
+                WHERE id=@id",
+
+
+                new QueryParameter("@id", MySqlDbType.Int32, 32, "id", shipData.Id),
+                new QueryParameter("@max_speed", MySqlDbType.Float, 32, "max_speed", shipData.SpeedMax),
+                new QueryParameter("@rotation_speed", MySqlDbType.Float, 32, "rotation_speed", shipData.RotationSpeed),
+                new QueryParameter("@acceleration_max", MySqlDbType.Float, 32, "acceleration_max", shipData.AccelerationMax),
+                new QueryParameter("@newSpeed", MySqlDbType.Float, 32, "newSpeed", shipData.SpeedNew),
+                new QueryParameter("@hull_full", MySqlDbType.Float, 32, "hull_full", shipData.Hull_full),
+                new QueryParameter("@armor_full", MySqlDbType.Float, 32, "armor_full", shipData.Armor_full),
+                new QueryParameter("@shield_full", MySqlDbType.Float, 32, "shield_full", shipData.Shield_full),
+                new QueryParameter("@capasitor_full", MySqlDbType.Float, 32, "capasitor_full", shipData.Capasitor_full),
+                new QueryParameter("@hull", MySqlDbType.Float, 32, "hull", shipData.Hull),
+                new QueryParameter("@armor", MySqlDbType.Float, 32, "armor", shipData.Armor),
+                new QueryParameter("@shield", MySqlDbType.Float, 32, "shield", shipData.Shield),
+                new QueryParameter("@capasitor", MySqlDbType.Float, 32, "capasitor", shipData.Capasitor),
+                new QueryParameter("@hull_restore", MySqlDbType.Float, 32, "hull_restore", shipData.Hull_restore),
+                new QueryParameter("@armor_restore", MySqlDbType.Float, 32, "armor_restore", shipData.Armor_restore),
+                new QueryParameter("@shield_restore", MySqlDbType.Float, 32, "shield_restore", shipData.Shield_restore),
+                new QueryParameter("@capasitor_restore", MySqlDbType.Float, 32, "capasitor_restore", shipData.Capasitor_restore),
+                new QueryParameter("@agr_distance", MySqlDbType.Float, 32, "agr_distance", shipData.AgrDistance),
+                new QueryParameter("@vision_distance", MySqlDbType.Float, 32, "vision_distance", shipData.VisionDistance),
+                new QueryParameter("@destroyed", MySqlDbType.Int16, 16, "destroyed", shipData.Destroyed),
+                new QueryParameter("@hidden", MySqlDbType.Int16, 16, "hidden", shipData.Hidden),
+                new QueryParameter("@mob", MySqlDbType.Int16, 16, "mob", shipData.Mob),
+                new QueryParameter("@warpDriveStartTime", MySqlDbType.Float, 32, "warpDriveStartTime", shipData.WarpDriveStartTime),
+                new QueryParameter("@warpSpeed", MySqlDbType.Float, 32, "warpSpeed", shipData.WarpSpeed));
+
+            foreach (WeaponData weapon in shipData.Weapons)
+            {
+                AddNewWeapon(newShip_id, weapon);
+            }
+            foreach (EquipmentData eq in shipData.Equipments)
+            {
+                //AddNewEquipment(newShip_id, eq);
+            }
+
+            callback(newShip_id);
         }
 
         public void GetAllMOBShips(Action<List<ShipData>> callback)
@@ -366,131 +600,6 @@ namespace MySQLConnector
             return retList;
         }
 
-        private WeaponData[] GetWeapons(int ship_id)
-        {
-            List<WeaponData> retList = new List<WeaponData>();
-
-            var rows = _database.ExecuteQuery(@"SELECT 
-					WeaponType, 
-					damage, 
-					reload, 
-					ammoSpeed, 
-					activeTime, 
-					sqrDistanse_max, 
-					capasitor_use
-					FROM SO_weapondata
-					WHERE SO_id=@id",
-                new QueryParameter("@id", MySqlDbType.Int32, 32, "id", ship_id));
-
-            foreach (var row in rows)
-            {
-                WeaponData weapon = new WeaponData();
-                var data = row.GetRow();
-
-                weapon.Type = (WeaponData.WeaponType)data["WeaponType"];
-                weapon.Damage = (float)data["damage"];
-                weapon.Reload = (float)data["reload"];
-                weapon.AmmoSpeed = (float)data["ammoSpeed"];
-                weapon.ActiveTime = (float)data["activeTime"];
-                weapon.SqrDistanse_max = (float)data["sqrDistanse_max"];
-                weapon.Capasitor_use = (float)data["capasitor_use"];
-
-                retList.Add(weapon);
-            }
-
-            return retList.ToArray();
-        }
-        
-        public void AddNewShip(ShipData shipData, Action<int> callback)
-        {
-            int newShip_id=AddNewSpaceObject(shipData);
-
-            _database.ExecuteNonQuery(
-                @"INSERT INTO server_objects (id,
-                        max_speed,
-                        rotation_speed,
-                        acceleration_max,
-                        newSpeed,
-                        hull_full,
-                        armor_full,
-                        shield_full,
-                        capasitor_full,
-                        hull,
-                        armor,
-                        shield,
-                        capasitor,
-                        hull_restore,
-                        armor_restore,
-                        shield_restore,
-                        capasitor_restore,
-                        agr_distance,
-                        vision_distance,
-                        destroyed,
-                        hidden,
-                        mob,
-                        warpDriveStartTime,
-                        warpSpeed) 
-                 VALUES(
-                        @id
-                        @max_speed,
-                        @rotation_speed,
-                        @acceleration_max,
-                        @newSpeed,
-                        @hull_full,
-                        @armor_full,
-                        @shield_full,
-                        @capasitor_full,
-                        @hull,
-                        @armor,
-                        @shield,
-                        @capasitor,
-                        @hull_restore,
-                        @armor_restore,
-                        @shield_restore,
-                        @capasitor_restore,
-                        @agr_distance,
-                        @vision_distance,
-                        @destroyed,
-                        @hidden,
-                        @mob,
-                        @warpDriveStartTime,
-                        @warpSpeed)",
-                new QueryParameter("@id",MySqlDbType.Int32, 32,"id",newShip_id),
-                new QueryParameter("@max_speed", MySqlDbType.Float, 32, "max_speed", shipData.SpeedMax),
-                new QueryParameter("@rotation_speed", MySqlDbType.Float, 32, "rotation_speed", shipData.RotationSpeed),
-                new QueryParameter("@acceleration_max", MySqlDbType.Float, 32, "acceleration_max", shipData.AccelerationMax),
-                new QueryParameter("@newSpeed", MySqlDbType.Float, 32, "newSpeed", shipData.SpeedNew),
-                new QueryParameter("@hull_full", MySqlDbType.Float, 32, "hull_full", shipData.Hull_full),
-                new QueryParameter("@armor_full", MySqlDbType.Float, 32, "armor_full", shipData.Armor_full),
-                new QueryParameter("@shield_full", MySqlDbType.Float, 32, "shield_full", shipData.Shield_full),
-                new QueryParameter("@capasitor_full", MySqlDbType.Float, 32, "capasitor_full", shipData.Capasitor_full),
-                new QueryParameter("@hull", MySqlDbType.Float, 32, "hull", shipData.Hull),
-                new QueryParameter("@armor", MySqlDbType.Float, 32, "armor", shipData.Armor),
-                new QueryParameter("@shield", MySqlDbType.Float, 32, "shield", shipData.Shield),
-                new QueryParameter("@capasitor", MySqlDbType.Float, 32, "capasitor", shipData.Capasitor),
-                new QueryParameter("@hull_restore", MySqlDbType.Float, 32, "hull_restore", shipData.Hull_restore),
-                new QueryParameter("@armor_restore", MySqlDbType.Float, 32, "armor_restore", shipData.Armor_restore),
-                new QueryParameter("@shield_restore", MySqlDbType.Float, 32, "shield_restore", shipData.Shield_restore),
-                new QueryParameter("@capasitor_restore", MySqlDbType.Float, 32, "capasitor_restore", shipData.Capasitor_restore),
-                new QueryParameter("@agr_distance", MySqlDbType.Float, 32, "agr_distance", shipData.AgrDistance),
-                new QueryParameter("@vision_distance", MySqlDbType.Float, 32, "vision_distance", shipData.VisionDistance),
-                new QueryParameter("@destroyed", MySqlDbType.Int16, 16, "destroyed", shipData.Destroyed),
-                new QueryParameter("@hidden", MySqlDbType.Int16, 16, "hidden", shipData.Hidden),
-                new QueryParameter("@mob", MySqlDbType.Int16, 16, "mob", shipData.Mob),
-                new QueryParameter("@warpDriveStartTime", MySqlDbType.Float, 32, "warpDriveStartTime", shipData.WarpDriveStartTime),
-                new QueryParameter("@warpSpeed", MySqlDbType.Float, 32, "warpSpeed", shipData.WarpSpeed));
-            foreach (WeaponData weapon in shipData.Weapons)
-            {
-                AddNewWeapon(newShip_id, weapon);
-            }
-            foreach (EquipmentData eq in shipData.Equipments)
-            {
-                //AddNewEquipment(newShip_id, eq);
-            }
-
-            callback(newShip_id);
-        }
-
         private void AddNewWeapon(int ship_id,WeaponData weaponData)
         {
             _database.ExecuteNonQuery(
@@ -526,64 +635,41 @@ namespace MySQLConnector
 
         }
 
-        private int AddNewSpaceObject(SpaceObject so)
+        private WeaponData[] GetWeapons(int ship_id)
         {
-            _database.ExecuteNonQuery(
-                @"INSERT INTO server_objects (id,
-                            type,
-                            visibleName,
-                            position_x,
-                            position_y,
-                            position_z,
-                            rotation_x,
-                            rotation_y,
-                            rotation_z,
-                            rotation_w,
-                            speed,
-                            prefab_path) 
-                            VALUES(
-                            NULL
-                            @type,
-                            @visibleName,
-                            @position_x,
-                            @position_y,
-                            @position_z,
-                            @rotation_x,
-                            @rotation_y,
-                            @rotation_z,
-                            @rotation_w,
-                            @speed,
-                            @prefab_path)",
-                            new QueryParameter("@type",        MySqlDbType.Int32, 32, "type",so.Type       ),
-                            new QueryParameter("@visibleName", MySqlDbType.VarChar, 250, "visibleName",so.VisibleName ),
-                            new QueryParameter("@position_x",  MySqlDbType.Float, 32, "position_x", so.Position.x),
-                            new QueryParameter("@position_y", MySqlDbType.Float, 32, "position_y", so.Position.y),
-                            new QueryParameter("@position_z", MySqlDbType.Float, 32, "position_z", so.Position.z),
-                            new QueryParameter("@rotation_x", MySqlDbType.Float, 32, "rotation_x", so.Rotation.x),
-                            new QueryParameter("@rotation_y", MySqlDbType.Float, 32, "rotation_y", so.Rotation.y),
-                            new QueryParameter("@rotation_z", MySqlDbType.Float, 32, "rotation_z", so.Rotation.z),
-                            new QueryParameter("@rotation_w", MySqlDbType.Float, 32, "rotation_w", so.Rotation.w),
-                            new QueryParameter("@speed", MySqlDbType.Float, 32, "speed", so.Speed),
-                            new QueryParameter("@prefab_path", MySqlDbType.VarChar, 250, "prefab_path",so.Prefab ));
-         
-         var id = _database.ExecuteScalar("SELECT ID FROM Users WHERE username = @userName");
-         return (int)id ;                
-        }
+            List<WeaponData> retList = new List<WeaponData>();
 
-        private void AddNewPlayer(string player,int ship_id)
-        {
-            _database.ExecuteNonQuery(
-                @"INSERT INTO players (id,
-                            player,
-                            active_ship_id)
-                            VALUES(
-                            NULL
-                            @player,
-                            @active_ship_id)",
-                            new QueryParameter("@player", MySqlDbType.VarChar, 250, "player",player ),
-                            new QueryParameter("@active_ship_id", MySqlDbType.Int32, 32, "active_ship_id",ship_id ));
-        }
+            var rows = _database.ExecuteQuery(@"SELECT 
+					WeaponType, 
+					damage, 
+					reload, 
+					ammoSpeed, 
+					activeTime, 
+					sqrDistanse_max, 
+					capasitor_use
+					FROM SO_weapondata
+					WHERE SO_id=@id",
+                new QueryParameter("@id", MySqlDbType.Int32, 32, "id", ship_id));
 
+            foreach (var row in rows)
+            {
+                WeaponData weapon = new WeaponData();
+                var data = row.GetRow();
+
+                weapon.Type = (WeaponData.WeaponType)data["WeaponType"];
+                weapon.Damage = (float)data["damage"];
+                weapon.Reload = (float)data["reload"];
+                weapon.AmmoSpeed = (float)data["ammoSpeed"];
+                weapon.ActiveTime = (float)data["activeTime"];
+                weapon.SqrDistanse_max = (float)data["sqrDistanse_max"];
+                weapon.Capasitor_use = (float)data["capasitor_use"];
+
+                retList.Add(weapon);
+            }
+
+            return retList.ToArray();
+        }
+       
         public void GetPlayerActiveShip(string player, Action<int> callback)
         {
             var row = _database.ExecuteScalar(
@@ -603,5 +689,20 @@ namespace MySQLConnector
                 }
             callback();
         }
+
+        private void AddNewPlayer(string player,int ship_id)
+        {
+            _database.ExecuteNonQuery(
+                @"INSERT INTO players (id,
+                            player,
+                            active_ship_id)
+                            VALUES(
+                            NULL
+                            @player,
+                            @active_ship_id)",
+                            new QueryParameter("@player", MySqlDbType.VarChar, 250, "player",player ),
+                            new QueryParameter("@active_ship_id", MySqlDbType.Int32, 32, "active_ship_id",ship_id ));
+        }
+
     }
 }
