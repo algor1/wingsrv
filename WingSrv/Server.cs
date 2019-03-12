@@ -93,38 +93,42 @@ namespace Wingsrv
         
         public void AddNewPlayer(string player)
         {
-            //int ship_id = 0;// 0 - ship id temporary TODO
-            //playerShip.Add(player, ship_id);
-            //playerShipInverse.Add( ship_id,player);
-            //SendPlayerShipData(player);
-            
             try
             {
                 _database.DataLayer.AddNewPlayerAndShip (player) newPlayer =>
                 {
                     LoadPlayer(newPlayer);
                 }
-
             }
             catch (Exception ex)
             {
                 gamePlugin.WriteToLog("Database error on adding player" +ex, DarkRift.LogType.Error);
-
-                //Return Error 2 for Database error
                 _database.DatabaseError(null , 0 , ex);
             }
-            
         }
 
         public void LoadPlayer(string player)
         {
-            int ship_id = 0;// 0 - ship id temporary TODO
-            playerShip.Add(player, ship_id);
-            playerShipInverse.Add(ship_id, player);
-            SendPlayerShipData(player);
-
-            //return true;
+            try
+            {
+                _database.DataLayer.GetPlayerActiveShip (player) shipId =>
+                {
+                   _database.DataLayer.GetShip(shipId) ship =>
+                    {
+                        AddShip(ship);
+                        playerShip.Add(player, shipId);
+                        playerShipInverse.Add(shipId, player);
+                        SendPlayerShipData(player);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on loading player" +ex, DarkRift.LogType.Error);
+                _database.DatabaseError(null , 0 , ex);
+            }
         }
+
         public void RemovePlayer(string player)
         {
             if (playerShip.ContainsKey(player))
