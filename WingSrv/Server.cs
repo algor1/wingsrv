@@ -109,7 +109,7 @@ namespace Wingsrv
 
         public void LoadPlayer(string player)
         {
-            if 
+            
             try
             {
                 _database.DataLayer.GetPlayerActiveShip (player) shipId =>
@@ -120,6 +120,7 @@ namespace Wingsrv
                         playerShip.Add(player, shipId);
                         playerShipInverse.Add(shipId, player);
                         SendPlayerShipData(player);
+                        gamePlugin.WriteToLog("player " + player + " saved. Ship id: "+ shipId, DarkRift.LogType.Info);
                     }
                 }
             }
@@ -133,8 +134,10 @@ namespace Wingsrv
         {
             _database.DataLayer.GetPlayerActiveShip (player) shipId =>
                 {
-                   _database.DataLayer.SetShip(shipId) ship =>
+                   _database.DataLayer.SetShip(ships[shipId].p) =>
                     {
+                        gamePlugin.WriteToLog("player " + player + " saved. Ship id: "+ shipId, DarkRift.LogType.Info);
+                    }
         }
 
         public void RemovePlayer(string player)

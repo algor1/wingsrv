@@ -62,7 +62,7 @@ namespace LoginPlugin
         }
 
         public event LogoutEventHandler onLogout;
-        public event LogoutEventHandler onSignUp;
+        public event SignUpEventHandler onSignUp;
 
         private void LoadConfig()
         {

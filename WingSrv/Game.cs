@@ -60,6 +60,7 @@ namespace Wingsrv
             LoadConfig();
             RunServers();
             ClientManager.ClientConnected += OnPlayerConnected;
+
         }
 
         
@@ -135,6 +136,7 @@ namespace Wingsrv
                         server._loginPlugin = _loginPlugin;
                         serverSO._loginPlugin = _loginPlugin;
                         _loginPlugin.onLogout+= RemovePlayerFromServer;
+                        _loginPlugin.onSignUp+= AddNewPlayer;
                     }
                 }
 
@@ -149,8 +151,8 @@ namespace Wingsrv
                     }
                 }
             }
-            server.RunServer();
-            serverSO.RunServer();
+            if (!server.started) server.RunServer();
+            if (!serverSO.started) serverSO.RunServer();
 
 
             e.Client.MessageReceived += OnMessageReceived;
@@ -214,11 +216,11 @@ namespace Wingsrv
 
         private void RemovePlayerFromServer(string username)
         {
-            server.RemovePlayer(username);
+             server.RemovePlayer(username);
         }
         private void AddNewPlayer(string username)
         {
-            server.AddNewPlayer(username);
+             server.AddNewPlayer(username);
         }
         public void WriteToLog(string _event, LogType typeInfo)
         {
