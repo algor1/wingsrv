@@ -35,6 +35,7 @@ namespace Wingsrv
         public const ushort MessageFailed = (ushort)(4 + Shift);
         public const ushort PlayerShipData = (ushort)(5 + Shift);
         public const ushort NearestSpaceObjects = (ushort)(6 + Shift);
+        public const ushort ShipCommand = (ushort)(7 + Shift);
 
 
         private const string ConfigPath = @"Plugins/Game.xml";

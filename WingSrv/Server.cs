@@ -352,14 +352,14 @@ namespace Wingsrv
                 {
                      using (var writer = DarkRiftWriter.Create())
                     {
-                        
+                        writer.Write(shipId);
                         writer.Write((int) player_command);
                         writer.Write(target_id);
                         writer.Write(point_id);
 
                         //Console.WriteLine("sending {0} bytes to player {1}",writer.Length,entry.Key);
 
-                        using (var msg = Message.Create(Game.PlayerShipCommand, writer))
+                        using (var msg = Message.Create(Game.ShipCommand, writer))
                         {
                             //Console.WriteLine("sending message tag {0} of {1} bytes to player {2}", msg.Tag,msg.DataLength,entry.Key);
                             //Console.WriteLine(_loginPlugin);
