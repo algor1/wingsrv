@@ -313,8 +313,12 @@ namespace LoginPlugin
                                         using (var msg = Message.CreateEmpty(AddUserSuccess))
                                         {
                                             client.SendMessage(msg, SendMode.Reliable);
-                                            onSignUp?.Invoke(username);
+
+
                                         }
+                                        onSignUp?.Invoke(username);
+                                        WriteEvent("New User: " + username, LogType.Info);
+
                                     });
                                 }
                                 else

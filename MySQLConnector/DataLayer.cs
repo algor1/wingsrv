@@ -155,8 +155,8 @@ namespace MySQLConnector
 
         private int AddNewSpaceObject(SpaceObject so)
         {
-            _database.ExecuteNonQuery(
-                @"INSERT INTO server_objects (id,
+            long _id =_database.ExecuteInsert(
+                @"INSERT INTO server_objects (
                             type,
                             visibleName,
                             position_x,
@@ -169,7 +169,7 @@ namespace MySQLConnector
                             speed,
                             prefab_path) 
                             VALUES(
-                            NULL
+
                             @type,
                             @visibleName,
                             @position_x,
@@ -181,7 +181,7 @@ namespace MySQLConnector
                             @rotation_w,
                             @speed,
                             @prefab_path)",
-                            new QueryParameter("@type",        MySqlDbType.Int32, 32, "type",so.Type       ),
+                            new QueryParameter("@type",        MySqlDbType.Int32, 32, "type",(int)so.Type       ),
                             new QueryParameter("@visibleName", MySqlDbType.VarChar, 250, "visibleName",so.VisibleName ),
                             new QueryParameter("@position_x",  MySqlDbType.Float, 32, "position_x", so.Position.x),
                             new QueryParameter("@position_y", MySqlDbType.Float, 32, "position_y", so.Position.y),
@@ -193,8 +193,8 @@ namespace MySQLConnector
                             new QueryParameter("@speed", MySqlDbType.Float, 32, "speed", so.Speed),
                             new QueryParameter("@prefab_path", MySqlDbType.VarChar, 250, "prefab_path",so.Prefab ));
          
-         var id = _database.ExecuteScalar("SELECT ID FROM Users WHERE username = @userName");
-         return (int)id ;                
+         //var id = _database.ExecuteScalar("SELECT LAST_INSERT_ID()");
+         return (int)_id ;                
         }
 
         public void GetSpaceObject(int _id, Action<SpaceObject> callback)
@@ -245,6 +245,7 @@ namespace MySQLConnector
                                 speed      = @speed,
                                 prefab_path= @prefab_path
                             WHERE id=@id" ,
+                            new QueryParameter("@id", MySqlDbType.Int32, 11, "id", so.Id),
                             new QueryParameter("@type",        MySqlDbType.Int32, 32, "type",(int)so.Type       ),
                             new QueryParameter("@visibleName", MySqlDbType.VarChar, 250, "visibleName",so.VisibleName ),
                             new QueryParameter("@position_x",  MySqlDbType.Float, 32, "position_x", so.Position.x),
@@ -261,9 +262,9 @@ namespace MySQLConnector
         public void AddNewShip(ShipData shipData, Action<int> callback)
         {
             int newShip_id=AddNewSpaceObject(shipData);
-
+            Console.WriteLine("new ship id {0} ", newShip_id);
             _database.ExecuteNonQuery(
-                @"INSERT INTO SO_shipdata (id,
+                @"INSERT INTO SO_shipdata (SO_id,
                         max_speed,
                         rotation_speed,
                         acceleration_max,
@@ -288,7 +289,7 @@ namespace MySQLConnector
                         warpDriveStartTime,
                         warpSpeed) 
                  VALUES(
-                        @id
+                        @SO_id,
                         @max_speed,
                         @rotation_speed,
                         @acceleration_max,
@@ -312,7 +313,7 @@ namespace MySQLConnector
                         @mob,
                         @warpDriveStartTime,
                         @warpSpeed)",
-                new QueryParameter("@id",MySqlDbType.Int32, 32,"id",newShip_id),
+                new QueryParameter("@SO_id",MySqlDbType.Int32, 11,"SO_id",newShip_id),
                 new QueryParameter("@max_speed", MySqlDbType.Float, 32, "max_speed", shipData.SpeedMax),
                 new QueryParameter("@rotation_speed", MySqlDbType.Float, 32, "rotation_speed", shipData.RotationSpeed),
                 new QueryParameter("@acceleration_max", MySqlDbType.Float, 32, "acceleration_max", shipData.AccelerationMax),
@@ -439,33 +440,32 @@ namespace MySQLConnector
         {
             SetSpaceObject(shipData);
                       
-            UPDATE `SO_shipdata` SET `max_speed`=? WHERE _rowid_='2';
             _database.ExecuteNonQuery(
                 @"UPDATE SO_shipdata SET
                     max_speed =@max_speed
-                    rotation_speed, =@rotation_speed,
-                    acceleration_max, =@acceleration_max,
-                    newSpeed, =@newSpeed,
-                    hull_full, =@hull_full,
-                    armor_full, =@armor_full,
-                    shield_full, =@shield_full,
-                    capasitor_full, =@capasitor_full,
-                    hull, =@hull,
-                    armor, =@armor,
-                    shield, =@shield,
-                    capasitor, =@capasitor,
-                    hull_restore, =@hull_restore,
-                    armor_restore, =@armor_restore,
-                    shield_restore, =@shield_restore,
-                    capasitor_restore,=@capasitor_restore,
-                    agr_distance, =@agr_distance,
-                    vision_distance, =@vision_distance,
-                    destroyed, =@destroyed,
-                    hidden, =@hidden,
-                    mob, =@mob,
+                    rotation_speed =@rotation_speed,
+                    acceleration_max =@acceleration_max,
+                    newSpeed =@newSpeed,
+                    hull_full =@hull_full,
+                    armor_full =@armor_full,
+                    shield_full =@shield_full,
+                    capasitor_full =@capasitor_full,
+                    hull =@hull,
+                    armor =@armor,
+                    shield =@shield,
+                    capasitor =@capasitor,
+                    hull_restore =@hull_restore,
+                    armor_restore =@armor_restore,
+                    shield_restore =@shield_restore,
+                    capasitor_restore=@capasitor_restore,
+                    agr_distance =@agr_distance,
+                    vision_distance =@vision_distance,
+                    destroyed =@destroyed,
+                    hidden =@hidden,
+                    mob =@mob,
                     warpDriveStartTime=@warpDriveStartTime,
                     warpSpeed =@warpSpeed
-                WHERE id=@id",
+                WHERE SO_id=@id",
 
 
                 new QueryParameter("@id", MySqlDbType.Int32, 32, "id", shipData.Id),
@@ -495,14 +495,14 @@ namespace MySQLConnector
 
             foreach (WeaponData weapon in shipData.Weapons)
             {
-                AddNewWeapon(newShip_id, weapon);
+                AddNewWeapon(shipData.Id, weapon);
             }
             foreach (EquipmentData eq in shipData.Equipments)
             {
                 //AddNewEquipment(newShip_id, eq);
             }
 
-            callback(newShip_id);
+            callback();
         }
 
         public void GetAllMOBShips(Action<List<ShipData>> callback)
@@ -678,30 +678,29 @@ namespace MySQLConnector
             callback((int)row);
         }
 
-        public void AddNewPlayerandShip(string player, Action callback)
+        public void AddNewPlayerAndShip(string player, Action callback)
         {
-            GetShip(0) newShip =>
+            GetShip(0, newShip =>
                 {
-                    AddNewShip(newShip) ship_id=>
+                    AddNewShip(newShip, ship_id =>
                         {
-                            AddNewPlayer(player,ship_id);
-                        }
-                }
+                            AddNewPlayer(player, ship_id);
+                        });
+                });
             callback();
         }
 
         private void AddNewPlayer(string player,int ship_id)
         {
             _database.ExecuteNonQuery(
-                @"INSERT INTO players (id,
+                @"INSERT INTO players (
                             player,
                             active_ship_id)
                             VALUES(
-                            NULL
                             @player,
                             @active_ship_id)",
-                            new QueryParameter("@player", MySqlDbType.VarChar, 250, "player",player ),
-                            new QueryParameter("@active_ship_id", MySqlDbType.Int32, 32, "active_ship_id",ship_id ));
+                            new QueryParameter("@player", MySqlDbType.VarChar, 200, "player",player ),
+                            new QueryParameter("@active_ship_id", MySqlDbType.Int32, 11, "active_ship_id",ship_id ));
         }
 
     }

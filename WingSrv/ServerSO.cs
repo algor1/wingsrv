@@ -56,6 +56,7 @@ namespace Wingsrv
 
                 SendNearestTick();
 
+
             }
 
         }
@@ -106,7 +107,7 @@ namespace Wingsrv
             while (started)
             {
                 //serverManager.WriteEvent("Send Nearest.", LogType.Info);
-                //Console.WriteLine("trying to send nearest");
+                Console.WriteLine("trying to send nearest");
                 foreach (KeyValuePair<string, int> entry in server.playerShip)
                 {
                     SendNearest(entry.Key);

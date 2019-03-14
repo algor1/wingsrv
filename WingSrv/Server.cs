@@ -95,10 +95,10 @@ namespace Wingsrv
         {
             try
             {
-                _database.DataLayer.AddNewPlayerAndShip (player) newPlayer =>
-                {
-                    LoadPlayer(newPlayer);
-                }
+                _database.DataLayer.AddNewPlayerAndShip(player,()  =>
+               {
+                   //LoadPlayer(player);
+               });
             }
             catch (Exception ex)
             {
@@ -109,20 +109,20 @@ namespace Wingsrv
 
         public void LoadPlayer(string player)
         {
-            
+
             try
             {
-                _database.DataLayer.GetPlayerActiveShip (player) shipId =>
-                {
-                   _database.DataLayer.GetShip(shipId) ship =>
+                _database.DataLayer.GetPlayerActiveShip(player, shipId =>
+               {
+                   _database.DataLayer.GetShip(shipId, ship =>
                     {
                         AddShip(ship);
                         playerShip.Add(player, shipId);
                         playerShipInverse.Add(shipId, player);
                         SendPlayerShipData(player);
-                        gamePlugin.WriteToLog("player " + player + " saved. Ship id: "+ shipId, DarkRift.LogType.Info);
-                    }
-                }
+                        gamePlugin.WriteToLog("player " + player + " loaded. Ship id: " + shipId, DarkRift.LogType.Info);
+                    });
+               });
             }
             catch (Exception ex)
             {
@@ -132,14 +132,14 @@ namespace Wingsrv
         }
         public void SavePlayer(string player)
         {
-            _database.DataLayer.GetPlayerActiveShip (player) shipId =>
-                {
-                   _database.DataLayer.SetShip(ships[shipId].p) =>
-                    {
-                        gamePlugin.WriteToLog("player " + player + " saved. Ship id: "+ shipId, DarkRift.LogType.Info);
-                    }
+            _database.DataLayer.GetPlayerActiveShip(player, shipId =>
+               {
+                   _database.DataLayer.SetShip(ships[shipId].p, () =>
+                     {
+                         gamePlugin.WriteToLog("player " + player + " saved. Ship id: " + shipId, DarkRift.LogType.Info);
+                     });
+               });
         }
-
         public void RemovePlayer(string player)
         {
             if (playerShip.ContainsKey(player))
@@ -277,14 +277,14 @@ namespace Wingsrv
         private void DeleteShip(int shipId) 
         {
             ships[shipId].BeforeDestroy();
-            ships.TryRemove(shipId);
+            ships.TryRemove(shipId, out _);
         }
 
         private void LoadShips()
         {
             try
             {
-                _database.DataLayer.GetAllShips( shipList =>
+                _database.DataLayer.GetAllMOBShips( shipList =>
                 {
                     for (int i = 0; i < shipList.Count; i++)
                         {

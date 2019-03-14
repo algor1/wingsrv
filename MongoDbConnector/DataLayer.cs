@@ -201,6 +201,36 @@ namespace MongoDbConnector
             throw new NotImplementedException();
         }
 
+        public void GetAllMOBShips(Action<List<ShipData>> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetShip(int ship_id, Action<ShipData> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddNewShip(ShipData shipData, Action<int> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetShip(ShipData shipData, Action callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddNewPlayerAndShip(string player, Action callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetPlayerActiveShip(string player, Action<int> callback)
+        {
+            throw new NotImplementedException();
+        }
+
 
 
         #endregion

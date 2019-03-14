@@ -110,6 +110,23 @@ namespace MySQLConnector
                 }
             }
         }
+        public long ExecuteInsert(string query, params QueryParameter[] parameters)
+        {
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    foreach (var parameter in parameters)
+                    {
+                        command.Parameters.Add(parameter.ParameterName, parameter.FieldType, parameter.Size, parameter.Column).Value = parameter.Value;
+                    }
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    return command.LastInsertedId;
+                }
+            }
+        }
 
         public object ExecuteScalar(string query, params QueryParameter[] parameters)
         {
