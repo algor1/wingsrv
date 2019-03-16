@@ -60,6 +60,7 @@ namespace Wingsrv
                 //Thread myThread = new Thread(new ThreadStart(Run));
                 //myThread.Start();
                 //Console.WriteLine(myThread.IsBackground);
+                started = true;
 
                 RunTick();
                 SendNearest();
@@ -71,7 +72,6 @@ namespace Wingsrv
         private async Task RunTick()
         {
             gamePlugin.WriteToLog(" Server started.", DarkRift.LogType.Info);
-            started = true;
             //SendNearest();
             while (started)
             {
@@ -157,28 +157,29 @@ namespace Wingsrv
             while (started)
             {
                 //serverManager.WriteEvent("Send Nearest.", LogType.Info);
-                //Console.WriteLine("trying to send nearest");
                 foreach (KeyValuePair<string, int> entry in playerShip)
                 {
+                    Console.WriteLine("trying to send nearest Ships");
+
                     using (var writer = DarkRiftWriter.Create())
                     {
                         writer.Write(Nearest(entry.Value));
 
-                        //Console.WriteLine("sending {0} bytes to player {1}",writer.Length,entry.Key);
+                        Console.WriteLine("sending {0} bytes to player {1}",writer.Length,entry.Key);
 
                         using (var msg = Message.Create(Game.NearestShips, writer))
                         {
-                            //Console.WriteLine("sending message tag {0} of {1} bytes to player {2}", msg.Tag,msg.DataLength,entry.Key);
-                            //Console.WriteLine(_loginPlugin);
-                            //Console.WriteLine(_loginPlugin.Clients.Count);
-                            //Console.WriteLine(_loginPlugin.UsersLoggedIn.Count);
+                            Console.WriteLine("sending message tag {0} of {1} bytes to player {2}", msg.Tag,msg.DataLength,entry.Key);
+                            Console.WriteLine(_loginPlugin);
+                            Console.WriteLine(_loginPlugin.Clients.Count);
+                            Console.WriteLine(_loginPlugin.UsersLoggedIn.Count);
 
                             IClient cl = _loginPlugin.Clients[entry.Key];
-                            //Console.WriteLine("client id {0}",cl.ID);
+                            Console.WriteLine("client id {0}",cl.ID);
 
                             cl.SendMessage(msg, SendMode.Unreliable);
                         }
-                        //Console.WriteLine("sended {0} nearest ships to player {1}", Nearest(entry.Value).Length, entry.Key);
+                        Console.WriteLine("sended {0} nearest ships to player {1}", Nearest(entry.Value).Length, entry.Key);
 
                     }
                 }
@@ -223,17 +224,24 @@ namespace Wingsrv
                 
         {
             Ship _playerShip = GetShip(ship_id);
+            //Console.WriteLine("nearets ship for id: {0}  count {1}", ship_id,ships.Count);
+
             List<ShipData> resultShipList = new List<ShipData>();
-            for (int i = 0; i < ships.Count; i++)
+            foreach (KeyValuePair<int, Ship> entry in ships)
             {
-                if (ships[i].p.Id == ship_id || ships[i].p.Hidden || ships[i].p.Destroyed) continue;//remove player from list
+                     
+                //Console.WriteLine("nearets ship id: {0}", entry.Value.p.Id);
+
+                if (entry.Value.p.Id == ship_id || entry.Value.p.Hidden || entry.Value.p.Destroyed) continue;//remove player from list
 
 
-                float dist = Vector3.Distance(_playerShip.p.Position, ships[i].p.Position);
+                float dist = Vector3.Distance(_playerShip.p.Position, entry.Value.p.Position);
                 //          print (dist);
                 if (dist < _playerShip.p.VisionDistance)
                 {
-                    resultShipList.Add(ships[i].p);
+                    //Console.WriteLine("nearets ship  add id: {0}", entry.Value.p.Id);
+
+                    resultShipList.Add(entry.Value.p);
                 }
 
             }
@@ -244,14 +252,14 @@ namespace Wingsrv
         {
             Ship _playerShip = GetShip(ship_id);
             List<int> resultShipList = new List<int>();
-            for (int i = 0; i < ships.Count; i++)
+            foreach (KeyValuePair<int, Ship> entry in ships)
             {
-                if (ships[i].p.Id == ship_id || ships[i].p.Hidden || ships[i].p.Destroyed) continue;//remove player from list
-                float dist = Vector3.Distance(_playerShip.p.Position, ships[i].p.Position);
+                if (entry.Value.p.Id == ship_id || entry.Value.p.Hidden || entry.Value.p.Destroyed) continue;//remove player from list
+                float dist = Vector3.Distance(_playerShip.p.Position, entry.Value.p.Position);
                 //          print (dist);
                 if (dist < _playerShip.p.VisionDistance)
                 {
-                    resultShipList.Add(ships[i].p.Id);
+                    resultShipList.Add(entry.Value.p.Id);
                 }
 
             }
@@ -382,10 +390,8 @@ namespace Wingsrv
 
         public Ship GetShip(int ship_id)
         {
-            for (int i = 0; i < ships.Count; i++)
-            {
-                if (ships[i].p.Id == ship_id) return ships[i];
-            }
+            if (ships.ContainsKey(ship_id)) return ships[ship_id];
+            //TODO somthing else when not found
             return ships[0];
 
         }

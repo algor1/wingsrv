@@ -442,7 +442,7 @@ namespace MySQLConnector
                       
             _database.ExecuteNonQuery(
                 @"UPDATE SO_shipdata SET
-                    max_speed =@max_speed
+                    max_speed =@max_speed,
                     rotation_speed =@rotation_speed,
                     acceleration_max =@acceleration_max,
                     newSpeed =@newSpeed,

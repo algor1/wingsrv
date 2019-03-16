@@ -52,8 +52,8 @@ namespace Wingsrv
                 //Thread myThread = new Thread(new ThreadStart(Run));
                 //myThread.Start();
                 //Console.WriteLine(myThread.IsBackground);
+                //started = false ;////!!!!!!!!!!!!!!!!!!!!!!!!
                 started = true;
-
                 SendNearestTick();
 
 
