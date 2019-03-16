@@ -9,6 +9,7 @@ namespace SpaceObjects
     public class WeaponData : IDarkRiftSerializable
     {
         public enum WeaponType { laser, missile, projective };
+        public int Point { get; set; }
         public WeaponType Type { get; set; }
         public float Damage { get; set; }
         public float Reload { get; set; }
@@ -23,6 +24,7 @@ namespace SpaceObjects
         public WeaponData(WeaponData value)
         {
             Type = value.Type;
+            Point = value.Point;
             Damage = value.Damage;
             Reload = value.Reload;
             AmmoSpeed = value.AmmoSpeed;
@@ -35,6 +37,7 @@ namespace SpaceObjects
         public void Deserialize(DeserializeEvent e)
         {
             Type = (WeaponType)e.Reader.ReadInt32();
+            Point = e.Reader.ReadInt32();
             Damage = e.Reader.ReadSingle();
             Reload = e.Reader.ReadSingle();
             AmmoSpeed = e.Reader.ReadSingle();
@@ -45,7 +48,8 @@ namespace SpaceObjects
 
         public void Serialize(SerializeEvent e)
         {
-            e.Writer.Write((int)Type); 
+            e.Writer.Write((int)Type);
+            e.Writer.Write(Point);
             e.Writer.Write(Damage);
             e.Writer.Write(Reload);
             e.Writer.Write(AmmoSpeed);

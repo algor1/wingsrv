@@ -495,7 +495,7 @@ namespace MySQLConnector
 
             foreach (WeaponData weapon in shipData.Weapons)
             {
-                AddNewWeapon(shipData.Id, weapon);
+                SetWeapon(shipData.Id, weapon);
             }
             foreach (EquipmentData eq in shipData.Equipments)
             {
@@ -600,11 +600,12 @@ namespace MySQLConnector
             return retList;
         }
 
-        private void AddNewWeapon(int ship_id,WeaponData weaponData)
+        private void AddNewWeapon(int ship_id, WeaponData weaponData)
         {
             _database.ExecuteNonQuery(
                     @"INSERT INTO SO_weapondata (
                         SO_id,
+                        point,
                         WeaponType,
                         active,
                         damage,
@@ -615,6 +616,7 @@ namespace MySQLConnector
                         capasitor_use) 
                     VALUES(
                         @SO_id,
+                        @point,
                         @WeaponType,
                         @active,
                         @damage,
@@ -623,8 +625,9 @@ namespace MySQLConnector
                         @activeTime ,
                         @sqrDistanse_max ,
                         @capasitor_use)",
-                    new QueryParameter("@SO_id"          , MySqlDbType.Float, 32, "SO_id"            , ship_id),
-                    new QueryParameter("@WeaponType"     , MySqlDbType.Float, 32, "WeaponType"       ,(int)weaponData.Type),
+                    new QueryParameter("@SO_id", MySqlDbType.Int32, 32, "SO_id", ship_id),
+                    new QueryParameter("@point", MySqlDbType.Int32, 32, "point", weaponData.Point),
+                    new QueryParameter("@WeaponType", MySqlDbType.Int32, 32, "WeaponType", (int)weaponData.Type),
                     new QueryParameter("@active"         , MySqlDbType.Float, 32, "active"           ,0),
                     new QueryParameter("@damage"         , MySqlDbType.Float, 32, "damage"           ,weaponData.Damage),
                     new QueryParameter("@reload"         , MySqlDbType.Float, 32, "reload"           ,weaponData.Reload),
@@ -634,6 +637,33 @@ namespace MySQLConnector
                     new QueryParameter("@capasitor_use"  , MySqlDbType.Float, 32, "capasitor_use"    ,weaponData.Capasitor_use));
 
         }
+        private void SetWeapon(int ship_id, WeaponData weaponData)
+        {
+            _database.ExecuteNonQuery(
+                @"UPDATE SO_weapondata SET
+
+                        SO_id            =@SO_id,
+                        WeaponType       =@WeaponType,
+                        active           =@active,
+                        damage           =@damage,
+                        reload           =@reload ,
+                        ammoSpeed        =@ammoSpeed ,
+                        activeTime       =@activeTime ,
+                        sqrDistanse_max  =@sqrDistanse_max,
+                        capasitor_use    =@capasitor_use
+                        WHERE SO_id=@SO_id and point=@point",
+                    new QueryParameter("@SO_id", MySqlDbType.Int32, 32, "SO_id", ship_id),
+                    new QueryParameter("@point", MySqlDbType.Int32, 32, "point", weaponData.Point),
+                    new QueryParameter("@WeaponType", MySqlDbType.Int32, 32, "WeaponType", (int)weaponData.Type),
+                    new QueryParameter("@active", MySqlDbType.Float, 32, "active", 0),
+                    new QueryParameter("@damage", MySqlDbType.Float, 32, "damage", weaponData.Damage),
+                    new QueryParameter("@reload", MySqlDbType.Float, 32, "reload", weaponData.Reload),
+                    new QueryParameter("@ammoSpeed", MySqlDbType.Float, 32, "ammoSpeed", weaponData.AmmoSpeed),
+                    new QueryParameter("@activeTime", MySqlDbType.Float, 32, "activeTime", weaponData.ActiveTime),
+                    new QueryParameter("@sqrDistanse_max", MySqlDbType.Float, 32, "sqrDistanse_max", weaponData.SqrDistanse_max),
+                    new QueryParameter("@capasitor_use", MySqlDbType.Float, 32, "capasitor_use", weaponData.Capasitor_use));
+
+        }
 
         private WeaponData[] GetWeapons(int ship_id)
         {
@@ -641,6 +671,7 @@ namespace MySQLConnector
 
             var rows = _database.ExecuteQuery(@"SELECT 
 					WeaponType, 
+                    point,
 					damage, 
 					reload, 
 					ammoSpeed, 
@@ -657,6 +688,7 @@ namespace MySQLConnector
                 var data = row.GetRow();
 
                 weapon.Type = (WeaponData.WeaponType)data["WeaponType"];
+                weapon.Point = (int)data["point"];
                 weapon.Damage = (float)data["damage"];
                 weapon.Reload = (float)data["reload"];
                 weapon.AmmoSpeed = (float)data["ammoSpeed"];
