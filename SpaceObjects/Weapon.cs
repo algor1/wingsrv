@@ -26,6 +26,7 @@ namespace SpaceObjects
             host = _host;
             //activated = false;
             fire = false;
+            Reload();
         }
         public void BeforeDestroy()
         {
@@ -59,6 +60,7 @@ namespace SpaceObjects
             mineTarget = null;
             fire = false;
             mine = false;
+            Reload();
         }
 
         private async Task Reload()
@@ -99,7 +101,7 @@ namespace SpaceObjects
             //activated = true;
             while (fire)
             {
-                if (!currentTarget.p.Destroyed)
+                if (currentTarget==null||currentTarget.p.Destroyed)
                 {
                     Stop();
                     return;
