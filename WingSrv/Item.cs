@@ -1,15 +1,17 @@
-using UnityEngine;
- 
-//[System.Serializable]
+
+
+public enum ItemType { ship, weapon, equipment, material, other, container, ore };
+
+
 public class Item 
 {
-    public int id;
-    public string item;
-    public Sprite itemSprite;
-    public enum Type_of_item { ship, weapon,equipment,material, other,container };
-    public Type_of_item itemType;
-    public float volume;
-	public string prefab;
+    public int Id { get; }
+    public string Item { get; }
+    public string SpritePath { get; }
+    
+    public ItemType ItemType { get; }
+    public float Volume { get; }
+    public string Prefab { get; }
 
     
 }
