@@ -435,18 +435,18 @@ namespace Wingsrv
             int new_id = 0;
             int _type = 1;
             Item _item = gamePlugin.inventoryServer.GetItem(item_id);
-            switch (_item.itemType)
+            switch (_item.ItemType)
             {
-                case Item.Type_of_item.ship:
+                case ItemType.ship:
                     _type = 1;
                     break;
-                case Item.Type_of_item.container:
+                case ItemType.container:
                     _type = 5;
                     break;
             }
             string qwery = "insert into server_objects (type,visibleName,position_x,position_y,position_z,rotation_x,rotation_y,rotation_z,rotation_w,speed,prefab_path) values (" +
                 _type.ToString() + ", " +
-                "\"" + _item.item.ToString() + "\", " +
+                "\"" + _item.ItemName.ToString() + "\", " +
                 position.x.ToString() + ", " +
                 position.y.ToString() + ", " +
                 position.z.ToString() + ", " +
@@ -455,7 +455,7 @@ namespace Wingsrv
                 rotation.z.ToString() + ", " +
                 rotation.w.ToString() + ", " +
                 "0 " + ", " +
-                "\"" + _item.prefab.ToString() + "\" " +
+                "\"" + _item.Prefab.ToString() + "\" " +
                 ") ";
 
             GetReader(qwery);

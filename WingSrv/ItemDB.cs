@@ -59,10 +59,10 @@ namespace Wingsrv {
             GetReader(qwery);
             while (reader.Read())
             {
-                if (!reader.IsDBNull(0)) returnItem.id = reader.GetInt32(0);
-                if (!reader.IsDBNull(1)) returnItem.item = reader.GetString(1);
-                if (!reader.IsDBNull(2)) returnItem.itemType = (Item.Type_of_item)System.Enum.Parse(typeof(Item.Type_of_item), reader.GetString(2));
-                if (!reader.IsDBNull(3)) returnItem.prefab = reader.GetString(3);
+                if (!reader.IsDBNull(0)) returnItem.Id = reader.GetInt32(0);
+                if (!reader.IsDBNull(1)) returnItem.ItemName = reader.GetString(1);
+                if (!reader.IsDBNull(2)) returnItem.ItemType = (ItemType)System.Enum.Parse(typeof(ItemType), reader.GetString(2));
+                if (!reader.IsDBNull(3)) returnItem.Prefab = reader.GetString(3);
             }
             return returnItem;
         }
