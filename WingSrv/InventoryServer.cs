@@ -10,14 +10,14 @@ namespace Wingsrv
     public class InventoryServer
     {
         public bool started;
-        private ItemDB itemDB;
+
+        private Server server;
         private Game gamePlugin;
 
         public InventoryServer(Game game)
         {
             started = true;
             gamePlugin = game;
-            itemDB = gamePlugin.itemDB;
         }
 
         public List<InventoryItem> PlayerInventory(int player_id, int holder_id)
