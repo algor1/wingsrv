@@ -76,7 +76,7 @@ using UnityEngine;
             e.Writer.Write(Id         );
             e.Writer.Write(ItemName   );
             e.Writer.Write(SpritePath );
-            e.Writer.Write((int)Type  );
+            e.Writer.Write((int)ItemType  );
             e.Writer.Write(Volume     );
             e.Writer.Write(Prefab);
 
@@ -109,4 +109,3 @@ using UnityEngine;
 
     }
 
-}
