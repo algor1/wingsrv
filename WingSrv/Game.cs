@@ -146,10 +146,14 @@ namespace Wingsrv
             {
                 lock (InitializeLock)
                 {
-                    if (server._database == null)
-                    {
-                        server._database = PluginManager.GetPluginByType<DatabaseProxy>();
-                    }
+                    if (server._database == null ) server._database = PluginManager.GetPluginByType<DatabaseProxy>();
+                }
+            }
+            if (serverSO._database == null)
+            {
+                lock (InitializeLock)
+                {
+                    if (serverSO._database == null ) serverSO._database = PluginManager.GetPluginByType<DatabaseProxy>();
                 }
             }
             if (!server.started) server.RunServer();

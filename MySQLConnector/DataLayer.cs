@@ -229,6 +229,41 @@ namespace MySQLConnector
             callback(returnSO);
         }
 
+        public void GetAllSpaceObject( Action<List<SpaceObject>> callback)
+        {
+            var rows = _database.ExecuteQuery(
+                @"SELECT id,
+                    type,
+                    visibleName,
+                    position_x,
+                    position_y,
+                    position_z,
+                    rotation_x,
+                    rotation_y,
+                    rotation_z,
+                    rotation_w,
+                    speed,
+                    prefab_path
+                    FROM server_objects
+                    where type <> 1 ");//not a ship TODO find another way
+            
+            List<SpaceObject> returnList=new List<SpaceObject>();
+            foreach (var row in rows)
+            {
+                SpaceObject returnSO = new SpaceObject();
+                var data = row.GetRow();
+                returnSO.Id = (int)data["id"];
+                returnSO.Type = (TypeSO)data["type"];
+                returnSO.VisibleName = (String)data["visibleName"];
+                returnSO.Position = new Vector3((float)data["position_x"], (float)data["position_y"], (float)data["position_z"]);
+                returnSO.Rotation = new MyQuaternion((float)data["rotation_x"], (float)data["rotation_y"], (float)data["rotation_z"], (float)data["rotation_w"]);
+                returnSO.Speed = (float)data["speed"];
+                returnSO.Prefab = (string)data["prefab_path"];
+                returnList.Add(returnSO);
+            }
+            callback(returnList);
+        }
+
         private void SetSpaceObject(SpaceObject so)
             {
                     _database.ExecuteNonQuery(

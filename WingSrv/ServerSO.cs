@@ -8,6 +8,7 @@ using DarkRift;
 using DarkRift.Server;
 using LoginPlugin;
 using SpaceObjects;
+using Database;
 
 namespace Wingsrv
 {
@@ -21,13 +22,14 @@ namespace Wingsrv
 
 
         private Server server;
-        private ServerDB serverDB;
+        
 
         private InventoryServer inventoryServer;
         //private ServerManager serverManager;
         public int TickDeltaTime = 10000;
         private Game gamePlugin;
         public Login _loginPlugin;
+        public  DatabaseProxy _database{get;set;}
 
 
 
@@ -44,15 +46,11 @@ namespace Wingsrv
             {
                 spaceObjects = new Dictionary<int, SpaceObject>();
                 server = gamePlugin.server;
-                serverDB = gamePlugin.serverDB;
                 inventoryServer = gamePlugin.inventoryServer;
                 Console.WriteLine("loading Space objects...");
                 LoadserverObjects();
                 Console.WriteLine("Starting SpaceObjects server...");
-                //Thread myThread = new Thread(new ThreadStart(Run));
-                //myThread.Start();
-                //Console.WriteLine(myThread.IsBackground);
-                //started = false ;////!!!!!!!!!!!!!!!!!!!!!!!!
+
                 started = true;
                 SendNearestTick();
 
@@ -63,16 +61,36 @@ namespace Wingsrv
 
         private void LoadserverObjects()
         {
-            List<SpaceObject> SOList = serverDB.GetAllSO();
-            for (int i = 0; i < SOList.Count; i++)
+            try
             {
-                if (SOList[i].Type != TypeSO.ship)
+                _database.DataLayer.GetAllSpaceObjects( soList =>
                 {
-
-                    SpaceObject s = new SpaceObject(SOList[i]);
-                    spaceObjects.Add(s.Id, s);
-                }
+                    for (int i = 0; i < soList.Count; i++)
+                        {
+                            
+                            AddSpaceObject(soList[i]);
+                        }
+                        //if (_debug)
+                        //   {
+                              gamePlugin.WriteToLog("Ships loaded count:"+soList.Count, DarkRift.LogType.Info);
+                        //   }
+                });
             }
+            catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on loading space objects" +ex, DarkRift.LogType.Error);
+
+                //Return Error 2 for Database error
+                _database.DatabaseError(null , 0 , ex);
+            }
+            
+            
+
+        }
+        private void AddSpaceObject(SpaceObject so)
+        {
+            SpaceObject s = new SpaceObject(so);
+            spaceObjects.Add(s.Id, s);
         }
 
         public void SendNearest(string player)

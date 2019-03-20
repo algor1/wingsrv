@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SpaceObjects;
+using Inventory;
 
 namespace Database
 {
@@ -31,11 +32,18 @@ namespace Database
 
         void GetAllMOBShips( Action<List<ShipData>> callback);
         void GetShip(int ship_id, Action<ShipData> callback);
-        void GetSpaceObject(int _id, Action<SpaceObject> callback);
         void AddNewShip (ShipData shipData, Action<int> callback);
         void SetShip(ShipData shipData, Action callback);
         void AddNewPlayerAndShip(string player, Action callback);
         void GetPlayerActiveShip(string player, Action<int> callback);
+
+        void GetSpaceObject(int _id, Action<SpaceObject> callback);
+        void GetAllSpaceObjects ( Action<List<SpaceObject>> callback);
+
+        #endregion
+
+        #region Inventory
+        void GetAllItems(Action<List<Item>> callback);
 
         #endregion
     }
