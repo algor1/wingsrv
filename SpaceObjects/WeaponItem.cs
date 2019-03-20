@@ -4,12 +4,14 @@ using UnityEngine;
 using DarkRift;
 using DarkRift.Server;
 
-public enum WeaponTypes { laser, missile, projective };
+namespace SpaceObjects
+{
+    public enum WeaponTypes { laser, missile, projective };
 
 
     public class WeaponItem : Item, IDarkRiftSerializable
     {
-        
+
 
         public WeaponTypes WeaponType { get; set; }
         public float Damage { get; set; }
@@ -19,7 +21,7 @@ public enum WeaponTypes { laser, missile, projective };
         public float SqrDistanse_max { get; set; }
         public float Capasitor_use { get; set; }
 
-        public WeaponItem():base()
+        public WeaponItem() : base()
         {
         }
 
@@ -62,3 +64,4 @@ public enum WeaponTypes { laser, missile, projective };
         }
 
     }
+}

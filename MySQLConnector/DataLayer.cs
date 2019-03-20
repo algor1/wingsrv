@@ -229,7 +229,7 @@ namespace MySQLConnector
             callback(returnSO);
         }
 
-        public void GetAllSpaceObject( Action<List<SpaceObject>> callback)
+        public void GetAllSpaceObjects( Action<List<SpaceObject>> callback)
         {
             var rows = _database.ExecuteQuery(
                 @"SELECT id,
@@ -770,5 +770,11 @@ namespace MySQLConnector
                             new QueryParameter("@active_ship_id", MySqlDbType.Int32, 11, "active_ship_id",ship_id ));
         }
 
+
+
+        public void GetAllItems(Action<List<Item>> callback)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 using DarkRift;
 
-namespace Inventory
+namespace SpaceObjects
 {
     public enum ItemTypes { ship, weapon, equipment, material, other, container, ore };
 

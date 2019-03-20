@@ -4,6 +4,7 @@ using DarkRift;
 using DarkRift.Server;
 using SpaceObjects;
 using Database;
+using System;
 
 namespace Wingsrv
 {
@@ -17,7 +18,7 @@ namespace Wingsrv
         public DatabaseProxy _database { get; set; }
 
         private Dictionary<int, Item> items;
-        private Dictionary<int, InventoryItem> items;
+        private Dictionary<int, InventoryItem> inventory;
 
 
 
@@ -55,23 +56,22 @@ namespace Wingsrv
             }
         }
 
-        public Item GetItem(int itemId)
-        {
-        
-        }
+        //public Item GetItem(int itemId)
+        //{
+        //}
 
-        #endregion 
+        //#endregion 
 
-        #region Inventory
-        public List<InventoryItem> PlayerInventory(int player_id, int holderId)
-        {
+        //#region Inventory
+        //public List<InventoryItem> PlayerInventory(int player_id, int holderId)
+        //{
 
-        }
+        //}
 
-        public List<InventoryItem> ObjectInventory(int holderId)
-        {
+        //public List<InventoryItem> ObjectInventory(int holderId)
+        //{
 
-        }
+        //}
 
         private void LoadPlayerInventory(int playerId)
         {

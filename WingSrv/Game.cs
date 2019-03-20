@@ -46,10 +46,10 @@ namespace Wingsrv
         
         // Servers
         public  Server server;
-        public  ServerDB serverDB;
+        //public  ServerDB serverDB;
         public  ServerSO serverSO;
         public  InventoryServer inventoryServer;
-        public  ItemDB itemDB;
+        //public  ItemDB itemDB;
 
         private ConcurrentDictionary<string, int> PlayerOnShips;
 
@@ -68,9 +68,9 @@ namespace Wingsrv
 
         public  void RunServers ()
         {
-            itemDB = new ItemDB(this);
+            //itemDB = new ItemDB(this);
             inventoryServer = new InventoryServer(this);
-            serverDB = new ServerDB(this);
+            //serverDB = new ServerDB(this);
             server = new Server(this);
             serverSO = new ServerSO(this);
 
@@ -82,7 +82,7 @@ namespace Wingsrv
         }
         public void Stop()
         {
-            itemDB.OnApplicationQuit();
+            //itemDB.OnApplicationQuit();
         }
 
 

@@ -4,14 +4,16 @@ using System.Collections.Generic;
 using DarkRift;
 using UnityEngine;
 
+namespace SpaceObjects
+{
 
 
     // Properties of spaceship that will be stored to DB
-    public class ShipItem: Item ,IDarkRiftSerializable
+    public class ShipItem : Item, IDarkRiftSerializable
     {
         public float SpeedMax { get; set; }
         public float RotationSpeed { get; set; }
-        public float AccelerationMax{get; set;}
+        public float AccelerationMax { get; set; }
         public float SpeedNew { get; set; }
 
         public float Hull_full { get; set; }
@@ -30,21 +32,21 @@ using UnityEngine;
         public float WarpDriveStartTime { get; set; }
         public float WarpSpeed { get; set; }
         public int WeaponsCount { get; set; }
-        public int EquipmentsCount {get; set;}
+        public int EquipmentsCount { get; set; }
 
 
-        public ShipItem():base()
+        public ShipItem() : base()
         {
         }
 
         public new void Deserialize(DeserializeEvent e)
         {
-            Id          = e.Reader.ReadInt32();
-            ItemName    = e.Reader.ReadString();
-            SpritePath  = e.Reader.ReadString();
-            ItemType        = (ItemTypes) e.Reader.ReadInt32();
-            Volume      = e.Reader.ReadInt32();
-            Prefab      = e.Reader.ReadString();
+            Id = e.Reader.ReadInt32();
+            ItemName = e.Reader.ReadString();
+            SpritePath = e.Reader.ReadString();
+            ItemType = (ItemTypes)e.Reader.ReadInt32();
+            Volume = e.Reader.ReadInt32();
+            Prefab = e.Reader.ReadString();
 
             SpeedMax = e.Reader.ReadSingle();
             RotationSpeed = e.Reader.ReadSingle();
@@ -55,12 +57,12 @@ using UnityEngine;
             Armor_full = e.Reader.ReadSingle();
             Shield_full = e.Reader.ReadSingle();
             Capasitor_full = e.Reader.ReadSingle();
-            
+
             Hull_restore = e.Reader.ReadSingle();
             Armor_restore = e.Reader.ReadSingle();
             Shield_restore = e.Reader.ReadSingle();
             Capasitor_restore = e.Reader.ReadSingle();
-            
+
             AgrDistance = e.Reader.ReadSingle();
             VisionDistance = e.Reader.ReadSingle();
 
@@ -72,12 +74,12 @@ using UnityEngine;
 
         public new void Serialize(SerializeEvent e)
         {
-            
-            e.Writer.Write(Id         );
-            e.Writer.Write(ItemName   );
-            e.Writer.Write(SpritePath );
-            e.Writer.Write((int)ItemType  );
-            e.Writer.Write(Volume     );
+
+            e.Writer.Write(Id);
+            e.Writer.Write(ItemName);
+            e.Writer.Write(SpritePath);
+            e.Writer.Write((int)ItemType);
+            e.Writer.Write(Volume);
             e.Writer.Write(Prefab);
 
             e.Writer.Write(SpeedMax);
@@ -109,3 +111,4 @@ using UnityEngine;
 
     }
 
+}

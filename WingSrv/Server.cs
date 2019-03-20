@@ -25,7 +25,7 @@ namespace Wingsrv
 
         public delegate void TickHandler();
         public event TickHandler onTick;
-        private ServerDB serverDB;
+        //private ServerDB serverDB;
         private InventoryServer inventoryServer;
         //private ServerManager serverManager;
         public int TickDeltaTime = 20;
@@ -50,7 +50,7 @@ namespace Wingsrv
             {
                 this.onTick += new TickHandler(Tick);
                 ships = new ConcurrentDictionary<int, Ship>();
-                serverDB = gamePlugin.serverDB;
+                //serverDB = gamePlugin.serverDB;
                 inventoryServer = gamePlugin.inventoryServer;
                 Console.WriteLine("loading ships...");
                 LoadShips();

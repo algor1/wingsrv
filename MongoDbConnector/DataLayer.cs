@@ -231,6 +231,16 @@ namespace MongoDbConnector
             throw new NotImplementedException();
         }
 
+        public void GetAllSpaceObjects(Action<List<SpaceObject>> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetAllItems(Action<List<Item>> callback)
+        {
+            throw new NotImplementedException();
+        }
+
 
 
         #endregion
