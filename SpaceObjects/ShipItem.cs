@@ -14,7 +14,6 @@ namespace SpaceObjects
         public float SpeedMax { get; set; }
         public float RotationSpeed { get; set; }
         public float AccelerationMax { get; set; }
-        public float SpeedNew { get; set; }
 
         public float Hull_full { get; set; }
         public float Armor_full { get; set; }

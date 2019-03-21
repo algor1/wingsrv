@@ -774,7 +774,57 @@ namespace MySQLConnector
 
         public void GetAllItems(Action<List<Item>> callback)
         {
-            throw new NotImplementedException();
+
+            List<Item> retListItems = new List<Item>();
+            var rows = _database.ExecuteQuery(@"SELECT
+                            id,
+                            item,
+                            type_id,
+                            base_value,
+                            sprite  
+                        FROM items");
+
+            foreach (var row in rows)
+            {
+                Item retItem = new Item();
+                var data = row.GetRow();
+
+                retItem.Id         = (int)data["id"];
+                retItem.ItemName   = (string)data["item"];
+                retItem.SpritePath = (string)data["type_id"];
+                retItem.ItemType   = (int)data["base_value"];
+                retItem.Volume     = (float)data["sprite"]; 
+                retListItems.Add(retItem);
+            }
+            callback(retListItems);
         }
-    }
+    
+
+        public void  GetPlayerInventory(string player, Action<Dictionary<int,Item>> callback)
+        {
+            Dictionary<int, Item> retDict = Dictionary<int, Item>();
+            var rows = _database.ExecuteQuery(@"SELECT
+                            inventory_holder_id
+                            item_id
+                            tech
+                            quantity
+                        FROM inventory INNER JOIN players
+                        ON inventory.player_id=players.id
+                        WHERE players = @player    ",
+                        new QueryParameter("@player", MySqlDbType.VarChar, 200, "player",player ));
+
+            foreach (var row in rows)
+            {
+                Item retInventoryItem = new InventoryItem();
+                var data = row.GetRow();
+                int holder =                (int)data["inventory_holder_id"];
+                retInventoryItem.ItemId   = (int)data["item_id"];
+                retInventoryItem.Tech     = (int)data["tech"];
+                retInventoryItem.Quantity = (int)data["quantity"];
+
+                retDict.Add(holder, retInventoryItem);
+            }
+            callback(retDict);
+        }
+}
 }

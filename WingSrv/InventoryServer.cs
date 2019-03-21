@@ -18,7 +18,7 @@ namespace Wingsrv
         public DatabaseProxy _database { get; set; }
 
         private Dictionary<int, Item> items;
-        private Dictionary<int, InventoryItem> inventory;
+        private Dictionary<int,Dictionary<int, InventoryItem>> inventories; //holder,player
 
 
 
@@ -56,13 +56,15 @@ namespace Wingsrv
             }
         }
 
-        //public Item GetItem(int itemId)
-        //{
-        //}
+        public Item GetItem(int itemId)
+        {
+            return items[itemId];
+        }
 
-        //#endregion 
+        #endregion 
 
         //#region Inventory
+
         //public List<InventoryItem> PlayerInventory(int player_id, int holderId)
         //{
 
@@ -73,18 +75,37 @@ namespace Wingsrv
 
         //}
 
-        private void LoadPlayerInventory(int playerId)
+        public void LoadPlayerInventory(string player)
         {
+            
+            try
+            {
+                _database.DataLayer.GetPlayerInventory( player, inventoryList =>
+                {
+                    for (int i = 0; i < inventoryList.Count; i++)
+                        {
+                            inventories.Add(inventoryList[i].Id,inventoryList[i]);
+                        }
+                        //if (_debug)
+                        //   {
+                              gamePlugin.WriteToLog("Items loaded count:"+itemList.Count, DarkRift.LogType.Info);
+                        //   }
+                });
+            }
+            catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on loading items" +ex, DarkRift.LogType.Error);
+
+                //Return Error 2 for Database error
+                _database.DatabaseError(null , 0 , ex);
+            }
         
         }
-        private void SavePlayerInventory(int playerId)
+        private void SaveInventoryItems(Item item)
         {
 
         }
-        private void SavePlayerInventory(int playerId,int holderId)
-        {
-
-        }
+        
 
         #endregion
 
