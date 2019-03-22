@@ -800,7 +800,7 @@ namespace MySQLConnector
         }
     
 
-        public void  GetPlayerInventory(string player, Action<Dictionary<int,Item>> callback)
+        public void  GetPlayerInventory(int playerId, Action<Dictionary<int,InventoryItem>> callback)
         {
             Dictionary<int, Item> retDict = Dictionary<int, Item>();
             var rows = _database.ExecuteQuery(@"SELECT
@@ -810,8 +810,8 @@ namespace MySQLConnector
                             quantity
                         FROM inventory INNER JOIN players
                         ON inventory.player_id=players.id
-                        WHERE players = @player    ",
-                        new QueryParameter("@player", MySqlDbType.VarChar, 200, "player",player ));
+                        WHERE players.id = @playerId    ",
+                        new QueryParameter("@playerId", MySqlDbType.Int32, 11, "playerId",playerId ));
 
             foreach (var row in rows)
             {
@@ -826,5 +826,14 @@ namespace MySQLConnector
             }
             callback(retDict);
         }
-}
+
+
+        public void GetPlayerId(string player, Action<int> callback)
+        {
+            var row = _database.ExecuteScalar(
+                "SELECT id FROM players WHERE player = @player",
+                new QueryParameter("@player", MySqlDbType.VarChar, 60, "player", _database.EscapeString(player)));
+            callback((int)row);
+        }
+    }
 }

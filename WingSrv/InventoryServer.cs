@@ -18,7 +18,7 @@ namespace Wingsrv
         public DatabaseProxy _database { get; set; }
 
         private Dictionary<int, Item> items;
-        private Dictionary<int,Dictionary<int, InventoryItem>> inventories; //holder,player
+        private Dictionary<int,Dictionary<int,Dictionary<int, InventoryItem>>> inventories; //<holder,<player<itemID,InvetoryItem>>>
 
 
 
@@ -75,20 +75,29 @@ namespace Wingsrv
 
         //}
 
-        public void LoadPlayerInventory(string player)
+        public void LoadPlayerInventory(int playerId)
         {
-            
+
             try
             {
-                _database.DataLayer.GetPlayerInventory( player, inventoryList =>
+                _database.DataLayer.GetPlayerInventory( playerId, inventoryDict =>
                 {
-                    for (int i = 0; i < inventoryList.Count; i++)
+                    foreach (KeyValuePair<int,InventoryItem> entry in inventoryDict)
+	                    {
+                        if (!inventories.ContainsKey(entry.Key))
                         {
-                            inventories.Add(inventoryList[i].Id,inventoryList[i]);
+                            inventories.Add(entry.Key,new Dictionary<int,Dictionary<int, InventoryItem>>());
+                        }
+                        if (!inventories[entry.Key].ContainsKey(player_id))
+                        {
+                            inventories[entry.Key].Add(player_id);
+                        }
+
+                        
                         }
                         //if (_debug)
                         //   {
-                              gamePlugin.WriteToLog("Items loaded count:"+itemList.Count, DarkRift.LogType.Info);
+                              gamePlugin.WriteToLog("inventory holders loaded count:"+inventoryDict.Count, DarkRift.LogType.Info);
                         //   }
                 });
             }
@@ -101,10 +110,25 @@ namespace Wingsrv
             }
         
         }
-        private void SaveInventoryItems(Item item)
+        private void InventoryItemAddition(int player,int holder,InventoryItem itemToAdd)
         {
-
+            InventoryItem item= GetInventoryItem(player,holder,itemToAdd.ItemId,itemToAdd.Tech);
+            if (item==null)
+                AddItemToInventory(player,holder,itemToAdd);
+            else 
+                UpdateItemInInventory(player,holder,itemToAdd);
         }
+        
+        private InventoryItem GetInventoryItem(int player,int holder,int itemId , int tech)
+        {
+            inventories[holder][player].ContainsKey(itemId);
+        }
+        
+        private void AddItemToInventory(player,holder,itemToAdd)
+        {}
+
+        private void UpdateItemInInventory(player,holder,itemToAdd)
+        {}
         
 
         #endregion

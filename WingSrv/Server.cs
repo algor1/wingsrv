@@ -20,8 +20,9 @@ namespace Wingsrv
         public bool started;
         private ConcurrentDictionary<int, Ship> ships;
         //private Dictionary<int, SpaceObject> spaseObjects;
-        public Dictionary<string, int> playerShip;
-        public Dictionary<int,string> playerShipInverse;
+        private Dictionary<string, int> playerShip;
+        private Dictionary<int,string> playerShipInverse;
+        private Dictionary<string,int> playerIds;
 
         public delegate void TickHandler();
         public event TickHandler onTick;
@@ -109,6 +110,21 @@ namespace Wingsrv
 
         public void LoadPlayer(string player)
         {
+            
+             try
+            {
+                _database.DataLayer.GetPlayerId( player, id =>
+                    {
+                        playerIds.Add(player,id);
+                    });
+            }
+            catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on loading items" +ex, DarkRift.LogType.Error);
+
+                //Return Error 2 for Database error
+                _database.DatabaseError(null , 0 , ex);
+            }
 
             try
             {
@@ -120,7 +136,7 @@ namespace Wingsrv
                         playerShip.Add(player, shipId);
                         playerShipInverse.Add(shipId, player);
                         SendPlayerShipData(player);
-                        inventoryServer.LoadPlayerInventory(player);
+                        inventoryServer.LoadPlayerInventory(GetPlayerId(player));
                         gamePlugin.WriteToLog("player " + player + " loaded. Ship id: " + shipId, DarkRift.LogType.Info);
                     });
                });
@@ -149,10 +165,16 @@ namespace Wingsrv
                 int shipIdToRemove=playerShip[player];
                 playerShip.Remove(player);
                 playerShipInverse.Remove(shipIdToRemove);
+                playerIds.Remove(player);
                 DeleteShip(shipIdToRemove);
                 gamePlugin.WriteToLog("player " + player + " removed", DarkRift.LogType.Info);
             }
         }
+        public int GetPlayerId(string player)
+        {
+            return playerIds[player];
+        }
+
         private async Task SendNearest()
         {
             while (started)
