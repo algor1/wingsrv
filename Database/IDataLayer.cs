@@ -44,7 +44,7 @@ namespace Database
 
         #region Inventory
         void GetAllItems(Action<List<Item>> callback);
-        void GetPlayerInventory( int playerId, Action<Dictionary<int,InventoryItem>> callback);
+        void GetPlayerInventory( int playerId, Action<Dictionary<int,Dictionary<int, InventoryItem>>> callback);
         void GetPlayerId(string player, Action<int> callback);
         #endregion
     }

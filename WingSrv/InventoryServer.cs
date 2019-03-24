@@ -63,7 +63,7 @@ namespace Wingsrv
 
         #endregion 
 
-        //#region Inventory
+        #region Inventory
 
         //public List<InventoryItem> PlayerInventory(int player_id, int holderId)
         //{
@@ -82,16 +82,17 @@ namespace Wingsrv
             {
                 _database.DataLayer.GetPlayerInventory( playerId, inventoryDict =>
                 {
-                    foreach (KeyValuePair<int,InventoryItem> entry in inventoryDict)
+                    foreach (KeyValuePair<int,Dictionary< InventoryItem>> entry in inventoryDict)
 	                    {
                         if (!inventories.ContainsKey(entry.Key))
                         {
                             inventories.Add(entry.Key,new Dictionary<int,Dictionary<int, InventoryItem>>());
                         }
-                        if (!inventories[entry.Key].ContainsKey(player_id))
+                        if (!inventories[entry.Key].ContainsKey(playerId))
                         {
-                            inventories[entry.Key].Add(player_id);
+                            inventories[entry.Key].Add(playerId,new Dictionary<int, InventoryItem>());
                         }
+                        if (!inventories[entry.Key][playerId].ContainsKey(playerId)
 
                         
                         }
@@ -124,10 +125,10 @@ namespace Wingsrv
             inventories[holder][player].ContainsKey(itemId);
         }
         
-        private void AddItemToInventory(player,holder,itemToAdd)
+        private void AddItemToInventoryint (int player, int holder, InventoryItem itemToAdd)
         {}
 
-        private void UpdateItemInInventory(player,holder,itemToAdd)
+        private void UpdateItemInInventory(int player, int holder, InventoryItem itemToAdd)
         {}
         
 

@@ -97,7 +97,7 @@ namespace Wingsrv
         {
             using (var writer = DarkRiftWriter.Create())
             {
-                writer.Write(Nearest(server.playerShip[player]));
+                writer.Write(Nearest(server.GetPlayerShipId(player)));
 
                 //Console.WriteLine("sending {0} bytes to player {1} ,tag {2}",writer.Length,player ,Game.NearestSpaceObjects);
 
@@ -126,9 +126,9 @@ namespace Wingsrv
             {
                 //serverManager.WriteEvent("Send Nearest.", LogType.Info);
                 Console.WriteLine("trying to send nearest");
-                foreach (KeyValuePair<string, int> entry in server.playerShip)
+                foreach (string entry in server.GetAllPlayers())
                 {
-                    SendNearest(entry.Key);
+                    SendNearest(entry);
                 }
                 await Task.Delay(TickDeltaTime);
             }

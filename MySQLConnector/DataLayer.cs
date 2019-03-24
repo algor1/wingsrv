@@ -791,18 +791,18 @@ namespace MySQLConnector
 
                 retItem.Id         = (int)data["id"];
                 retItem.ItemName   = (string)data["item"];
-                retItem.SpritePath = (string)data["type_id"];
-                retItem.ItemType   = (int)data["base_value"];
-                retItem.Volume     = (float)data["sprite"]; 
+                retItem.ItemType = (ItemTypes)data["type_id"];
+                retItem.Volume    = (float)data["base_value"];
+                retItem.SpritePath = (string)data["sprite"]; 
                 retListItems.Add(retItem);
             }
             callback(retListItems);
         }
     
 
-        public void  GetPlayerInventory(int playerId, Action<Dictionary<int,InventoryItem>> callback)
+        public void  GetPlayerInventory(int playerId, Action<Dictionary<int,Dictionary<int, InventoryItem>>> callback)
         {
-            Dictionary<int, Item> retDict = Dictionary<int, Item>();
+            Dictionary<int, InventoryItem> retDict = new Dictionary<int, InventoryItem>();
             var rows = _database.ExecuteQuery(@"SELECT
                             inventory_holder_id
                             item_id
@@ -815,7 +815,7 @@ namespace MySQLConnector
 
             foreach (var row in rows)
             {
-                Item retInventoryItem = new InventoryItem();
+                InventoryItem retInventoryItem = new InventoryItem();
                 var data = row.GetRow();
                 int holder =                (int)data["inventory_holder_id"];
                 retInventoryItem.ItemId   = (int)data["item_id"];

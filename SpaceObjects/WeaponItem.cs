@@ -32,7 +32,6 @@ namespace SpaceObjects
             SpritePath = e.Reader.ReadString();
             ItemType = (ItemTypes)e.Reader.ReadInt32();
             Volume = e.Reader.ReadInt32();
-            Prefab = e.Reader.ReadString();
 
             WeaponType = (WeaponTypes)e.Reader.ReadInt32();
             Damage = e.Reader.ReadSingle();
@@ -50,7 +49,6 @@ namespace SpaceObjects
             e.Writer.Write(SpritePath);
             e.Writer.Write((int)ItemType);
             e.Writer.Write(Volume);
-            e.Writer.Write(Prefab);
 
             e.Writer.Write((int)WeaponType);
             e.Writer.Write(Damage);

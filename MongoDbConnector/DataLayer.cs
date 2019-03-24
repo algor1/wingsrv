@@ -241,6 +241,16 @@ namespace MongoDbConnector
             throw new NotImplementedException();
         }
 
+        public void GetPlayerInventory(int playerId, Action<Dictionary<int, InventoryItem>> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetPlayerId(string player, Action<int> callback)
+        {
+            throw new NotImplementedException();
+        }
+
 
 
         #endregion

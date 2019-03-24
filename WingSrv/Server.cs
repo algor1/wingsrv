@@ -9,6 +9,7 @@ using DarkRift.Server;
 using LoginPlugin;
 using SpaceObjects;
 using Database;
+using System.Linq;
 
 namespace Wingsrv
 {
@@ -235,6 +236,15 @@ namespace Wingsrv
             }
 
         }
+        public List<string> GetAllPlayers()
+        {
+            return playerShipInverse.Values.ToList();
+        }
+        public int GetPlayerShipId(string player)
+        {
+            return playerShip[player];
+        }
+
 
 
 

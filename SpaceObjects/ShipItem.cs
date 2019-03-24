@@ -45,12 +45,10 @@ namespace SpaceObjects
             SpritePath = e.Reader.ReadString();
             ItemType = (ItemTypes)e.Reader.ReadInt32();
             Volume = e.Reader.ReadInt32();
-            Prefab = e.Reader.ReadString();
 
             SpeedMax = e.Reader.ReadSingle();
             RotationSpeed = e.Reader.ReadSingle();
             AccelerationMax = e.Reader.ReadSingle();
-            SpeedNew = e.Reader.ReadSingle();
 
             Hull_full = e.Reader.ReadSingle();
             Armor_full = e.Reader.ReadSingle();
@@ -79,12 +77,10 @@ namespace SpaceObjects
             e.Writer.Write(SpritePath);
             e.Writer.Write((int)ItemType);
             e.Writer.Write(Volume);
-            e.Writer.Write(Prefab);
 
             e.Writer.Write(SpeedMax);
             e.Writer.Write(RotationSpeed);
             e.Writer.Write(AccelerationMax);
-            e.Writer.Write(SpeedNew);
 
             e.Writer.Write(Hull_full);
             e.Writer.Write(Armor_full);
