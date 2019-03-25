@@ -97,7 +97,8 @@ namespace Wingsrv
         {
             using (var writer = DarkRiftWriter.Create())
             {
-                writer.Write(Nearest(server.GetPlayerShipId(player)));
+                int playerShipId=server.GetPlayerShipId(player);
+                writer.Write(Nearest(playerId));
 
                 //Console.WriteLine("sending {0} bytes to player {1} ,tag {2}",writer.Length,player ,Game.NearestSpaceObjects);
 

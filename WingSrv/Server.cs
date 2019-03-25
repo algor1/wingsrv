@@ -148,6 +148,7 @@ namespace Wingsrv
                 _database.DatabaseError(null , 0 , ex);
             }
         }
+
         public void SavePlayer(string player)
         {
             _database.DataLayer.GetPlayerActiveShip(player, shipId =>
@@ -158,6 +159,7 @@ namespace Wingsrv
                      });
                });
         }
+
         public void RemovePlayer(string player)
         {
             if (playerShip.ContainsKey(player))
@@ -171,6 +173,7 @@ namespace Wingsrv
                 gamePlugin.WriteToLog("player " + player + " removed", DarkRift.LogType.Info);
             }
         }
+
         public int GetPlayerId(string player)
         {
             return playerIds[player];
@@ -210,6 +213,7 @@ namespace Wingsrv
                 await Task.Delay(3000);
             }
         }
+
         private void SendPlayerShipData(string _player)
         {
 
@@ -236,17 +240,16 @@ namespace Wingsrv
             }
 
         }
+
         public List<string> GetAllPlayers()
         {
             return playerShipInverse.Values.ToList();
         }
+
         public int GetPlayerShipId(string player)
         {
             return playerShip[player];
         }
-
-
-
 
         #endregion
 

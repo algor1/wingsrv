@@ -82,24 +82,26 @@ namespace Wingsrv
             {
                 _database.DataLayer.GetPlayerInventory( playerId, inventoryDict =>
                 {
-                    foreach (KeyValuePair<int,Dictionary< InventoryItem>> entry in inventoryDict)
-	                    {
+                    foreach (KeyValuePair<int, List<InventoryItem>> entry in inventoryDict)
+                    {
                         if (!inventories.ContainsKey(entry.Key))
                         {
-                            inventories.Add(entry.Key,new Dictionary<int,Dictionary<int, InventoryItem>>());
+                            inventories.Add(entry.Key, new Dictionary<int, Dictionary<int, InventoryItem>>());
                         }
                         if (!inventories[entry.Key].ContainsKey(playerId))
                         {
-                            inventories[entry.Key].Add(playerId,new Dictionary<int, InventoryItem>());
+                            inventories[entry.Key].Add(playerId, new Dictionary<int, InventoryItem>());
                         }
-                        if (!inventories[entry.Key][playerId].ContainsKey(playerId)
+                        foreach (InventoryItem inventoryItem in entry.Value)
+                        {
 
-                        
+                            inventories[entry.Key][playerId].Add(inventoryItem.ItemId, inventoryItem);
                         }
-                        //if (_debug)
-                        //   {
-                              gamePlugin.WriteToLog("inventory holders loaded count:"+inventoryDict.Count, DarkRift.LogType.Info);
-                        //   }
+                    }
+                    //if (_debug)
+                    //   {
+                    gamePlugin.WriteToLog("inventory holders loaded count:"+inventoryDict.Count, DarkRift.LogType.Info);
+                    //   }
                 });
             }
             catch (Exception ex)
@@ -122,14 +124,35 @@ namespace Wingsrv
         
         private InventoryItem GetInventoryItem(int player,int holder,int itemId , int tech)
         {
-            inventories[holder][player].ContainsKey(itemId);
+            return inventories[holder][player][itemId];
         }
         
-        private void AddItemToInventoryint (int player, int holder, InventoryItem itemToAdd)
-        {}
+        private void AddItemToInventory (int playerId, int holder, InventoryItem itemToAdd)
+        {
+            
+            if (!inventories.ContainsKey(holder))
+            {
+                inventories.Add(holder, new Dictionary<int, Dictionary<int, InventoryItem>>());
+            }
+            if (!inventories[holder].ContainsKey(playerId))
+            {
+                inventories[holder].Add(playerId, new Dictionary<int, InventoryItem>());
+            }
+            inventories[holder][playerId].Add(itemToAdd.ItemId, itemToAdd);
+        }
 
-        private void UpdateItemInInventory(int player, int holder, InventoryItem itemToAdd)
-        {}
+        private void UpdateItemInInventory(int playerId, int holder, InventoryItem itemToUpdate)
+        {
+            if (!inventories.ContainsKey(holder))
+            {
+                inventories.Add(holder, new Dictionary<int, Dictionary<int, InventoryItem>>());
+            }
+            if (!inventories[holder].ContainsKey(playerId))
+            {
+                inventories[holder].Add(playerId, new Dictionary<int, InventoryItem>());
+            }
+            inventories[holder][playerId][itemToUpdate.ItemId]= itemToUpdate;
+        }
         
 
         #endregion

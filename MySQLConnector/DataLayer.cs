@@ -800,9 +800,9 @@ namespace MySQLConnector
         }
     
 
-        public void  GetPlayerInventory(int playerId, Action<Dictionary<int,Dictionary<int, InventoryItem>>> callback)
+        public void  GetPlayerInventory(int playerId, Action<Dictionary<int,List< InventoryItem>>> callback)
         {
-            Dictionary<int, InventoryItem> retDict = new Dictionary<int, InventoryItem>();
+            Dictionary<int, List<InventoryItem>> retDict = new Dictionary<int, List<InventoryItem>>();
             var rows = _database.ExecuteQuery(@"SELECT
                             inventory_holder_id
                             item_id
@@ -822,7 +822,8 @@ namespace MySQLConnector
                 retInventoryItem.Tech     = (int)data["tech"];
                 retInventoryItem.Quantity = (int)data["quantity"];
 
-                retDict.Add(holder, retInventoryItem);
+                if (!retDict.ContainsKey(holder)) retDict.Add(holder, new List<InventoryItem>());
+                retDict[holder].Add(retInventoryItem);
             }
             callback(retDict);
         }
