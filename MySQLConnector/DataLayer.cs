@@ -831,9 +831,14 @@ namespace MySQLConnector
 
         public void GetPlayerId(string player, Action<int> callback)
         {
+            Console.WriteLine("DB {0}   {1}", _database , player);
+
             var row = _database.ExecuteScalar(
                 "SELECT id FROM players WHERE player = @player",
                 new QueryParameter("@player", MySqlDbType.VarChar, 60, "player", _database.EscapeString(player)));
+
+            Console.WriteLine("row {0}", row);
+
             callback((int)row);
         }
     }

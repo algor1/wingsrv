@@ -27,6 +27,8 @@ namespace Wingsrv
         {
             started = true;
             gamePlugin = game;
+            items = new Dictionary<int, Item>();
+            inventories = new Dictionary<int, Dictionary<int, Dictionary<int, InventoryItem>>>();
         }
 
         #region Items

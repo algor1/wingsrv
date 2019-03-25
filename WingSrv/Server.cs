@@ -59,6 +59,7 @@ namespace Wingsrv
                 Console.WriteLine("Starting server...");
                 playerShip = new Dictionary<string, int>();
                 playerShipInverse = new Dictionary<int,string >();
+                playerIds = new Dictionary<string, int>();
                 //Thread myThread = new Thread(new ThreadStart(Run));
                 //myThread.Start();
                 //Console.WriteLine(myThread.IsBackground);
@@ -111,8 +112,9 @@ namespace Wingsrv
 
         public void LoadPlayer(string player)
         {
-            
-             try
+            Console.WriteLine("Loading player {0}", player);
+
+            try
             {
                 _database.DataLayer.GetPlayerId( player, id =>
                     {
@@ -121,7 +123,7 @@ namespace Wingsrv
             }
             catch (Exception ex)
             {
-                gamePlugin.WriteToLog("Database error on loading items" +ex, DarkRift.LogType.Error);
+                gamePlugin.WriteToLog("Database error on loading player " +player +"  "+ex, DarkRift.LogType.Error);
 
                 //Return Error 2 for Database error
                 _database.DatabaseError(null , 0 , ex);
