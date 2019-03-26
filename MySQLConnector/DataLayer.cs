@@ -800,32 +800,33 @@ namespace MySQLConnector
         }
     
 
-        public void  GetPlayerInventory(int playerId, Action<Dictionary<int,List< InventoryItem>>> callback)
+        public void  GetPlayerInventory(int playerId, int holderId, Action<List< InventoryItem>> callback)
         {
-            Dictionary<int, List<InventoryItem>> retDict = new Dictionary<int, List<InventoryItem>>();
-            var rows = _database.ExecuteQuery(@"SELECT
-                            inventory_holder_id
-                            item_id
-                            tech
-                            quantity
-                        FROM inventory INNER JOIN players
-                        ON inventory.player_id=players.id
-                        WHERE players.id = @playerId    ",
-                        new QueryParameter("@playerId", MySqlDbType.Int32, 11, "playerId",playerId ));
+            List<InventoryItem>> retList = new List<InventoryItem>();
+            var rows = _database.ExecuteQuery(
+                        @"SELECT
+                            inventory_holder_id,
+                            item_id,
+                            tech,
+                            quantity 
+                        FROM inventory 
+                        WHERE player_id = @playerId and 
+                                inventory_holder_id = @holderId ",
+                        new QueryParameter("@playerId", MySqlDbType.Int32, 11, "playerId",playerId ),
+                        new QueryParameter("@holderId", MySqlDbType.Int32, 11, "holderId",holderId ));
 
             foreach (var row in rows)
             {
                 InventoryItem retInventoryItem = new InventoryItem();
                 var data = row.GetRow();
-                int holder =                (int)data["inventory_holder_id"];
+                
                 retInventoryItem.ItemId   = (int)data["item_id"];
                 retInventoryItem.Tech     = (int)data["tech"];
                 retInventoryItem.Quantity = (int)data["quantity"];
-
-                if (!retDict.ContainsKey(holder)) retDict.Add(holder, new List<InventoryItem>());
-                retDict[holder].Add(retInventoryItem);
+                
+                retList.Add(retInventoryItem);
             }
-            callback(retDict);
+            callback(retList);
         }
 
 
@@ -842,6 +843,46 @@ namespace MySQLConnector
             callback((int)row);
         }
 
+        public void GetHolderInventory( int holderId, Action<List<InventoryItem>> callback)
+        {
+            List < InventoryItem >> retList = new List<InventoryItem>();
+            var rows = _database.ExecuteQuery(
+                        @"SELECT
+                            inventory_holder_id,
+                            item_id,
+                            tech,
+                            quantity 
+                        FROM inventory 
+                        WHERE inventory_holder_id = @holderId ",
+                        new QueryParameter("@holderId", MySqlDbType.Int32, 11, "holderId", holderId));
+
+            foreach (var row in rows)
+            {
+                InventoryItem retInventoryItem = new InventoryItem();
+                var data = row.GetRow();
+
+                retInventoryItem.ItemId = (int)data["item_id"];
+                retInventoryItem.Tech = (int)data["tech"];
+                retInventoryItem.Quantity = (int)data["quantity"];
+
+                retList.Add(retInventoryItem);
+            }
+            callback(retList);
+        }
+
+
+        public void GetPlayerId(string player, Action<int> callback)
+        {
+            Console.WriteLine("DB {0}   {1}", _database, player);
+
+            var row = _database.ExecuteScalar(
+                "SELECT id FROM players WHERE player = @player",
+                new QueryParameter("@player", MySqlDbType.VarChar, 60, "player", _database.EscapeString(player)));
+
+            Console.WriteLine("row {0}", row);
+
+            callback((int)row);
+        }
 
         public void InventoryItemMove(int senderId, int senderHolder, int receiverId, int receiverHolder, int itemId, int quantity, Action<bool> callback)
         {
@@ -894,7 +935,7 @@ namespace MySQLConnector
 
 
 
-        public void InventoryItemAdd(int receiverId, int receiverHolder, int itemId, int quantity, Action<bool> callback)
+        public void InventoryItemAdd(int receiverId, int receiverHolder, int itemId, int quantity, Action<int> callback)
         {
             int receiverQuantity = InventoryItemQuantity(receiverId, receiverHolder, itemId);
             throw new NotImplementedException();
@@ -937,5 +978,19 @@ namespace MySQLConnector
             }
 
         }
+
+
+        public void DeleteHolderInventory(int holderId, Action callback)
+        {
+            _database.ExecuteNonQuery(
+                @"DELETE FROM inventory 
+                WHERE inventory_holder_id = @holderId and",
+            new QueryParameter("@holderId", MySqlDbType.Int32, 11, "holderId", holderId));
+
+            callback();
+        }
+
+
+
     }
 }

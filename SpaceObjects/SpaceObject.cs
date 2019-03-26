@@ -8,6 +8,7 @@ namespace SpaceObjects
     public class SpaceObject :IDarkRiftSerializable
     {
         public int Id { get; set; }
+        public int PlayerId {get;set;}
         public string VisibleName { get; set; }
         public TypeSO Type { get; set; }
         public Vector3 Position { get; set; }
@@ -22,6 +23,7 @@ namespace SpaceObjects
         public SpaceObject(SpaceObject value)
         {
             Id = value.Id;
+            PlayerId= value.PlayerId;
             VisibleName = value.VisibleName;
             Type = value.Type;
             Position = value.Position;
@@ -34,6 +36,7 @@ namespace SpaceObjects
 public void  Deserialize(DeserializeEvent e)
 {
  	        Id= e.Reader.ReadInt32();
+            PlayerId=e.Reader.ReadInt32();
             VisibleName = e.Reader.ReadString();
             Type = (TypeSO) e.Reader.ReadInt32();
             Position = new Vector3(e.Reader.ReadSingle(),e.Reader.ReadSingle(),e.Reader.ReadSingle());
@@ -45,6 +48,7 @@ public void  Deserialize(DeserializeEvent e)
 public void  Serialize(SerializeEvent e)
 {
             e.Writer.Write(Id);
+            e.Writer.Write(PlayerId);
             e.Writer.Write(VisibleName);
             e.Writer.Write((int)Type);
             e.Writer.Write(Position.x);

@@ -16,6 +16,8 @@ namespace Wingsrv
         private Server server;
         private Game gamePlugin;
         public DatabaseProxy _database { get; set; }
+        System.Random autoRand = new System.Random();
+        const float ContainerPersentage = 0.2f;
 
         private Dictionary<int, Item> items;
         //private Dictionary<int,Dictionary<int,Dictionary<int, InventoryItem>>> inventories; //<holder,<player<itemID,InvetoryItem>>>
@@ -28,6 +30,7 @@ namespace Wingsrv
             started = true;
             gamePlugin = game;
             items = new Dictionary<int, Item>();
+
             //inventories = new Dictionary<int, Dictionary<int, Dictionary<int, InventoryItem>>>();
         }
 
@@ -69,11 +72,28 @@ namespace Wingsrv
 
         public List<InventoryItem> PlayerInventory(int player_id, int holderId)
         {
+             try
+            {
+                _database.DataLayer.GetPlayerInventory(playerId, holderId, playerInventory =>
+                {
+                    return playerInventory;
+                });
+            }
+            catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on adding items to inventory" + ex, DarkRift.LogType.Error);
+
+                //Return Error 2 for Database error
+                _database.DatabaseError(null, 0, ex);
+            }
+        }
+        public List<InventoryItem> HolderInventory(int holderId)
+        {
             try
             {
-                _database.DataLayer.InventoryItemAdd(player, holder, itemId, quantity, quantityAdded =>
+                _database.DataLayer.GetPlayerInventory( holderId, holderInventory =>
                 {
-                    Console.WriteLine("added {0} items id:{1} to player {2} holder {3} ", quantity, itemId, player, holder);
+                    return holderInventory;
                 });
             }
             catch (Exception ex)
@@ -85,10 +105,6 @@ namespace Wingsrv
             }
         }
 
-        public List<InventoryItem> HolderInventory(int holderId)
-        {
-
-        }
 
         private void InventoryItemAddition(int player, int holder, int itemId, int quantity)
         {
@@ -123,7 +139,39 @@ namespace Wingsrv
                     }
              });
         }
-       
+
+        public void ContainerFromShip(SpaceObject cont, SpaceObject so)
+        {
+            List<InventoryItem> holderInventory = HolderInventory(ship.Id);
+            for (int i = 0; i < holderInventory.Count; i++)
+            {
+
+                if (autoRand.NextDouble() < ContainerPersentage )
+                {
+                    //				float tmp_quantity = (float)objectInventory [i].quantity;
+                    InventoryItemMove(so.PlayerId, so.Id, cont.PlayerId, cont.Id, holderInventory[i].ItemId, (int)Math.Ceiling(holderInventory[i].Quantity * autoRand.NextDouble() * 0.5f));
+                }
+
+            }
+            DestroyInventory(so.Id);
+        }
+        private void DestroyInventory(int holderId)
+        {
+            try
+            {
+                _database.DataLayer.DeleteHolderInventory(holderId , () =>
+                {
+                    Console.WriteLine("Inventory destroyed holderId {0} ", holderId);
+                });
+            }
+            catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on destroing inventory holder" + ex, DarkRift.LogType.Error);
+
+                //Return Error 2 for Database error
+                _database.DatabaseError(null, 0, ex);
+            }
+        }
 
 
    
