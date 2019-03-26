@@ -253,6 +253,36 @@ namespace MongoDbConnector
             throw new NotImplementedException();
         }
 
+        public void GetPlayerInventory(int playerId, int holderId, Action<List<InventoryItem>> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetHolderInventory(int holderId, Action<List<InventoryItem>> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteHolderInventory(int holderId, Action callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InventoryItemMove(int senderId, int senderHolder, int receiverId, int receiverHolder, int itemID, int quantity, Action<bool> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InventoryItemAdd(int receiverId, int receiverHolder, int itemId, int quantity, Action<int> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InventoryItemSubtract(int playerId, int HolderId, int itemId, int quantity, Action<int> callback)
+        {
+            throw new NotImplementedException();
+        }
+
 
 
         #endregion

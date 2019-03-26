@@ -139,7 +139,7 @@ namespace Wingsrv
                         playerShip.Add(player, shipId);
                         playerShipInverse.Add(shipId, player);
                         SendPlayerShipData(player);
-                        inventoryServer.LoadPlayerInventory(GetPlayerId(player));
+                        //inventoryServer.LoadPlayerInventory(GetPlayerId(player));
                         gamePlugin.WriteToLog("player " + player + " loaded. Ship id: " + shipId, DarkRift.LogType.Info);
                     });
                });

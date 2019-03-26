@@ -70,13 +70,15 @@ namespace Wingsrv
 
         #region Inventory
 
-        public List<InventoryItem> PlayerInventory(int player_id, int holderId)
+        public List<InventoryItem> PlayerInventory(int playerId, int holderId)
         {
-             try
+            List<InventoryItem> retList = new List<InventoryItem>();
+
+            try
             {
                 _database.DataLayer.GetPlayerInventory(playerId, holderId, playerInventory =>
                 {
-                    return playerInventory;
+                    retList = playerInventory;
                 });
             }
             catch (Exception ex)
@@ -86,14 +88,16 @@ namespace Wingsrv
                 //Return Error 2 for Database error
                 _database.DatabaseError(null, 0, ex);
             }
+            return retList;
         }
         public List<InventoryItem> HolderInventory(int holderId)
         {
+            List<InventoryItem> retList = new List<InventoryItem>();
             try
             {
-                _database.DataLayer.GetPlayerInventory( holderId, holderInventory =>
+                _database.DataLayer.GetHolderInventory( holderId, holderInventory =>
                 {
-                    return holderInventory;
+                    retList= holderInventory;
                 });
             }
             catch (Exception ex)
@@ -103,6 +107,7 @@ namespace Wingsrv
                 //Return Error 2 for Database error
                 _database.DatabaseError(null, 0, ex);
             }
+            return retList;
         }
 
 
@@ -142,7 +147,7 @@ namespace Wingsrv
 
         public void ContainerFromShip(SpaceObject cont, SpaceObject so)
         {
-            List<InventoryItem> holderInventory = HolderInventory(ship.Id);
+            List<InventoryItem> holderInventory = HolderInventory(so.Id);
             for (int i = 0; i < holderInventory.Count; i++)
             {
 

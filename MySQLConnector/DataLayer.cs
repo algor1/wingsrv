@@ -802,7 +802,7 @@ namespace MySQLConnector
 
         public void  GetPlayerInventory(int playerId, int holderId, Action<List< InventoryItem>> callback)
         {
-            List<InventoryItem>> retList = new List<InventoryItem>();
+            List<InventoryItem> retList = new List<InventoryItem>();
             var rows = _database.ExecuteQuery(
                         @"SELECT
                             inventory_holder_id,
@@ -845,7 +845,7 @@ namespace MySQLConnector
 
         public void GetHolderInventory( int holderId, Action<List<InventoryItem>> callback)
         {
-            List < InventoryItem >> retList = new List<InventoryItem>();
+            List < InventoryItem > retList = new List<InventoryItem>();
             var rows = _database.ExecuteQuery(
                         @"SELECT
                             inventory_holder_id,
@@ -870,48 +870,35 @@ namespace MySQLConnector
             callback(retList);
         }
 
-
-        public void GetPlayerId(string player, Action<int> callback)
-        {
-            Console.WriteLine("DB {0}   {1}", _database, player);
-
-            var row = _database.ExecuteScalar(
-                "SELECT id FROM players WHERE player = @player",
-                new QueryParameter("@player", MySqlDbType.VarChar, 60, "player", _database.EscapeString(player)));
-
-            Console.WriteLine("row {0}", row);
-
-            callback((int)row);
-        }
-
         public void InventoryItemMove(int senderId, int senderHolder, int receiverId, int receiverHolder, int itemId, int quantity, Action<bool> callback)
         {
-            bool sucsess;
-            try
-            {
-                InventoryItemSubtract ( senderId, senderHolder, itemID, quantity, realQuantity  =>
+            bool sucsess=false;
+            //try
+            //{
+                InventoryItemSubtract ( senderId, senderHolder, itemId, quantity, realQuantity  =>
                 {
                     if (realQuantity>0) 
                     {
-                        InventoryItemAdd( receiverId, receiverHolder, itemId, quantity =>
+                        InventoryItemAdd( receiverId, receiverHolder, itemId, quantity, addedQuantity =>
                             {
-                                Console.WriteLine("moved {0} items id:{1} from player {2} to {3} from holder {4} to {5}",quantity,itemID,senderId,senderHolder,receiverId,receiverHolder);
+                                Console.WriteLine("moved {0} items id:{1} from player {2} to {3} from holder {4} to {5}",addedQuantity,itemId,senderId,senderHolder,receiverId,receiverHolder);
                             });
                         sucsess = true;
                     }
                     else
                     {
-                        Console.WriteLine("Failed to move {0} items id:{1} from player {2} to {3} from holder {4} to {5}",quantity,itemID,senderId,senderHolder,receiverId,receiverHolder);
+                        Console.WriteLine("Failed to move {0} items id:{1} from player {2} to {3} from holder {4} to {5}",quantity,itemId,senderId,senderHolder,receiverId,receiverHolder);
                     }
                 });
-            }
-            catch (Exception ex)
-            {
-                gamePlugin.WriteToLog("Database error on moving inventory items" + ex, DarkRift.LogType.Error);
+            //}
+            //catch (Exception ex)
+            //{
+            //    //TODO exeption description
+            //    //_database.WriteToLog("Database error on moving inventory items" + ex, DarkRift.LogType.Error);
 
-                //Return Error 2 for Database error
-                _database.DatabaseError(null, 0, ex);
-            }
+            //    //Return Error 2 for Database error
+            //    //_database.DatabaseError(null, 0, ex);
+            //}
             callback(sucsess);
         }
 
