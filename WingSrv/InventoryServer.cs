@@ -18,7 +18,7 @@ namespace Wingsrv
         public DatabaseProxy _database { get; set; }
 
         private Dictionary<int, Item> items;
-        private Dictionary<int,Dictionary<int,Dictionary<int, InventoryItem>>> inventories; //<holder,<player<itemID,InvetoryItem>>>
+        //private Dictionary<int,Dictionary<int,Dictionary<int, InventoryItem>>> inventories; //<holder,<player<itemID,InvetoryItem>>>
 
 
 
@@ -28,7 +28,7 @@ namespace Wingsrv
             started = true;
             gamePlugin = game;
             items = new Dictionary<int, Item>();
-            inventories = new Dictionary<int, Dictionary<int, Dictionary<int, InventoryItem>>>();
+            //inventories = new Dictionary<int, Dictionary<int, Dictionary<int, InventoryItem>>>();
         }
 
         #region Items
@@ -67,94 +67,87 @@ namespace Wingsrv
 
         #region Inventory
 
-        //public List<InventoryItem> PlayerInventory(int player_id, int holderId)
-        //{
-
-        //}
-
-        //public List<InventoryItem> ObjectInventory(int holderId)
-        //{
-
-        //}
-
-        public void LoadPlayerInventory(int playerId)
+        public List<InventoryItem> PlayerInventory(int player_id, int holderId)
         {
-
             try
             {
-                _database.DataLayer.GetPlayerInventory( playerId, inventoryDict =>
+                _database.DataLayer.InventoryItemAdd(player, holder, itemId, quantity, quantityAdded =>
                 {
-                    foreach (KeyValuePair<int, List<InventoryItem>> entry in inventoryDict)
-                    {
-                        if (!inventories.ContainsKey(entry.Key))
-                        {
-                            inventories.Add(entry.Key, new Dictionary<int, Dictionary<int, InventoryItem>>());
-                        }
-                        if (!inventories[entry.Key].ContainsKey(playerId))
-                        {
-                            inventories[entry.Key].Add(playerId, new Dictionary<int, InventoryItem>());
-                        }
-                        foreach (InventoryItem inventoryItem in entry.Value)
-                        {
-
-                            inventories[entry.Key][playerId].Add(inventoryItem.ItemId, inventoryItem);
-                        }
-                    }
-                    //if (_debug)
-                    //   {
-                    gamePlugin.WriteToLog("inventory holders loaded count:"+inventoryDict.Count, DarkRift.LogType.Info);
-                    //   }
+                    Console.WriteLine("added {0} items id:{1} to player {2} holder {3} ", quantity, itemId, player, holder);
                 });
             }
             catch (Exception ex)
             {
-                gamePlugin.WriteToLog("Database error on loading items" +ex, DarkRift.LogType.Error);
+                gamePlugin.WriteToLog("Database error on adding items to inventory" + ex, DarkRift.LogType.Error);
 
                 //Return Error 2 for Database error
-                _database.DatabaseError(null , 0 , ex);
+                _database.DatabaseError(null, 0, ex);
             }
-        
-        }
-        private void InventoryItemAddition(int player,int holder,InventoryItem itemToAdd)
-        {
-            InventoryItem item= GetInventoryItem(player,holder,itemToAdd.ItemId,itemToAdd.Tech);
-            if (item==null)
-                AddItemToInventory(player,holder,itemToAdd);
-            else 
-                UpdateItemInInventory(player,holder,itemToAdd);
-        }
-        
-        private InventoryItem GetInventoryItem(int player,int holder,int itemId , int tech)
-        {
-            return inventories[holder][player][itemId];
-        }
-        
-        private void AddItemToInventory (int playerId, int holder, InventoryItem itemToAdd)
-        {
-            
-            if (!inventories.ContainsKey(holder))
-            {
-                inventories.Add(holder, new Dictionary<int, Dictionary<int, InventoryItem>>());
-            }
-            if (!inventories[holder].ContainsKey(playerId))
-            {
-                inventories[holder].Add(playerId, new Dictionary<int, InventoryItem>());
-            }
-            inventories[holder][playerId].Add(itemToAdd.ItemId, itemToAdd);
         }
 
-        private void UpdateItemInInventory(int playerId, int holder, InventoryItem itemToUpdate)
+        public List<InventoryItem> HolderInventory(int holderId)
         {
-            if (!inventories.ContainsKey(holder))
-            {
-                inventories.Add(holder, new Dictionary<int, Dictionary<int, InventoryItem>>());
-            }
-            if (!inventories[holder].ContainsKey(playerId))
-            {
-                inventories[holder].Add(playerId, new Dictionary<int, InventoryItem>());
-            }
-            inventories[holder][playerId][itemToUpdate.ItemId]= itemToUpdate;
+
         }
+
+        private void InventoryItemAddition(int player, int holder, int itemId, int quantity)
+        {
+            try
+            {
+                _database.DataLayer.InventoryItemAdd(player,holder,itemId,quantity, quantityAdded =>
+                {
+                    Console.WriteLine("added {0} items id:{1} to player {2} holder {3} ", quantity, itemId, player,holder);
+                });
+            }
+            catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on adding items to inventory" + ex, DarkRift.LogType.Error);
+
+                //Return Error 2 for Database error
+                _database.DatabaseError(null, 0, ex);
+            }
+        }
+
+        private void InventoryItemMove(int senderId, int senderHolder, int receiverId, int receiverHolder, int itemID, int quantity)
+        {
+            //TODO CheckVolume
+            _database.DataLayer.InventoryItemMove( senderId, senderHolder, receiverId, receiverHolder, itemID, quantity, complited  =>
+                {
+                    if (complited) 
+                    {
+                        Console.WriteLine("moved {0} items id:{1} from player {2} to {3} from holder {4} to {5}",quantity,itemID,senderId,senderHolder,receiverId,receiverHolder);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to move {0} items id:{1} from player {2} to {3} from holder {4} to {5}",quantity,itemID,senderId,senderHolder,receiverId,receiverHolder);
+                    }
+             });
+        }
+       
+
+
+   
+
+        
+        //private InventoryItem GetInventoryItem(int player,int holder,int itemId , int tech)
+        //{
+        //    return inventories[holder][player][itemId];
+        //}
+        
+  
+
+        //private void UpdateItemInInventory(int playerId, int holder, InventoryItem itemToUpdate)
+        //{
+        //    if (!inventories.ContainsKey(holder))
+        //    {
+        //        inventories.Add(holder, new Dictionary<int, Dictionary<int, InventoryItem>>());
+        //    }
+        //    if (!inventories[holder].ContainsKey(playerId))
+        //    {
+        //        inventories[holder].Add(playerId, new Dictionary<int, InventoryItem>());
+        //    }
+        //    inventories[holder][playerId][itemToUpdate.ItemId]= itemToUpdate;
+        //}
         
 
         #endregion

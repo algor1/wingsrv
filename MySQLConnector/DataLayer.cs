@@ -841,5 +841,101 @@ namespace MySQLConnector
 
             callback((int)row);
         }
+
+
+        public void InventoryItemMove(int senderId, int senderHolder, int receiverId, int receiverHolder, int itemId, int quantity, Action<bool> callback)
+        {
+            bool sucsess;
+            try
+            {
+                InventoryItemSubtract ( senderId, senderHolder, itemID, quantity, realQuantity  =>
+                {
+                    if (realQuantity>0) 
+                    {
+                        InventoryItemAdd( receiverId, receiverHolder, itemId, quantity =>
+                            {
+                                Console.WriteLine("moved {0} items id:{1} from player {2} to {3} from holder {4} to {5}",quantity,itemID,senderId,senderHolder,receiverId,receiverHolder);
+                            });
+                        sucsess = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to move {0} items id:{1} from player {2} to {3} from holder {4} to {5}",quantity,itemID,senderId,senderHolder,receiverId,receiverHolder);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on moving inventory items" + ex, DarkRift.LogType.Error);
+
+                //Return Error 2 for Database error
+                _database.DatabaseError(null, 0, ex);
+            }
+            callback(sucsess);
+        }
+
+        private int InventoryItemQuantity(int playerId, int holderId, int itemId)
+        {
+            int retQuantity=0;
+            var row = _database.ExecuteScalar(@"SELECT
+                                                        quantity
+                                                FROM    inventory
+                                                WHERE   player_id = @playerId and 
+                                                        inventory_holder_id = @holderId and 
+                                                        item_id = @itemId ",
+                        new QueryParameter("@playerId", MySqlDbType.Int32, 11, "playerId",playerId ),
+                        new QueryParameter("@holderId", MySqlDbType.Int32, 11, "holderId",holderId ),
+                        new QueryParameter("@itemId", MySqlDbType.Int32, 11, "itemId",itemId ));
+            
+            if (row!=null)
+                retQuantity=(int)row;
+            return retQuantity;
+        }
+
+
+
+        public void InventoryItemAdd(int receiverId, int receiverHolder, int itemId, int quantity, Action<bool> callback)
+        {
+            int receiverQuantity = InventoryItemQuantity(receiverId, receiverHolder, itemId);
+            throw new NotImplementedException();
+        }
+
+        public void InventoryItemSubtract(int playerId, int holderId, int itemId, int quantity, Action<int> callback)
+        {
+            int playerQuantity = InventoryItemQuantity(playerId, holderId, itemId);
+            
+            if (playerQuantity > quantity)
+            {
+                _database.ExecuteNonQuery(
+                                    @"UPDATE inventory SET
+                                            quantity = quantity - @quantity 
+                                    WHERE   player_id = @playerId and 
+                                            inventory_holder_id = @holderId and 
+                                            item_id = @itemId ",
+                        new QueryParameter("@playerId", MySqlDbType.Int32, 11, "playerId",playerId ),
+                        new QueryParameter("@holderId", MySqlDbType.Int32, 11, "holderId",holderId ),
+                        new QueryParameter("@itemId", MySqlDbType.Int32, 11, "itemId",itemId ),
+                        new QueryParameter("@quantity", MySqlDbType.Int32, 11, "quantity",quantity ));
+                callback(quantity);
+            }
+            else
+            {
+                //delete
+                if (playerQuantity > 0)
+                {
+                    _database.ExecuteNonQuery(
+                                 @"DELETE FROM inventory 
+                                    WHERE   player_id = @playerId and 
+                                            inventory_holder_id = @holderId and 
+                                            item_id = @itemId ",
+                            new QueryParameter("@playerId", MySqlDbType.Int32, 11, "playerId", playerId),
+                            new QueryParameter("@holderId", MySqlDbType.Int32, 11, "holderId", holderId),
+                            new QueryParameter("@itemId", MySqlDbType.Int32, 11, "itemId", itemId));
+                }
+                callback(playerQuantity);
+            
+            }
+
+        }
     }
 }
