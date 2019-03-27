@@ -26,7 +26,8 @@ namespace Wingsrv
 
         private InventoryServer inventoryServer;
         //private ServerManager serverManager;
-        public int TickDeltaTime = 10000;
+        public const int TickDeltaTime = 10000;
+        public const int TickCleanDeltaTime = 600000;
         private Game gamePlugin;
         public Login _loginPlugin;
         public  DatabaseProxy _database{get;set;}
@@ -48,7 +49,7 @@ namespace Wingsrv
                 server = gamePlugin.server;
                 inventoryServer = gamePlugin.inventoryServer;
                 Console.WriteLine("loading Space objects...");
-                LoadserverObjects();
+                LoadSpaceObjects();
                 Console.WriteLine("Starting SpaceObjects server...");
 
                 started = true;
@@ -59,7 +60,7 @@ namespace Wingsrv
 
         }
 
-        private void LoadserverObjects()
+        private void LoadSpaceObjects()
         {
             try
             {
@@ -91,6 +92,11 @@ namespace Wingsrv
         {
             SpaceObject s = new SpaceObject(so);
             spaceObjects.Add(s.Id, s);
+        }
+
+         private void DeleteSpaceObject(SpaceObject so)
+        {
+            spaceObjects.Remove(so.Id);
         }
 
         public void SendNearest(string player)
@@ -134,7 +140,22 @@ namespace Wingsrv
                 await Task.Delay(TickDeltaTime);
             }
         }
-
+        private async Task CleanTick()
+        {
+            while (started)
+            {
+                
+                Console.WriteLine("cleaning empty containers");
+                foreach (KeyValuePair<int,SpaceObject> entry in spaceObjects)
+                {
+                    if (entry.Value.Type== TypeSO.container){
+                        if (inventoryServer.HolderInventory(entry.Value.Id).Count==0)
+                            DestroyContainer(entry.Key);
+                    }
+                }
+                await Task.Delay(TickCleanDeltaTime);
+            }
+        }
 
 
 
@@ -164,9 +185,50 @@ namespace Wingsrv
             return spaceObjects[id];
         }
 
+        public void AddNewContainer(SpaceObject destroedSo)
+    {
+		int containerItemId = 4;// TODO  брать из базы
+			
+        //SpaceObject newContainer;
+        int containerEtalonId = 4;
+        try
+            {
+            _database.DataLayer.GetSpaceObject( containerEtalonId, container =>
+                {
+                    SpaceObject newContainerData=container;
+                    newContainerData.Position = destroedSo.Position;
+                    _database.DataLayer.AddNewContainer(newContainerData, newContainer =>
+                        {
+                            //newContainer
+                            inventoryServer.ContainerInventoryFromShip(newContainer,destroedSo);
+                            AddSpaceObject(newContainer);
+
+                        });
+                });
+            }
+    catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on loading player" +ex, DarkRift.LogType.Error);
+                _database.DatabaseError(null , 0 , ex);
+            }
     }
 
+	public void DestroyContainer(int container_id){
+        try
+            {
+               _database.DataLayer.DeleteContainer(container_id,() =>
+               {
+                   DeleteSpaceObject(container_id);
+                   Console.WriteLine("Container {0} deleted as it was empty",container_id);
+               });
+            }
+            catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on loading player" +ex, DarkRift.LogType.Error);
+                _database.DatabaseError(null , 0 , ex);
+            }
 
+		}
 
-
+	}
 }

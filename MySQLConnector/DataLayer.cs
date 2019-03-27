@@ -265,34 +265,54 @@ namespace MySQLConnector
         }
 
         private void SetSpaceObject(SpaceObject so)
-            {
-                    _database.ExecuteNonQuery(
-                    @"UPDATE server_objects SET
-                                type       = @type,
-                                visibleName= @visibleName,
-                                position_x = @position_x,
-                                position_y = @position_y,
-                                position_z = @position_z,
-                                rotation_x = @rotation_x,
-                                rotation_y = @rotation_y,
-                                rotation_z = @rotation_z,
-                                rotation_w = @rotation_w,
-                                speed      = @speed,
-                                prefab_path= @prefab_path
-                            WHERE id=@id" ,
-                            new QueryParameter("@id", MySqlDbType.Int32, 11, "id", so.Id),
-                            new QueryParameter("@type",        MySqlDbType.Int32, 32, "type",(int)so.Type       ),
-                            new QueryParameter("@visibleName", MySqlDbType.VarChar, 250, "visibleName",so.VisibleName ),
-                            new QueryParameter("@position_x",  MySqlDbType.Float, 32, "position_x", so.Position.x),
-                            new QueryParameter("@position_y", MySqlDbType.Float, 32, "position_y", so.Position.y),
-                            new QueryParameter("@position_z", MySqlDbType.Float, 32, "position_z", so.Position.z),
-                            new QueryParameter("@rotation_x", MySqlDbType.Float, 32, "rotation_x", so.Rotation.x),
-                            new QueryParameter("@rotation_y", MySqlDbType.Float, 32, "rotation_y", so.Rotation.y),
-                            new QueryParameter("@rotation_z", MySqlDbType.Float, 32, "rotation_z", so.Rotation.z),
-                            new QueryParameter("@rotation_w", MySqlDbType.Float, 32, "rotation_w", so.Rotation.w),
-                            new QueryParameter("@speed", MySqlDbType.Float, 32, "speed", so.Speed),
-                            new QueryParameter("@prefab_path", MySqlDbType.VarChar, 250, "prefab_path",so.Prefab ));
-            }
+        {
+            _database.ExecuteNonQuery(
+            @"UPDATE server_objects SET
+                        type       = @type,
+                        visibleName= @visibleName,
+                        position_x = @position_x,
+                        position_y = @position_y,
+                        position_z = @position_z,
+                        rotation_x = @rotation_x,
+                        rotation_y = @rotation_y,
+                        rotation_z = @rotation_z,
+                        rotation_w = @rotation_w,
+                        speed      = @speed,
+                        prefab_path= @prefab_path
+                    WHERE id=@id" ,
+                    new QueryParameter("@id", MySqlDbType.Int32, 11, "id", so.Id),
+                    new QueryParameter("@type",        MySqlDbType.Int32, 32, "type",(int)so.Type       ),
+                    new QueryParameter("@visibleName", MySqlDbType.VarChar, 250, "visibleName",so.VisibleName ),
+                    new QueryParameter("@position_x",  MySqlDbType.Float, 32, "position_x", so.Position.x),
+                    new QueryParameter("@position_y", MySqlDbType.Float, 32, "position_y", so.Position.y),
+                    new QueryParameter("@position_z", MySqlDbType.Float, 32, "position_z", so.Position.z),
+                    new QueryParameter("@rotation_x", MySqlDbType.Float, 32, "rotation_x", so.Rotation.x),
+                    new QueryParameter("@rotation_y", MySqlDbType.Float, 32, "rotation_y", so.Rotation.y),
+                    new QueryParameter("@rotation_z", MySqlDbType.Float, 32, "rotation_z", so.Rotation.z),
+                    new QueryParameter("@rotation_w", MySqlDbType.Float, 32, "rotation_w", so.Rotation.w),
+                    new QueryParameter("@speed", MySqlDbType.Float, 32, "speed", so.Speed),
+                    new QueryParameter("@prefab_path", MySqlDbType.VarChar, 250, "prefab_path",so.Prefab ));
+        }
+
+        public void AddNewContainer(SpaceObject so, Action<SpaceObject> callback)
+        {
+            int id = AddNewSpaceObject(so);
+            so.Id = id;
+            callback(so);
+        }
+
+        public void DeleteContainer(int id, Action callback)
+        {
+            _database.ExecuteNonQuery(
+                @"DELETE FROM server_objects 
+                WHERE id=@id",
+            new QueryParameter("@id", MySqlDbType.Int32, 11, "id", id));
+
+            callback();
+
+            
+            
+        }
 
         public void AddNewShip(ShipData shipData, Action<int> callback)
         {
@@ -971,7 +991,7 @@ namespace MySQLConnector
         {
             _database.ExecuteNonQuery(
                 @"DELETE FROM inventory 
-                WHERE inventory_holder_id = @holderId and",
+                WHERE inventory_holder_id = @holderId",
             new QueryParameter("@holderId", MySqlDbType.Int32, 11, "holderId", holderId));
 
             callback();
@@ -979,5 +999,8 @@ namespace MySQLConnector
 
 
 
+
+
+        
     }
 }

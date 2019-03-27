@@ -36,7 +36,8 @@ namespace Database
         void SetShip(ShipData shipData, Action callback);
         void AddNewPlayerAndShip(string player, Action callback);
         void GetPlayerActiveShip(string player, Action<int> callback);
-
+        void AddNewContainer(SpaceObject so, Action<SpaceObject> callback);
+        void DeleteContainer(int id, Action callback);
         void GetSpaceObject(int _id, Action<SpaceObject> callback);
         void GetAllSpaceObjects ( Action<List<SpaceObject>> callback);
 

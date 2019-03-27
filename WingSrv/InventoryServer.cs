@@ -20,6 +20,8 @@ namespace Wingsrv
         const float ContainerPersentage = 0.2f;
 
         private Dictionary<int, Item> items;
+
+        
         //private Dictionary<int,Dictionary<int,Dictionary<int, InventoryItem>>> inventories; //<holder,<player<itemID,InvetoryItem>>>
 
 
@@ -145,7 +147,7 @@ namespace Wingsrv
              });
         }
 
-        public void ContainerFromShip(SpaceObject cont, SpaceObject so)
+        public void ContainerInventoryFromShip(SpaceObject cont, SpaceObject so)
         {
             List<InventoryItem> holderInventory = HolderInventory(so.Id);
             for (int i = 0; i < holderInventory.Count; i++)
@@ -158,6 +160,8 @@ namespace Wingsrv
                 }
 
             }
+            InventoryItemAddition(cont.PlayerId, cont.Id, 38,(int) Math.Ceiling(10 * autoRand.NextDouble()));
+            
             DestroyInventory(so.Id);
         }
         private void DestroyInventory(int holderId)
