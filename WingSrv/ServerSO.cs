@@ -94,9 +94,9 @@ namespace Wingsrv
             spaceObjects.Add(s.Id, s);
         }
 
-         private void DeleteSpaceObject(SpaceObject so)
+         private void DeleteSpaceObject(int soId)
         {
-            spaceObjects.Remove(so.Id);
+            spaceObjects.Remove(soId);
         }
 
         public void SendNearest(string player)

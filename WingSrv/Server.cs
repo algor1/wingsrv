@@ -456,6 +456,7 @@ namespace Wingsrv
         {
             gamePlugin.serverSO.AddNewContainer(ships[e.ship_id].p);
             DeleteShip(e.ship_id);
+            _database.DataLayer.////!!!!!!!!!
             Console.WriteLine(" Ship id: {0}  Destroyed ", e.ship_id);
         }
          private void ShipSpawn(object sender, SpawnEventArgs e)

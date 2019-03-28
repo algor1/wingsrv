@@ -283,6 +283,16 @@ namespace MongoDbConnector
             throw new NotImplementedException();
         }
 
+        public void AddNewContainer(SpaceObject so, Action<SpaceObject> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteContainer(int id, Action callback)
+        {
+            throw new NotImplementedException();
+        }
+
 
 
         #endregion
