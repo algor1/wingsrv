@@ -354,6 +354,7 @@ namespace Wingsrv
         #endregion
 
         #region user commands
+
         public void GetPlayerShipCommand(string player, ShipCommand player_command, int target_id,int point_id)
         {
             gamePlugin.WriteToLog(player + "  " + player_command + " " + target_id + " " + point_id,DarkRift.LogType.Info);
@@ -455,9 +456,21 @@ namespace Wingsrv
         private void ShipDestroy(object sender, DestroyEventArgs e)
         {
             gamePlugin.serverSO.AddNewContainer(ships[e.ship_id].p);
-            DeleteShip(e.ship_id);
-            _database.DataLayer.////!!!!!!!!!
-            Console.WriteLine(" Ship id: {0}  Destroyed ", e.ship_id);
+            try
+            {
+             _database.DataLayer.DeleteShip(e.ship_id, ()=>
+                {
+                    gamePlugin.serverSO.AddNewContainer(ships[e.ship_id].p);
+                    DeleteShip(e.ship_id);
+                    Console.WriteLine(" Ship id: {0}  Destroyed ", e.ship_id);
+                });
+            }
+            catch (Exception ex)
+            {
+                gamePlugin.WriteToLog("Database error on loading space objects" +ex, DarkRift.LogType.Error);
+                //Return Error 2 for Database error
+                _database.DatabaseError(null , 0 , ex);
+            }
         }
          private void ShipSpawn(object sender, SpawnEventArgs e)
         {

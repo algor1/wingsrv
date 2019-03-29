@@ -559,6 +559,16 @@ namespace MySQLConnector
 
             callback();
         }
+        public void DeleteShip(int shipId, Action callback)
+        {
+            _database.ExecuteNonQuery(
+                @"DELETE a,b FROM SO_shipdata a
+                  INNER JOIN server_objects b
+                  ON a.SO_id=b.id 
+                WHERE b.id = @Id",
+                new QueryParameter("@Id", MySqlDbType.Int32, 11, "Id", shipId));
+            callback();
+        }
 
         public void GetAllMOBShips(Action<List<ShipData>> callback)
         {
