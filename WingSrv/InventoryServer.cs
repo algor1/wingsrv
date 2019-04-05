@@ -13,7 +13,7 @@ namespace Wingsrv
     {
         public bool started;
 
-        private Server server;
+        //private Server server;
         private Game gamePlugin;
         public DatabaseProxy _database { get; set; }
         System.Random autoRand = new System.Random();
@@ -21,19 +21,21 @@ namespace Wingsrv
 
         private Dictionary<int, Item> items;
 
-        
-        //private Dictionary<int,Dictionary<int,Dictionary<int, InventoryItem>>> inventories; //<holder,<player<itemID,InvetoryItem>>>
-
-
-
 
         public InventoryServer(Game game)
         {
-            started = true;
             gamePlugin = game;
             items = new Dictionary<int, Item>();
 
-            //inventories = new Dictionary<int, Dictionary<int, Dictionary<int, InventoryItem>>>();
+        }
+        public void RunServer()
+        {
+            if (!started)
+            {
+                LoadItems();
+
+                started = true;
+            }
         }
 
         #region Items
@@ -85,7 +87,7 @@ namespace Wingsrv
             }
             catch (Exception ex)
             {
-                gamePlugin.WriteToLog("Database error on adding items to inventory" + ex, DarkRift.LogType.Error);
+                gamePlugin.WriteToLog("Database error on getting items of player inventory" + ex, DarkRift.LogType.Error);
 
                 //Return Error 2 for Database error
                 _database.DatabaseError(null, 0, ex);
@@ -94,17 +96,20 @@ namespace Wingsrv
         }
         public List<InventoryItem> HolderInventory(int holderId)
         {
+            Console.WriteLine("trying to get inventory of holder id: {0}", holderId);
             List<InventoryItem> retList = new List<InventoryItem>();
+            Console.WriteLine("0");
             try
             {
-                _database.DataLayer.GetHolderInventory( holderId, holderInventory =>
-                {
+                _database.DataLayer.GetHolderInventory(holderId, holderInventory =>
+               {
+               Console.WriteLine("holder id {0} has {1} items" , holderId, holderInventory.Count);
                     retList= holderInventory;
                 });
             }
             catch (Exception ex)
             {
-                gamePlugin.WriteToLog("Database error on adding items to inventory" + ex, DarkRift.LogType.Error);
+                gamePlugin.WriteToLog("Database error on getting items of holder inventory" + ex, DarkRift.LogType.Error);
 
                 //Return Error 2 for Database error
                 _database.DatabaseError(null, 0, ex);

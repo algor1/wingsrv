@@ -293,6 +293,11 @@ namespace MongoDbConnector
             throw new NotImplementedException();
         }
 
+        public void DeleteShip(int ship_id, Action callback)
+        {
+            throw new NotImplementedException();
+        }
+
 
 
         #endregion

@@ -245,7 +245,7 @@ namespace MySQLConnector
                     speed,
                     prefab_path
                     FROM server_objects
-                    where type <> 1 ");//not a ship TODO find another way
+                    where type <> 1 and id>=100");//not a ship and id<100 only for copying TODO find another way
             
             List<SpaceObject> returnList=new List<SpaceObject>();
             foreach (var row in rows)
@@ -611,7 +611,7 @@ namespace MySQLConnector
                             SO_shipdata.warpSpeed
                         FROM SO_shipdata INNER JOIN server_objects
                         ON SO_shipdata.SO_id=server_objects.id 
-                        WHERE SO_shipdata.mob = 1");
+                        WHERE SO_shipdata.mob = 1 and id>=100");
 
             foreach (var row in rows)
             {
@@ -875,9 +875,11 @@ namespace MySQLConnector
 
         public void GetHolderInventory( int holderId, Action<List<InventoryItem>> callback)
         {
+            Console.WriteLine("1");
             List < InventoryItem > retList = new List<InventoryItem>();
+            Console.WriteLine("2");
             var rows = _database.ExecuteQuery(
-                        @"SELECT
+                        @"SELECT 
                             inventory_holder_id,
                             item_id,
                             tech,
@@ -886,6 +888,7 @@ namespace MySQLConnector
                         WHERE inventory_holder_id = @holderId ",
                         new QueryParameter("@holderId", MySqlDbType.Int32, 11, "holderId", holderId));
 
+            Console.WriteLine("rows selected in holder inventory {0}",rows!=null);
             foreach (var row in rows)
             {
                 InventoryItem retInventoryItem = new InventoryItem();

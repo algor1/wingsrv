@@ -53,7 +53,9 @@ namespace Wingsrv
                 Console.WriteLine("Starting SpaceObjects server...");
 
                 started = true;
+#pragma warning disable CS4014 // Так как этот вызов не ожидается, выполнение существующего метода продолжается до тех пор, пока вызов не будет завершен
                 SendNearestTick();
+#pragma warning restore CS4014 // Так как этот вызов не ожидается, выполнение существующего метода продолжается до тех пор, пока вызов не будет завершен
 
 
             }
@@ -186,11 +188,9 @@ namespace Wingsrv
         }
 
         public void AddNewContainer(SpaceObject destroedSo)
-    {
-		int containerItemId = 4;// TODO  брать из базы
-			
+    {			
         //SpaceObject newContainer;
-        int containerEtalonId = 4;
+        int containerEtalonId = 4;// TODO  брать из базы
         try
             {
             _database.DataLayer.GetSpaceObject( containerEtalonId, container =>
@@ -208,7 +208,7 @@ namespace Wingsrv
             }
     catch (Exception ex)
             {
-                gamePlugin.WriteToLog("Database error on loading player" +ex, DarkRift.LogType.Error);
+                gamePlugin.WriteToLog("Database error on adding new container" +ex, DarkRift.LogType.Error);
                 _database.DatabaseError(null , 0 , ex);
             }
     }
@@ -224,7 +224,7 @@ namespace Wingsrv
             }
             catch (Exception ex)
             {
-                gamePlugin.WriteToLog("Database error on loading player" +ex, DarkRift.LogType.Error);
+                gamePlugin.WriteToLog("Database error on destroing container" +ex, DarkRift.LogType.Error);
                 _database.DatabaseError(null , 0 , ex);
             }
 

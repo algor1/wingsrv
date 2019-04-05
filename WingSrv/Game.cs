@@ -51,7 +51,7 @@ namespace Wingsrv
         public  InventoryServer inventoryServer;
         //public  ItemDB itemDB;
 
-        private ConcurrentDictionary<string, int> PlayerOnShips;
+        //private ConcurrentDictionary<string, int> PlayerOnShips;
 
 
 
@@ -156,8 +156,17 @@ namespace Wingsrv
                     if (serverSO._database == null ) serverSO._database = PluginManager.GetPluginByType<DatabaseProxy>();
                 }
             }
+            if (inventoryServer._database == null)
+            {
+                lock (InitializeLock)
+                {
+                    if (inventoryServer._database == null) inventoryServer._database = PluginManager.GetPluginByType<DatabaseProxy>();
+                }
+            }
             if (!server.started) server.RunServer();
             if (!serverSO.started) serverSO.RunServer();
+            if (!inventoryServer.started) inventoryServer.RunServer();
+
 
 
             e.Client.MessageReceived += OnMessageReceived;

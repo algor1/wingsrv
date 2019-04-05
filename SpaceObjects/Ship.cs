@@ -36,7 +36,7 @@ namespace SpaceObjects
         private bool warpStarted;
 
         //public bool landed;
-        private bool atackAI;
+        //private bool atackAI;
         public Weapon[] Weapons;
         public Equipment[] Equipments;
         
@@ -103,10 +103,14 @@ namespace SpaceObjects
         protected virtual void OnDestroy(DestroyEventArgs e)
         {
             EventHandler<DestroyEventArgs> handler = ShipDestroyed;
+            Console.WriteLine("handler null? {0}",handler==null);//
+            handler?.Invoke(this, e);
+
         }
         private void OnDestroyCall(int ship_id)
         {
             DestroyEventArgs args = new DestroyEventArgs();
+            Console.WriteLine("Ship destroyed, id: {0}", ship_id);
             args.ship_id=ship_id;
             OnDestroy(args);
         }
@@ -114,6 +118,8 @@ namespace SpaceObjects
         protected virtual void OnSpawn(SpawnEventArgs e)
         {
             EventHandler<SpawnEventArgs> handler = ShipSpawn;
+            handler?.Invoke(this, e);
+
         }
         private void OnSpawnCall(int ship_id)
         {
@@ -126,6 +132,8 @@ namespace SpaceObjects
         protected virtual void OnChangeState(ChangeStateArgs e)
         {
             EventHandler<ChangeStateArgs> handler = ChangeState;
+            handler?.Invoke(this, e);
+
         }
         private void OnChangeStateCall(ShipEvenentsType _eventType)
         {

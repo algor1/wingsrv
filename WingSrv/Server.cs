@@ -65,8 +65,11 @@ namespace Wingsrv
                 //Console.WriteLine(myThread.IsBackground);
                 started = true;
 
+#pragma warning disable CS4014 // Так как этот вызов не ожидается, выполнение существующего метода продолжается до тех пор, пока вызов не будет завершен
                 RunTick();
                 SendNearest();
+#pragma warning restore CS4014 // Так как этот вызов не ожидается, выполнение существующего метода продолжается до тех пор, пока вызов не будет завершен
+
 
             }
 
@@ -312,6 +315,7 @@ namespace Wingsrv
                 Console.WriteLine("added {0} id {1} position {2} , rotation {3}", s.p.Type, s.p.Id, s.p.Position, s.p.Rotation);
 
                 ships.TryAdd(s.p.Id,s);
+                EventSigner(s);
                 onTick += s.Tick;
                 
             }
@@ -455,7 +459,11 @@ namespace Wingsrv
         }
         private void ShipDestroy(object sender, DestroyEventArgs e)
         {
+            Console.WriteLine(" Ship id: {0}  Destroyed. Trying to add container", e.ship_id);
+
             gamePlugin.serverSO.AddNewContainer(ships[e.ship_id].p);
+            Console.WriteLine(" Ship id: {0}  Destroyed. Trying to delete it in DB", e.ship_id);
+
             try
             {
              _database.DataLayer.DeleteShip(e.ship_id, ()=>
@@ -467,7 +475,7 @@ namespace Wingsrv
             }
             catch (Exception ex)
             {
-                gamePlugin.WriteToLog("Database error on loading space objects" +ex, DarkRift.LogType.Error);
+                gamePlugin.WriteToLog("Database error on delete ship " +ex, DarkRift.LogType.Error);
                 //Return Error 2 for Database error
                 _database.DatabaseError(null , 0 , ex);
             }
