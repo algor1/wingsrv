@@ -98,7 +98,6 @@ namespace Wingsrv
         {
             Console.WriteLine("trying to get inventory of holder id: {0}", holderId);
             List<InventoryItem> retList = new List<InventoryItem>();
-            Console.WriteLine("0");
             try
             {
                 _database.DataLayer.GetHolderInventory(holderId, holderInventory =>
@@ -165,7 +164,8 @@ namespace Wingsrv
                 }
 
             }
-            InventoryItemAddition(cont.PlayerId, cont.Id, 38,(int) Math.Ceiling(10 * autoRand.NextDouble()));
+            int metalScrapsId = 38; //TODO 
+            InventoryItemAddition(cont.PlayerId, cont.Id, metalScrapsId,(int) Math.Ceiling(10 * autoRand.NextDouble()));
             
             DestroyInventory(so.Id);
         }

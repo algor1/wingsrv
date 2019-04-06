@@ -875,9 +875,7 @@ namespace MySQLConnector
 
         public void GetHolderInventory( int holderId, Action<List<InventoryItem>> callback)
         {
-            Console.WriteLine("1");
             List < InventoryItem > retList = new List<InventoryItem>();
-            Console.WriteLine("2");
             var rows = _database.ExecuteQuery(
                         @"SELECT 
                             inventory_holder_id,
@@ -958,7 +956,34 @@ namespace MySQLConnector
         public void InventoryItemAdd(int receiverId, int receiverHolder, int itemId, int quantity, Action<int> callback)
         {
             int receiverQuantity = InventoryItemQuantity(receiverId, receiverHolder, itemId);
-            throw new NotImplementedException();
+
+            if (receiverQuantity != 0)
+            {
+                _database.ExecuteNonQuery(
+                                    @"UPDATE inventory SET
+                                            quantity = quantity + @quantity 
+                                    WHERE   player_id = @playerId and 
+                                            inventory_holder_id = @holderId and 
+                                            item_id = @itemId ",
+                        new QueryParameter("@playerId", MySqlDbType.Int32, 11, "playerId", receiverId),
+                        new QueryParameter("@holderId", MySqlDbType.Int32, 11, "holderId", receiverHolder),
+                        new QueryParameter("@itemId", MySqlDbType.Int32, 11, "itemId", itemId),
+                        new QueryParameter("@quantity", MySqlDbType.Int32, 11, "quantity", quantity));
+
+            }
+            else
+            {
+                _database.ExecuteNonQuery(
+                             @"INSERT INTO inventory 
+                                  (player_id, inventory_holder_id,item_id,quantity)
+                               VALUES 
+                                  (@playerId,  @holderId , @itemId, @quantity) ",
+                        new QueryParameter("@playerId", MySqlDbType.Int32, 11, "playerId", receiverId),
+                        new QueryParameter("@holderId", MySqlDbType.Int32, 11, "holderId", receiverHolder),
+                        new QueryParameter("@itemId", MySqlDbType.Int32, 11, "itemId", itemId),
+                        new QueryParameter("@quantity", MySqlDbType.Int32, 11, "quantity", quantity));
+
+            }
         }
 
         public void InventoryItemSubtract(int playerId, int holderId, int itemId, int quantity, Action<int> callback)

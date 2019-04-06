@@ -459,16 +459,15 @@ namespace Wingsrv
         }
         private void ShipDestroy(object sender, DestroyEventArgs e)
         {
-            Console.WriteLine(" Ship id: {0}  Destroyed. Trying to add container", e.ship_id);
+            Console.WriteLine(" Ship id: {0}  Destroyed. Trying to add new container from destroyed ship", e.ship_id);
 
-            gamePlugin.serverSO.AddNewContainer(ships[e.ship_id].p);
+            gamePlugin.serverSO.AddNewContainerDestroyedShip(ships[e.ship_id].p);
             Console.WriteLine(" Ship id: {0}  Destroyed. Trying to delete it in DB", e.ship_id);
 
             try
             {
              _database.DataLayer.DeleteShip(e.ship_id, ()=>
                 {
-                    gamePlugin.serverSO.AddNewContainer(ships[e.ship_id].p);
                     DeleteShip(e.ship_id);
                     Console.WriteLine(" Ship id: {0}  Destroyed ", e.ship_id);
                 });

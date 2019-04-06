@@ -187,7 +187,7 @@ namespace Wingsrv
             return spaceObjects[id];
         }
 
-        public void AddNewContainer(SpaceObject destroedSo)
+        public void AddNewContainerDestroyedShip(SpaceObject destroedSo)
     {			
         //SpaceObject newContainer;
         int containerEtalonId = 4;// TODO  брать из базы
