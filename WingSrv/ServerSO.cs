@@ -173,7 +173,7 @@ namespace Wingsrv
 
                 float dist = Vector3.Distance(_playerShip.p.Position, entry.Value.Position);
                 //          print (dist);
-                if (dist < _playerShip.p.VisionDistance)
+                if (entry.Value.Type==TypeSO.waypoint||dist < _playerShip.p.VisionDistance)
                 {
                     resultSOList.Add(entry.Value);
                 }
