@@ -64,31 +64,17 @@ namespace Wingsrv
 
         }
 
-        
-
         public  void RunServers ()
         {
-            //itemDB = new ItemDB(this);
             inventoryServer = new InventoryServer(this);
-            //serverDB = new ServerDB(this);
             server = new Server(this);
             serverSO = new ServerSO(this);
-
-            //Thread myThread = new Thread(new ThreadStart(server.RunServer));
-            //myThread.Start();
-            //Console.WriteLine(myThread.IsBackground);
-
-
         }
+
         public void Stop()
         {
             //itemDB.OnApplicationQuit();
         }
-
-
-
-
-
 
         private void LoadConfig()
         {

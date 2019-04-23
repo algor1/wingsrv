@@ -353,8 +353,6 @@ namespace SpaceObjects
                 {
                     p.Rotation = MyQuaternion.RotateTowards(p.Rotation, rotationToTarget, p.RotationSpeed * TickDeltaTime/1000f);
                     Console.WriteLine("Ship {0} , rotation {1} target {2} rotation to target {3}" , p.Id, p.Rotation.eulerAngles, TargetToMove.Id,rotationToTarget.eulerAngles);
-                    
-
                 }
             }
         }
@@ -369,7 +367,6 @@ namespace SpaceObjects
                     {
                         p.Speed = p.SpeedNew;
                         Console.WriteLine("Ship {0} , position {1}", p.Id,p.Position);
-
                     }
                 }
                 else
@@ -382,6 +379,7 @@ namespace SpaceObjects
                 }
             }
         }
+
         private void Move()
         {
             if (moveCommand == MoveType.move)
@@ -389,24 +387,24 @@ namespace SpaceObjects
                 p.SpeedNew = p.SpeedMax;
                 Rotate();
                 Accelerate();
-                //p.Speed = Mathf.Lerp(p.Speed, p.SpeedMax, TickDeltaTime/1000f * p.AccelerationMax);
                 p.Position += p.Rotation * Vector3.forward * TickDeltaTime/1000f * p.Speed;
             }
         }
+
         private void Stop()
         {
             if (moveCommand == MoveType.stop)
             {
                 //Console.WriteLine(p.Position);
-
                 p.SpeedNew = 0;
             }
         }
+
         public void Damage(float damage)
         {
             if (p.Shield - damage > 0)
             {
-                p.Shield += -damage;
+                p.Shield -= damage;
             }
             else
             {
