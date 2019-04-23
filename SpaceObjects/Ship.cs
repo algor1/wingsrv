@@ -404,7 +404,7 @@ namespace SpaceObjects
         {
             if (p.Shield - damage > 0)
             {
-                p.Shield -= damage;
+                p.Shield += damage;
             }
             else
             {
@@ -483,7 +483,6 @@ namespace SpaceObjects
         //}
         public async Task Warpdrive()
         {
-            
             warpStarted = true;
             OnChangeStateCall(ShipEvenentsType.warmwarp);
             await Task.Delay((int)(1000f*p.WarpDriveStartTime));
