@@ -13,11 +13,8 @@ using System.Linq;
 
 namespace Wingsrv
 {
-    //public enum Command { MoveTo, WarpTo, Atack, SetTarget, SetTargetShip, LandTo, Equipment, Open, TakeOff };
-
     public class Server
     {
-
         public bool started;
         private ConcurrentDictionary<int, Ship> ships;
         //private Dictionary<int, SpaceObject> spaseObjects;
