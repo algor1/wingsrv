@@ -70,6 +70,17 @@ namespace Wingsrv
             return items[itemId];
         }
 
+        public List<Item> GetItems(List<int> itemIds)
+        {
+            List<Item> retItems = new List<Item>();
+            foreach (var itemId in itemIds)
+            {
+                retItems.Add(items[itemId]);
+            }
+            return retItems;
+        }
+
+
         #endregion 
 
         #region Inventory

@@ -36,6 +36,9 @@ namespace Wingsrv
         public const ushort PlayerShipData = (ushort)(5 + Shift);
         public const ushort NearestSpaceObjects = (ushort)(6 + Shift);
         public const ushort ShipCommand = (ushort)(7 + Shift);
+        public const ushort ObjectInventory = (ushort)(8 + Shift);
+        public const ushort ObjectInventoryQuery = (ushort)(9 + Shift);
+        public const ushort InventoryItems = (ushort)(10 + Shift);
 
 
         private const string ConfigPath = @"Plugins/Game.xml";
