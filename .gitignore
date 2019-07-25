@@ -10,3 +10,4 @@ obj/
 .vs/
 *.suo
 SpaceObjects/Properties/AssemblyInfo.cs
+packages/

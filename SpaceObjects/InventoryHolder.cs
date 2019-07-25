@@ -11,10 +11,6 @@ namespace SpaceObjects{
         public float Volume     { get; set; }
         public float VolumeLeft { get; set; }
 
-
-
-
-
         public void Deserialize(DeserializeEvent e)
         {
             
@@ -27,10 +23,11 @@ namespace SpaceObjects{
 
         public void Serialize(SerializeEvent e)
         {
-            
-            e.Writer.Write(PlayerId  );
-            e.Writer.Write(HolderId  );
-            e.Writer.Write(Volume    );
+
+            e.Writer.Write(PlayerId);
+            e.Writer.Write(HolderId);
+            e.Writer.Write(Volume);
             e.Writer.Write(VolumeLeft);
+        }
     }
 }
