@@ -29,7 +29,6 @@ namespace SpaceObjects
             SpritePath = e.Reader.ReadString();
             ItemType = (ItemTypes)e.Reader.ReadInt32();
             Volume = e.Reader.ReadInt32();
-            Prefab = e.Reader.ReadString();
 
             passive = e.Reader.ReadBoolean();
             shieldpoints = e.Reader.ReadSingle();
@@ -46,7 +45,6 @@ namespace SpaceObjects
             e.Writer.Write(SpritePath);
             e.Writer.Write((int)ItemType);
             e.Writer.Write(Volume);
-            e.Writer.Write(Prefab);
 
             e.Writer.Write(passive);
             e.Writer.Write(shieldpoints);
