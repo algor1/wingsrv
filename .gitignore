@@ -1,6 +1,7 @@
 *.meta
 *.zip
 *.rar
+*.config
 bin/
 obj/
 *.bak
