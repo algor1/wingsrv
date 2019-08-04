@@ -131,7 +131,7 @@ namespace Wingsrv
                 }
 
             }
-            if (server._database == null)
+            if ((server != null) && (server._database == null))
             {
                 lock (InitializeLock)
                 {
